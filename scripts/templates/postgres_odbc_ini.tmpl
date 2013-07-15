@@ -1,0 +1,18 @@
+;
+; Postgres odbc ini file, created by mill.py on $date
+; Incorporate this in /etc/odbc.ini on a unix system; maybe turn on the tracing.
+; Assumes running on localhost.
+;
+; driver pg_unicode is defined in odbcinst.ini; see postgres/odbc docs
+; at 
+$dbDecl
+Description     = $description
+Driver          = pg_unicode
+Servername      = localhost
+Database        = $database
+Port            = 5432
+Socket          =
+Option          =
+Stmt            =
+Trace           = No
+;TraceFile       = /var/tmp/psqlodbc.log

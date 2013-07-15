@@ -1,0 +1,71 @@
+<?xml version="1.0" 
+      encoding="ISO-8859-1" 
+      standalone="no"
+       ?>
+<!DOCTYPE database SYSTEM "http://www.virtual-worlds.biz/dtds/mill.dtd">
+<database name="adrs_data">
+
+        <table name="standard_user" description="A user">
+           
+                <column name="user_id"  
+                        primaryKey='true'
+                        type='INTEGER'
+                        description=""/>
+                <column name="username"  
+                        required="true"
+                        default=''
+                        type="CHAR"
+                        size="16"
+                        description=""/>
+                <column name='password'
+                        default=''
+                        type='CHAR'
+                        size='32' />
+                <column name='salary'
+                        default=''
+                        type='DECIMAL'
+                        size='10'
+                        scale='2' />
+                <column name='rate'
+                        default=''
+                        type='REAL'
+                        />
+                        
+                <column name='date_created'
+                        type='DATE'
+                        default='0000-00-00'
+                         />
+        </table>
+
+        <table name="standard_group" description="Group a user belongs to">        
+                <column name="name"
+                        type='CHAR'
+                        size='30'
+                        primaryKey='true'
+                        default='SATTSIM'
+                        description="Model Name"/>
+                <column name="description"
+                        type='CHAR'
+                        size='120'
+                        description="Description"/>
+        </table>
+        
+        <table name="group_members" description="Group a user belongs to">        
+                <column name="group_name"
+                        type='CHAR'
+                        size='30'
+                        primaryKey='true'
+                        default=''
+                        description="Model Name"/>
+                <column name="user_id"  
+                        primaryKey='true'
+                        type='INTEGER'
+                        description=""/>
+                <foreign-key foreignTable="standard_group"   onDelete="CASCADE">
+                     <reference foreign="name" local="group_name"/>
+                </foreign-key>
+                <foreign-key foreignTable="standard_user"   onDelete="CASCADE">
+                     <reference foreign="user_id" local="user_id"/>
+                </foreign-key>
+        </table>
+</database>

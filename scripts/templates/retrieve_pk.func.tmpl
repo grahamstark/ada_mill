@@ -1,0 +1,16 @@
+   $functionHeader
+      l : $listType;
+      $variableDecl;
+      c : d.Criteria;
+   begin      
+#for cr in $primaryKeyCriteria:
+      $cr;
+#end for;
+      l := Retrieve( c, connection );
+      if( $notEmpty ) then
+         $getFirstRecord;
+      else
+         $getNullRecord;
+      end if;
+      return $adaName;
+   end Retrieve_By_PK;

@@ -1,0 +1,37 @@
+with GNATCOLL.SQL.Exec;
+
+-- === CUSTOM IMPORTS START ===
+#for $e in $customImports 
+$e 
+#end for
+-- === CUSTOM IMPORTS END ===
+
+package Connection_Pool is
+
+    -- === CUSTOM TYPES START ===
+#for $e in $customTypes 
+$e 
+#end for
+   -- === CUSTOM TYPES END ===
+   
+   package dexec renames GNATCOLL.SQL.Exec; 
+
+   procedure Initialise( 
+      server_name  : String;
+      database     : String;
+      user_name    : String;
+      password     : String;
+      initial_size : Positive );
+      
+   function Lease return dexec.Database_Connection;
+   procedure Return_Connection( c : dexec.Database_Connection );
+   procedure Shutdown;
+
+   -- === CUSTOM IMPORTS START ===
+#for $e in $customProcs 
+$e 
+#end for
+-- === CUSTOM IMPORTS END ===
+   
+   
+end Connection_Pool;

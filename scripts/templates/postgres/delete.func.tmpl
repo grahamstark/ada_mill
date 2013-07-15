@@ -1,0 +1,21 @@
+   procedure Delete( where_Clause : String; connection : gse.Database_Connection := null ) is
+      local_connection : gse.Database_Connection;     
+      is_local_connection : Boolean;
+      query : constant String := DELETE_PART & where_Clause;
+   begin
+      if( connection = null )then
+          local_connection := Connection_Pool.Lease;
+          is_local_connection := True;
+      else
+          local_connection := connection;          
+          is_local_connection := False;
+      end if;
+      Log( "delete; executing query" & query );
+      gse.Execute( local_connection, query );
+      Check_Result( local_connection );
+      Log( "delete; execute query OK" );
+      if( is_local_connection )then
+         local_connection.Commit;
+         Connection_Pool.Return_Connection( local_connection );
+      end if;
+   end Delete;

@@ -1,0 +1,76 @@
+INFO_LEVEL 2011: 8: 18: 52284.967208000 : Starting test Standard_User_Create_Test
+INFO_LEVEL 2011: 8: 18: 52284.967301000 : Clearing out the table
+INFO_LEVEL 2011: 8: 18: 52284.967353000 : delete; executing querydelete from standard_user  
+ERROR_LEVEL 2011: 8: 18: 52284.985087000 : exception Exception name: DB_COMMONS.DB_EXCEPTION
+Message: Error in db_common-odbc.adb: Connect server name: simple_pg user_name: postgres password: Exception name: GNU.DB.SQLCLI.INVALID_AUTH_SPEC
+Message: [Proc=SQLConnect][Server=][State=28000][unixODBC]FATA
+
+ERROR_LEVEL 2011: 8: 18: 52284.985125000 : delete; execute query failed with message Exception name: DB_COMMONS.DB_EXCEPTION
+Message: getConnection: exception thrown Exception name: DB_COMMONS.DB_EXCEPTION
+Message: Error in db_common-odbc.adb: Connect server name: simple_pg user_name: postgres password: Exception name: GNU.DB.SQLCLI
+
+ERROR_LEVEL 2011: 8: 18: 52284.985153000 : Standard_User_Create_Test execute query failed with message Exception name: DB_COMMONS.DB_EXCEPTION
+Message: delete: exception thrown Exception name: DB_COMMONS.DB_EXCEPTION
+Message: getConnection: exception thrown Exception name: DB_COMMONS.DB_EXCEPTION
+Message: Error in db_common-odbc.adb: Connect server n
+
+INFO_LEVEL 2011: 8: 18: 52284.985202000 : Starting test Standard_Group_Create_Test
+INFO_LEVEL 2011: 8: 18: 52284.985206000 : Clearing out the table
+INFO_LEVEL 2011: 8: 18: 52284.985215000 : delete; executing querydelete from standard_group  
+ERROR_LEVEL 2011: 8: 18: 52284.992682000 : exception Exception name: DB_COMMONS.DB_EXCEPTION
+Message: Error in db_common-odbc.adb: Connect server name: simple_pg user_name: postgres password: Exception name: GNU.DB.SQLCLI.INVALID_AUTH_SPEC
+Message: [Proc=SQLConnect][Server=][State=28000][unixODBC]FATA
+
+ERROR_LEVEL 2011: 8: 18: 52284.992715000 : delete; execute query failed with message Exception name: DB_COMMONS.DB_EXCEPTION
+Message: getConnection: exception thrown Exception name: DB_COMMONS.DB_EXCEPTION
+Message: Error in db_common-odbc.adb: Connect server name: simple_pg user_name: postgres password: Exception name: GNU.DB.SQLCLI
+
+ERROR_LEVEL 2011: 8: 18: 52284.992744000 : Standard_Group_Create_Test execute query failed with message Exception name: DB_COMMONS.DB_EXCEPTION
+Message: delete: exception thrown Exception name: DB_COMMONS.DB_EXCEPTION
+Message: getConnection: exception thrown Exception name: DB_COMMONS.DB_EXCEPTION
+Message: Error in db_common-odbc.adb: Connect server n
+
+INFO_LEVEL 2011: 8: 18: 52284.992785000 : Starting test Group_Members_Create_Test
+INFO_LEVEL 2011: 8: 18: 52284.992790000 : Clearing out the table
+INFO_LEVEL 2011: 8: 18: 52284.992799000 : delete; executing querydelete from group_members  
+ERROR_LEVEL 2011: 8: 18: 52285.002812000 : exception Exception name: DB_COMMONS.DB_EXCEPTION
+Message: Error in db_common-odbc.adb: Connect server name: simple_pg user_name: postgres password: Exception name: GNU.DB.SQLCLI.INVALID_AUTH_SPEC
+Message: [Proc=SQLConnect][Server=][State=28000][unixODBC]FATA
+
+ERROR_LEVEL 2011: 8: 18: 52285.002848000 : delete; execute query failed with message Exception name: DB_COMMONS.DB_EXCEPTION
+Message: getConnection: exception thrown Exception name: DB_COMMONS.DB_EXCEPTION
+Message: Error in db_common-odbc.adb: Connect server name: simple_pg user_name: postgres password: Exception name: GNU.DB.SQLCLI
+
+ERROR_LEVEL 2011: 8: 18: 52285.002876000 : Group_Members_Create_Test execute query failed with message Exception name: DB_COMMONS.DB_EXCEPTION
+Message: delete: exception thrown Exception name: DB_COMMONS.DB_EXCEPTION
+Message: getConnection: exception thrown Exception name: DB_COMMONS.DB_EXCEPTION
+Message: Error in db_common-odbc.adb: Connect server n
+
+
+FAIL Simple_Pg_Test Test Suite : Test of Creation and deletion of Standard_User
+    Standard_User_Create_Test : exception thrown Exception name: DB_COMMONS.DB_EXCEPTION
+Message: delete: exception thrown Exception name: DB_COMMONS.DB_EXCEPTION
+Message: getConnection: exception thrown Exception name: DB_COMMONS.DB_EXCEPTION
+Message: Error in db_common-odbc.adb: Connect server n
+
+    at simple_pg_test.adb:111
+FAIL Simple_Pg_Test Test Suite : Test of Creation and deletion of Standard_Group
+    Standard_Group_Create_Test : exception thrown Exception name: DB_COMMONS.DB_EXCEPTION
+Message: delete: exception thrown Exception name: DB_COMMONS.DB_EXCEPTION
+Message: getConnection: exception thrown Exception name: DB_COMMONS.DB_EXCEPTION
+Message: Error in db_common-odbc.adb: Connect server n
+
+    at simple_pg_test.adb:176
+FAIL Simple_Pg_Test Test Suite : Test of Creation and deletion of Group_Members
+    Group_Members_Create_Test : exception thrown Exception name: DB_COMMONS.DB_EXCEPTION
+Message: delete: exception thrown Exception name: DB_COMMONS.DB_EXCEPTION
+Message: getConnection: exception thrown Exception name: DB_COMMONS.DB_EXCEPTION
+Message: Error in db_common-odbc.adb: Connect server n
+
+    at simple_pg_test.adb:240
+
+Total Tests Run:   3
+Successful Tests:  0
+Failed Assertions: 3
+Unexpected Errors: 0
+

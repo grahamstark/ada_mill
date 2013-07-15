@@ -1,0 +1,5 @@
+   procedure Delete( c : d.Criteria, $connectionString ) is
+   begin      
+      delete( d.to_string( c ), connection );
+      Log( "delete criteria; execute query OK" );
+   end Delete;

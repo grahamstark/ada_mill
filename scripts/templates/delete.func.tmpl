@@ -1,0 +1,34 @@
+   --
+   -- No longer used since there are no replacements in it and so
+   -- the code can just be written straight into the main io template.
+   -- 
+   procedure Delete( where_Clause : String ) is
+      ps : sql.SQLHDBC := sql.SQL_NULL_HANDLE;
+      connection : dodbc.Database_Connection := Connection_Pool.Lease;
+      query : Unbounded_String := DELETE_PART & To_Unbounded_String(" ");
+   begin
+      begin -- exception block
+         query := query & where_Clause;
+         Log( "delete; executing query" & query );
+         ps := dodbc.Initialise_Prepared_Statement( connection.connection, query );       
+         SQLExecute( ps );
+         Log( "delete; execute query OK" );
+      exception
+         when No_Data => Null; -- ignore no data exceptions
+         when Error : others =>
+            Log( "delete; execute query failed with message " & Exception_Information(Error)  );
+            Raise_Exception( d.DB_Exception'Identity, 
+               "delete: exception thrown " & Exception_Information(Error) );
+      end;
+      -- 
+      begin -- close block
+         dodbc.Close_Prepared_Statement( ps );
+         Connection_Pool.Return_Connection( connection );
+      exception
+         when Error : others =>
+            Log( "delete/close exception" & Exception_Information(Error)  );
+            Raise_Exception( d.DB_Exception'Identity, 
+               "delete/close exception" & Exception_Information(Error) );
+      end;
+   end Delete;
+

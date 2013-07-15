@@ -1,0 +1,41 @@
+   procedure Delete( where_Clause : String; connection : Database_Connection :=Null_Database_Connection ) is
+      ps : sql.SQLHDBC := sql.SQL_NULL_HANDLE;
+      local_connection : dodbc.Database_Connection;
+      locally_allocated_connection : Boolean;
+      query : Unbounded_String := DELETE_PART & To_Unbounded_String(" ");
+   begin
+      query := query & where_Clause;
+      begin -- try catch block for execute
+         Log( "delete; executing query" & To_String(query) );
+         if( connection = Null_Database_Connection )then
+            local_connection := Connection_Pool.Lease;
+            locally_allocated_connection := True;
+         else
+            local_connection := connection;
+            locally_allocated_connection := False;         
+         end if;
+
+         ps := dodbc.Initialise_Prepared_Statement( local_connection.connection, query );       
+         SQLExecute( ps );
+         Log( "delete; execute query OK" );
+      exception 
+         when Error : No_Data => Null; -- silently ignore no data exception, which is hardly exceptional
+         when Error : others =>
+            Log( "delete; execute query failed with message " & Exception_Information(Error)  );
+            Raise_Exception( d.DB_Exception'Identity, 
+               "delete: exception thrown " & Exception_Information(Error) );
+      end;
+      begin -- try catch block for close
+         dodbc.Close_Prepared_Statement( ps );
+         if( locally_allocated_connection )then
+            Connection_Pool.Return_Connection( local_connection );
+         end if;
+      exception 
+         when Error : others =>
+            Log( "delete; execute query failed with message " & Exception_Information(Error)  );
+            Raise_Exception( d.DB_Exception'Identity, 
+               "delete: exception thrown " & Exception_Information(Error) );
+      end;
+   end Delete;
+
+

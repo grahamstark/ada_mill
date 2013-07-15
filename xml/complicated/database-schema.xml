@@ -1,0 +1,3237 @@
+<?xml version="1.0" 
+      encoding="ISO-8859-1" 
+      standalone="no"
+       ?>
+<!DOCTYPE database PUBLIC "http://virtual-worlds.biz/Mill"  "http://www.virtual-worlds.biz/dtds/mill.dtd">
+
+<database name="adrs_data">
+
+        <table name="admin_users" description="A dummy user, till we work out the structure of user tables.">
+           
+                <column name="admin_id"  
+                        primaryKey='true'
+                        type='INTEGER'
+                        description=""/>
+                <column name="username"  
+                        required="true"
+                        default=''
+                        type="CHAR"
+                        size="16"
+                        description=""/>
+                <column name='password'
+                        default=''
+                        type='CHAR'
+                        size='32' />
+                <column name='date_created'
+                        type='DATE'
+                        default='0000-00-00'
+                         />
+                <column name='date_deleted'
+                        type='DATE'
+                        default='0000-00-00'
+                         />
+                <column name='is_deleted'
+                        default='0'
+                        type='INTEGER'
+                        size='1'
+                         />
+        </table>
+
+        <table name="model" description="Information on a Model">        
+                <column name="model_name"
+                        type='CHAR'
+                        size='30'
+                        primaryKey='true'
+                        default='SATTSIM'
+                        description="Model Name"/>
+                <column name="label"
+                        type='CHAR'
+                        size='120'
+                        default='Sattsim'
+                        description="Description"/>
+                
+                <column name="description"
+                        type='CHAR'
+                        size='120'
+                        description="Description"/>
+                        
+                <column name="intro_text_file"
+                        type='CHAR'
+                        size='120'
+                        description="Description"/>
+                        
+                <column name='default_start_year'
+                        type='INTEGER'
+                        default='2006' />
+                <column name='default_forecast_periods'
+                        type='INTEGER'
+                        default='11' />
+                <column name='short_run_hh_count'
+                        type='INTEGER'
+                        default='4944' />
+                <column name='long_run_hh_count'
+                        type='INTEGER'
+                        default='20000' />
+                <column name='xml_file'
+                        type='CHAR'
+                        size='60'
+                        default='SATTSIM.xml' />
+                <column name='ms_param_size'
+                        type='INTEGER'
+                        default='318'
+                        description='count of the number of variables in the output array we need to feed to the GAUSS model. Probably never changes from the default'
+                        />
+                <column name='run_command'
+                        type='CHAR'
+                        size='120'
+                        default='run_sattsim'
+                        />
+                        
+                <column name='is_micro_model'
+                        type='INTEGER'
+                        size='1'
+                        default='0'
+                        />
+                        
+                <column name='is_macro_model'
+                        type='INTEGER'
+                        size='1'
+                        default='0'
+                        />
+                        
+                <column name='default_parameter_name'
+                        type='CHAR'
+                        size='120'
+                        default='msparameters_2005.txt'
+                        />
+                <!-- FIXME: the macro models have 4 (6?) parameter files which are better set off in a table with model as FK 
+                     presently they are just hard-wired into the model code.
+                -->
+                <column name='macro_parameter_name'
+                        type='CHAR'
+                        size='120'
+                        default='sattsim_plus_assumption_data.txt'
+                        />
+                <column name='acceptable_running_time'
+                        type='INTEGER'
+                        description='flag and error if a model runs for longer than this (in seconds). Defaults to 1 hour'
+                        default='3600'
+                        />
+                <column name='executable_file'
+                        type='CHAR'
+                        size='120'
+                        description='The Exe file associated with this model'
+                        />
+        </table>
+         <table name="chart_type">
+                <column
+                     name="name"
+                     type="CHAR"
+                     size='60'
+                     primaryKey='true'
+                     description="primary key"/>
+                <column
+                     name="description"
+                     type="CHAR"
+                     size='120'                     
+                     description=""/>
+        </table>
+
+        <table name="system_selection">
+                <column
+                     name="name"
+                     type="CHAR"
+                     size='60'
+                     primaryKey='true'
+                     description="primary key"/>
+                <column
+                     name="description"
+                     type="CHAR"
+                     size='120'                     
+                     description=""/>
+        </table>
+
+         <table name="font_type">
+                <column
+                     name="name"
+                     type="CHAR"
+                     size='60'
+                     primaryKey='true'
+                     description="primary key"/>
+                <column
+                     name="description"
+                     type="CHAR"
+                     size='120'                     
+                     description=""/>
+                <column
+                     name="alias1"
+                     type="CHAR"
+                     size='80'                     
+                     description=""/>
+                <column
+                     name="alias2"
+                     type="CHAR"
+                     size='80'                     
+                     description=""/>
+                <column
+                     name="alias3"
+                     type="CHAR"
+                     size='80'                     
+                     description=""/>
+        </table>
+         
+         <table name="chart_breakdown_variable">
+                <column
+                     name="name"
+                     type="CHAR"
+                     size='60'
+                     primaryKey='true'
+                     description="primary key"/>
+                <column
+                     name="description"
+                     type="CHAR"
+                     size='120'
+                     description=""/>
+                 <column name='model_table_total_start_row'
+                     type='INTEGER'
+                     description="positions of row totals for race, etc. for each we have start row, start column."/>
+                 <column name='model_table_total_start_col'
+                     type='INTEGER'
+                     description="positions of row totals for race, etc. for each we have start row, start column."/>
+        </table>
+        
+         <table name="vartypes">
+                <column
+                     name="name"
+                     type="CHAR"
+                     size='60'
+                     primaryKey='true'
+                     description="primary key"/>
+                <column
+                     name="description"
+                     type="CHAR"
+                     size='120'
+                     
+                     description="budget or eligibility"/>
+           <column
+                     name="unit"
+                     type="CHAR"
+                     size='12'
+                     description=""/>
+        </table>
+        
+        <table name="chart_breakdown_values">
+                <column
+                     name="variable"
+                     type="CHAR"
+                     size='60'
+                     primaryKey='true'
+                     description="primary key"/>
+                <column
+                     name="value"
+                     type="CHAR"
+                     size='60'
+                     primaryKey='true'
+                     description="primary key"/>
+                <column
+                     name="description"
+                     type="CHAR"
+                     size='120'
+                     description=""/>
+                <column
+                     name="position"
+                     type="INTEGER"
+                     description=""/>
+                <foreign-key foreignTable="chart_breakdown_variable"   onDelete="CASCADE">
+                     <reference foreign="name" local="variable"/>
+                </foreign-key>
+        </table>
+        
+         
+         <table name="chart_main_variable">
+                <column
+                     name="name"
+                     type="CHAR"
+                     size='60'
+                     primaryKey='true'
+                     description=""/>
+                <column
+                     name="description"
+                     type="CHAR"
+                     size='120'
+                     
+                     description=""/>
+                <column
+                     name="model_table_name"
+                     type="CHAR"
+                     size='20'
+                     description=""/>
+                <column
+                     name="model_table_values"
+                     type="ENUM"
+                     values="val1 val2 val3 val4"
+                     size='20'
+                     description=""/>
+                     
+        </table>
+        
+        <table name="standard_user" description="A dummy user, till we work out the structure of user tables.">
+           
+                <column name="user_id"  
+                        primaryKey='true'
+                        type='INTEGER'
+                        description=""/>
+                 <column name="last_name"  
+                        default=''
+                        type="CHAR"
+                        size="100"
+                        description=""/>
+                <!--     
+                <column name='preferred_language'
+                        default='en'
+                        type='CHAR'
+                        size='4' />
+                -->    
+                <column name='middle_name'
+                        default=''
+                        type='CHAR'
+                        size='50' />
+                        
+                <column name='first_name'
+                        default=''
+                        type='CHAR'
+                        size='50' />
+                <column name='email'
+                        default=''
+                        type='CHAR'
+                        size='250' />
+                <column name='password'
+                        type='CHAR'
+                        default=''
+                        size='32' />
+                <column name='password_plain'
+                        default=''
+                        type='CHAR'
+                        size='32' />
+                <column name='is_deleted'
+                        size='1'
+                        default='0'
+                        type='BOOLEAN'
+                         />
+                <column name='user_type'
+                        size='1'
+                        default='0'
+                        type='ENUM'
+                        values='admin standard guest'
+                         />
+                <column name='date_created'
+                        type='DATE'
+                        default='0000-00-00'
+                         />
+                <column name='date_deleted'
+                        type='DATE'
+                        default='0000-00-00'
+                         />
+        </table>
+
+        <table name="pending_user" description="">
+                <column name="user_id"  
+                        primaryKey='true'
+                        type='INTEGER'
+                        description=""/>
+                <column name="md5_key"  
+                        primaryKey='true'
+                        type='CHAR'
+                        size='120'
+                        description=""/>
+               <foreign-key foreignTable="standard_user"    onDelete="CASCADE">
+                        <reference foreign="user_id" local="user_id"/>
+               </foreign-key>                
+        </table>
+        
+        <table name="groups" description="A dummy group, till we work out the structure of user tables.">
+                
+                <column name="group_id"  
+                        required="true"
+                        type="INTEGER"
+                        autoIncrement='true'                        
+                        primaryKey='true'
+                        description=""/>
+
+               <column name="name"  
+                        required="true"
+                        type="CHAR"
+                        size='250'
+                        description=""/>
+               
+               <column name="description"  
+                        type="VARCHAR"
+                        size='1024'
+                        description=""/>
+              <column name="is_active"  
+                        required="true"
+                        type="INTEGER"
+                        size='1'
+                        default='0'                        
+                        description=""/>
+                        
+               <column name="is_private"  
+                        required="true"
+                        type="INTEGER"
+                        size='1'
+                        default='0'                        
+                        description=""/>
+               <column name="date_created"  
+                        required="true"
+                        type="DATE"
+                        default='0000-00-00'                        
+                        description=""/>
+                        
+                <column name="date_deleted"  
+                        required="true"
+                        type="DATE"
+                        default='0000-00-00'                        
+                        description=""/>
+
+                <column name="is_deleted"  
+                        required="true"
+                        type="INTEGER"
+                        size='1'
+                        default='0'                        
+                        description=""/>
+                        
+                
+        </table>
+        
+        <table name="group_members" description="All members of a group">
+                <column name="group_id"  
+                        required="true"
+                        type="INTEGER"
+                        primaryKey='true'
+                        description=""/>
+                <column name="user_id"  
+                        required="true"
+                        type="INTEGER"
+                        primaryKey='true'
+                        description=""/>
+                <column name="is_active"  
+                        required="true"
+                        type="INTEGER"
+                        size='1'
+                        default='0'                        
+                        description=""/>
+                <column name="is_deleted"  
+                        required="true"
+                        type="INTEGER"
+                        size='1'
+                        default='0'                        
+                        description=""/>
+                <column name="is_admin"  
+                        required="true"
+                        type="INTEGER"
+                        size='1'
+                        default='0'                        
+                        description=""/>
+
+                <column name="date_created"  
+                        required="true"
+                        type="DATE"
+                        default='0000-00-00'                        
+                        description=""/>
+                        
+                <column name="date_deleted"  
+                        required="true"
+                        type="DATE"
+                        default='0000-00-00'                        
+                        description=""/>
+                        
+                        
+                <foreign-key foreignTable="groups"    onDelete="CASCADE">
+                        <reference foreign="group_id" local="group_id"/>
+                </foreign-key>
+                <foreign-key foreignTable="standard_user"    onDelete="CASCADE">
+                        <reference foreign="user_id" local="user_id"/>
+                </foreign-key>                
+        </table>
+        
+        <table name='run' description='holder for all elements '>
+                <column name="run_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="Unique indenfier for this run associated with this run"/>
+                <column name="user_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="User associated with this run"/>
+                <column name="model_name"  
+                        type="CHAR"
+                        primaryKey='true'
+                        size="30"
+                        description="The model associated with this run"/>
+                <column name='is_basis_for_comparisons'        
+                        type='INTEGER'
+                        default='0'/>
+                <column name='is_currently_edited'        
+                        type='INTEGER'
+                        default='0'/>
+                <column name='is_editing_template'        
+                        type='INTEGER'
+                        default='0'/>
+                <column name='is_displayed_out'        
+                        type='INTEGER'
+                        default='0'/>
+                        
+                <column name="description"  
+                        type="CHAR"
+                        size="240"
+                        description="Description of this run"/>
+                <foreign-key foreignTable="model"   onDelete="CASCADE">
+                        <reference foreign="model_name" local="model_name"/>
+                </foreign-key>
+                <foreign-key foreignTable="standard_user"   onDelete="CASCADE">
+                        <reference foreign="user_id" local="user_id"/>
+                </foreign-key>
+        </table>
+
+        <table name="run_submission" description="a placeholder for a single run">
+        
+                <column name="run_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="Unique indenfier for this run associated with this run"/>
+                        
+                <column name="user_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="User associated with this run"/>
+                
+                <column name="model_name"  
+                        type="CHAR"
+                        primaryKey='true'
+                        size="30"
+                        description="The model associated with this run"/>
+                        
+                        
+                <column name='run_end_email_sent'
+                        type='INTEGER'
+                        default='0'
+                        />
+                        
+                <column name='error_alert_email_sent'
+                        type='INTEGER'
+                        default='0'
+                        />
+                        
+                <column name="queue_id"  
+                        type="CHAR"
+                        size='60'
+                        description="Use this to monitor job in the queue"/>
+                       
+                <column name="submission_time"  
+                        required="true"
+                        type="TIMESTAMP"
+                        description="Original Submission Time"/>
+                        
+                <column name="start_execute_time"  
+                        required="true"
+                        type="TIMESTAMP"
+                        description="Original Submission Time"/>
+                        
+                <column name="run_state"  
+                        type="CHAR"
+                        size='60'
+                        default='not_started'
+                        description="Last known state of the run"/>
+               <column name="return_message"
+                        type="VARCHAR"
+                        size='1024'
+                        description="any error message"/>
+               <column name='num_tables_loaded'
+                        type='INTEGER'
+                        default='0'
+                         />
+               <column name='num_charts_to_generate'
+                        type='INTEGER'
+                        default='5470'
+                         />
+               <column name='num_charts_loaded'
+                        type='INTEGER'
+                        default='0'
+                         />
+               <column name='any_errors_acknowleged'
+                        type='INTEGER'
+                        default='0'
+                         />
+               <!-- cols for DIMMSIM. Note we're assumning here that all DIMMSIM runs are always on the same iteration, so we
+                    don't need these in the run_segments -->
+               <column name='current_iteration'
+                        type='INTEGER'
+                        default='0'
+                        description='for DIMMSIM'  />
+               <column name='current_phase'
+                        type='INTEGER'
+                        default='0'
+                        description = " 1 = micro; 0 = macro. For DIMMSIM"  />
+               <column name='current_year_counter'
+                        type='INTEGER'
+                        default='0'
+                        description = "counting from 1, not (say) 2005"  />
+                         
+                <column name='all_calculation_iterations_complete'
+                        type='INTEGER'
+                        
+                        default='1'
+                        description = "all the models except DIMMSIM are submitted once per run, but each year/iter in dimmsim is submitted seperately, so this signals that the last of them is done. So, default it to true and set to 0 if this is DIMMSIM"  />
+                <column name='calculation_iterations_started'
+                        type='INTEGER'                        
+                        default='0'
+                        description = "DIMMSIM is multiply submitted, so this helps tell where we are, even if the state is set to (say) queued after some chunk is submitted"  />
+        
+                <column name='num_nodes'
+                        type='INTEGER'                        
+                        default='0'
+                        description = "Num physical machines we saw when we started"  />
+                        
+                <column name='num_processors_per_node'
+                        type='INTEGER'                        
+                        default='0'
+                        description = "FIXME assumes equal numbers per processor should be own table??"  />
+                        
+                <foreign-key foreignTable="run"   onDelete="CASCADE">
+                        <reference foreign="run_id" local="run_id"/>
+                        <reference foreign="user_id" local="user_id"/>
+                        <reference foreign="model_name" local="model_name"/>
+                </foreign-key>
+        </table>
+        
+        <table name="run_segment" description="The details of the run submitted to one machine.">
+                <column name="run_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="Unique indenfier for this run associated with this run"/>
+                <column name="user_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="User associated with this run"/>
+                <column name="model_name"  
+                        type="CHAR"
+                        primaryKey='true'
+                        size="30"
+                        description="The model associated with this run"/>
+               <column name='segment'
+                        type="INTEGER"
+                        default='1'
+                        primaryKey="true"
+                        description="id of this processing segment"/> 
+                <column name="queue_id"  
+                        type="CHAR"
+                        size='60'
+                        description="Use this to monitor job in the queue"/>
+                <column name='command'
+                        type="VARCHAR"
+                        size='1000'
+                        description="command to be run on this processing segment"/>                         
+                <column name='machine_name'
+                        type="CHAR"
+                        size='255'
+                        required='false'
+                        description="machine this segment is running on"/>        
+                <column name='start_household'
+                        type="INTEGER"
+                        required='true'
+                        default='1'
+                        description="start household for this segment"/> 
+                <column name="return_message"
+                        required="false"
+                        type="VARCHAR"
+                        size="2048"
+                        description="any error message"/>
+        
+                <column name='end_household'
+                        type="INTEGER"
+                        description="end household for this segment; null implies all available" />
+                <foreign-key foreignTable="run_submission" onDelete="CASCADE">
+                        <reference foreign="run_id" local="run_id"/>
+                        <reference foreign="user_id" local="user_id"/>
+                        <reference foreign="model_name" local="model_name"/>
+                </foreign-key>
+                <!-- not needed now we have torque handling everything 
+                <foreign-key foreignTable="machines"   onDelete="CASCADE">
+                        <reference foreign="machine_name" local="machine_name"/>
+                </foreign-key>                        
+                -->
+        </table>
+        
+        <table name="segment_run_event" description="a monitored event for a run, from the pov of the machine doing the monitoring"> 
+                <column name="run_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="Unique indenfier for this run associated with this run"/>
+                        
+                <column name="user_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="User associated with this run"/>
+                
+                <column name="model_name"  
+                        type="CHAR"
+                        primaryKey='true'
+                        size="30"
+                        description="The model associated with this run"/>
+               <column name='segment'
+                        type="INTEGER"
+                        default='1'
+                        primaryKey="true"
+                        description="id of this processing segment"/>
+                        
+               <column name="event_time"  
+                        required="true"
+                        type="TIMESTAMP"
+                        description="Time of this event"/>
+                <column name="event_state"  
+                        required="true"
+                        type="CHAR"
+                        size="30"
+                        description="running, submitted and so on"/>
+                <column name="year"  
+                        type="INTEGER"
+                        required="false"
+                        description="If multi year. which year is being processed"/>
+                <column name="counter"  
+                        type="INTEGER"
+                        required="false"
+                        description="e.g. household we're currently processing"/>
+                <column name="submission_time"  
+                        required="true"
+                        type="TIMESTAMP"
+                        description="Original Submission Time for this segment"/>
+                 <column name="model_pid"  
+                        type="INTEGER"
+                        description="Pid of the actual model run"/>
+                <column name="monitor_pid"  
+                        type="INTEGER"
+                        description="Pid of the php job that starts and monitors the model run"/>
+                <!-- 1:1 with run_segments -->
+                <foreign-key foreignTable="run_segment"   onDelete="CASCADE">
+                        <reference foreign="run_id" local="run_id"/>
+                        <reference foreign="user_id" local="user_id"/>
+                        <reference foreign="model_name" local="model_name"/>
+                        <reference foreign="segment" local="segment"/>
+                </foreign-key>
+         </table>
+        
+         <table name='macro_assumptions_table'>
+                <column name="run_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="Unique indenfier for this run associated with this run"/>
+                        
+                <column name="user_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="User associated with this run"/>
+                
+                <column name="model_name"  
+                        type="CHAR"
+                        primaryKey='true'
+                        size="30"
+                        description="The model associated with this run"/>
+                       
+                <column name="data"
+                        type='VARCHAR'
+                        size='1024'
+                        description='macro data, serialised'/>
+                        
+                <foreign-key foreignTable="run"   onDelete="CASCADE">
+                        <reference foreign="run_id" local="run_id"/>
+                        <reference foreign="user_id" local="user_id"/>
+                        <reference foreign="model_name" local="model_name"/>
+                </foreign-key>
+        
+        </table>
+     
+        <table name="run_settings" description="Num Households, tolerances, etc. for a run">
+        
+                <column name="run_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="Unique indenfier for this run associated with this run"/>
+                        
+                <column name="user_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="User associated with this run"/>
+                
+                <column name="model_name"  
+                        type="CHAR"
+                        primaryKey='true'
+                        size="30"
+                        description="The model associated with this run"/>
+                        
+                        
+                <column name="description"  
+                        type="VARCHAR"
+                        size="120"
+                        description="Some text describing these settings."/>
+                                
+                <column name="working_directory"
+                        required="true"
+                        type="CHAR"
+                        size="120"
+                        description="writing to this"/>                                              
+                <column name="num_segments"  
+                        required="false"
+                        default='1'
+                        type="INTEGER"
+                        description="How many slices we're chopping this up into for the run"/>
+                <column name="start_year"  
+                        required="false"
+                        type="INTEGER"
+                        description="Where to start, if this is a time-series model"/>
+                <column name="end_year"  
+                        required="false"
+                        type="INTEGER"
+                        description="Where to end, if this is a time-series model"/>
+                <column name="run_type"  
+                        default="long_run"
+                        type="CHAR"
+                        size="30"
+                        description="Short or Long run?"/>
+                <column name="last_saved_time"  
+                        required="true"
+                        type="TIMESTAMP"
+                        description="Time Last Modified"/>
+
+                <column name="send_run_end_email"
+                        type='INTEGER'
+                        default='1'
+                        />
+                <!-- FIXME: next 4 not really normalised, are they ? -->
+                <column name="memsa_tolerance"
+                        type='REAL'
+                        default='0.0001'
+                        />
+                <column name="dimsim_tolerance"
+                        type='REAL'
+                        default='0.0001'
+                        />
+                <column name="memsa_max_iterations"
+                        type='INTEGER'
+                        default='100'
+                        />
+                        
+                <column name="dimmsim_max_iterations"
+                        type='INTEGER'
+                        default='3'
+                        />
+                <foreign-key foreignTable="run"   onDelete="CASCADE">
+                        <reference foreign="run_id" local="run_id"/>
+                        <reference foreign="user_id" local="user_id"/>
+                        <reference foreign="model_name" local="model_name"/>
+                </foreign-key>
+       
+        </table>
+          
+        
+        
+        
+         
+        <!--
+        This just models Asghar's dataset as a row of arbitrary numbers, since  ..
+        -->
+        <table name="parameters" description="">
+        
+                <column name="run_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="Unique indenfier for this run associated with this run"/>
+                        
+                <column name="user_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="User associated with this run"/>
+                
+                <column name="model_name"  
+                        type="CHAR"
+                        primaryKey='true'
+                        size="30"
+                        description="The model associated with this run"/>
+        
+                <column name="year"  
+                        required="true"
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="Year this parameter refers to, or -99"/>
+                        
+                <column name="v1" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v2" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v3" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v4" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v5" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v6" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v7" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v8" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v9" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v10" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v11" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v12" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v13" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v14" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v15" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v16" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v17" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v18" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v19" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v20" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v21" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v22" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v23" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v24" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v25" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v26" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v27" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v28" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v29" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v30" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v31" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v32" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v33" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v34" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v35" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v36" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v37" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v38" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v39" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v40" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v41" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v42" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v43" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v44" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v45" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v46" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v47" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v48" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v49" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v50" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v51" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v52" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v53" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v54" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v55" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v56" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v57" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v58" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v59" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v60" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v61" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v62" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v63" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v64" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v65" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v66" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v67" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v68" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v69" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v70" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v71" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v72" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v73" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v74" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v75" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v76" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v77" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v78" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v79" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v80" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v81" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v82" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v83" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v84" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v85" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v86" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v87" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v88" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v89" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v90" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v91" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v92" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v93" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v94" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v95" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v96" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v97" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v98" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v99" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v100" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v101" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v102" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v103" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v104" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v105" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v106" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v107" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v108" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v109" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v110" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v111" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v112" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v113" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v114" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v115" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v116" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v117" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v118" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v119" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v120" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v121" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v122" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v123" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v124" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v125" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v126" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v127" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v128" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v129" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v130" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v131" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v132" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v133" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v134" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v135" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v136" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v137" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v138" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v139" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v140" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v141" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v142" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v143" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v144" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v145" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v146" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v147" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v148" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v149" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v150" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v151" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v152" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v153" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v154" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v155" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v156" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v157" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v158" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v159" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v160" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v161" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v162" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v163" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v164" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v165" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v166" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v167" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v168" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v169" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v170" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v171" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v172" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v173" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v174" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v175" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v176" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v177" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v178" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v179" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v180" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v181" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v182" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v183" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v184" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v185" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v186" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v187" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v188" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v189" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v190" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v191" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v192" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v193" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v194" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v195" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v196" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v197" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v198" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v199" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+
+                <column name="v200" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v201" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v202" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v203" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v204" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v205" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v206" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v207" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v208" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v209" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v210" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v211" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v212" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v213" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v214" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v215" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v216" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v217" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v218" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v219" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v220" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v221" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v222" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v223" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v224" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v225" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v226" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v227" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v228" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v229" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v230" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v231" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v232" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v233" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v234" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v235" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v236" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v237" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v238" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v239" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v240" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v241" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v242" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v243" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v244" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v245" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v246" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v247" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v248" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v249" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v250" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v251" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v252" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v253" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v254" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v255" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v256" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v257" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v258" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v259" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v260" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v261" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v262" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v263" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v264" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v265" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v266" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v267" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v268" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v269" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v270" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v271" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v272" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v273" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v274" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v275" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v276" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v277" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v278" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v279" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v280" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v281" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v282" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v283" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v284" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v285" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v286" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v287" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v288" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v289" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v290" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v291" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v292" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v293" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v294" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v295" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v296" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v297" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v298" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v299" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                        
+               <column name="v300" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v301" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v302" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v303" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v304" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v305" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v306" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v307" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v308" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v309" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v310" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v311" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v312" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v313" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v314" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v315" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v316" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v317" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v318" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v319" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v320" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v321" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v322" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v323" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v324" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v325" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v326" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v327" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v328" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v329" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v330" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v331" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v332" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v333" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v334" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v335" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v336" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v337" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v338" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v339" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v340" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v341" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v342" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v343" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v344" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v345" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v346" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v347" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v348" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v349" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v350" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v351" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v352" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v353" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v354" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v355" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v356" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v357" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v358" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v359" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v360" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v361" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v362" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v363" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v364" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v365" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v366" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v367" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v368" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v369" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v370" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v371" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v372" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v373" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v374" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v375" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v376" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v377" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v378" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v379" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v380" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v381" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v382" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v383" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v384" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v385" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v386" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v387" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v388" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v389" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v390" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v391" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v392" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v393" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v394" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v395" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v396" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v397" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v398" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <column name="v399" 
+                        required="false"
+                        type="DOUBLE"
+                        description=" arbitrary parameter value"/>
+                <foreign-key foreignTable="run"   onDelete="CASCADE">
+                        <reference foreign="run_id" local="run_id"/>
+                        <reference foreign="user_id" local="user_id"/>
+                        <reference foreign="model_name" local="model_name"/>
+                </foreign-key>
+         </table>
+         
+         <!-- FIXME not normalised !! -->
+        <table name="model_output_tables" description="List of tables produced by a given model">
+        
+                <column name="model_name"
+                        type='CHAR'
+                        size='30'
+                        primaryKey='true'
+                        default='SATTSIM'
+                        description="Model Name"/>
+                        
+                        
+                <column name="xtable"
+                        type='CHAR'
+                        size='60'
+                        primaryKey='true'
+                        default='SATTSIM'
+                        description="Model Name"/>
+                <column
+                     name="variable"
+                     type="CHAR"
+                     size='60'
+                     description="the table contents: for example, income tax, vat"/>
+                     
+                <column
+                     name="vartype"
+                     type="CHAR"
+                     size='60'
+                     description="whether the table represents budget or eligibility"/>
+                    
+                 <column name="is_share"
+                     type = 'INTEGER'
+                     required='true'/>
+                     
+                 <!-- so, for example, proportion of group in poverty -->
+                 <column name="is_proportion"
+                     type = 'INTEGER'
+                     required='true'/>
+                     
+                 <foreign-key foreignTable="vartypes"   onDelete="CASCADE">
+                         <reference foreign="name" local="vartype"/>
+                 </foreign-key>
+                 
+                 <foreign-key foreignTable="chart_main_variable"   onDelete="CASCADE">
+                         <reference foreign="name" local="variable"/>
+                 </foreign-key>
+
+                 <foreign-key foreignTable="model"   onDelete="CASCADE">
+                        <reference foreign="model_name" local="model_name"/>
+                 </foreign-key>
+        </table>
+        
+         
+         <!-- data from a run table as a VARCHAR, for performance reasons -->
+         <table name="raw_data_table" description="">
+         
+               <column name="run_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="Unique indenfier for this run associated with this run"/>
+                        
+                <column name="user_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="User associated with this run"/>
+                
+                <column name="model_name"  
+                        type="CHAR"
+                        primaryKey='true'
+                        size="30"
+                        description="The model associated with this run"/>
+                <column
+                        name="model_table_name"
+                        type="CHAR"
+                        size="40"
+                        primaryKey='true'
+                        description="name of Asghars Table"/>
+                 <column name="raw_data"
+                        type="VARCHAR"    
+                        size='1024'
+                        description="data as a VARCHAR, for performance reasons"/>
+                 
+                 <foreign-key foreignTable="model_output_tables"   onDelete="CASCADE">
+                        <reference foreign="model_name" local="model_name"/>
+                        <reference foreign="xtable" local="model_table_name"/>
+                 </foreign-key>
+                <foreign-key foreignTable="run" onDelete="CASCADE">
+                        <reference foreign="run_id" local="run_id"/>
+                        <reference foreign="user_id" local="user_id"/>
+                        <reference foreign="model_name" local="model_name"/>
+                </foreign-key>
+         </table>
+
+         <table name='input_page_detail' description='pick one of these up to help generate page contents. Assumes all the page content are contained in one ParameterSystem class and optionally pointed to by the contents of one enumerated type.'>
+                
+                <column
+                     name="page_name"
+                     type="CHAR"
+                     size='60'
+                     primaryKey='true'
+                     description="primary key"/>
+                <column
+                     name="instance_path"
+                     type="CHAR"
+                     size='120'
+                     description="path to the class through instances in a parameters2.dtd xml file"/>
+                <column
+                     name="help_link"
+                     type="CHAR"
+                     size='120'
+                     description="A url for the information pop-up for this page."/>
+                <column
+                     name="info_class_path"
+                     type="CHAR"
+                     size='120'
+                     description="path to the class through classes in a parameters2.dtd xml file; will be different from class path for e.g. arrays. This will be the base and classpath will be the variables "/>
+                <column
+                     name="class_path"
+                     type="CHAR"
+                     size='120'
+                     description="path to the class through classes in a parameters2.dtd xml file"/>
+                <column
+                     name="variables"
+                     type="CHAR"
+                     size='240'
+                     description="delimited list of all the variables to be displayed on this page, or ALL in the class if none"/>
+                <column
+                     name="enumerated_type"
+                     type="CHAR"
+                     size='240'
+                     description=""/>
+                <column
+                     name="enumerations"
+                     type="CHAR"
+                     size='240'
+                     description="delimited list of all the enumerated values  to be displayed on this page, or ALL if none"/>
+                
+         </table>
+         
+         <!-- you shouldn't need to change any of the defaults here -->
+         <table name='common_chart_details'>
+                 <column name='name'
+                     type='CHAR'
+                     size='60'
+                     default='default'
+                     primaryKey='true'
+                     />
+                 <column name='footer'
+                     type='CHAR'
+                     size='60'
+                     default='copyright(c) ADRS all rights reserved'
+                     />
+                     
+                 <column name='font'
+                     type="CHAR"
+                     size='60'
+                     default='sans'
+                     description=""/>
+                 <column name='colour1'
+                     type="CHAR"
+                     size='7'
+                     description=""/>
+                 <column name='colour2'
+                     type="CHAR"
+                     size='7'
+                     description=""/>
+                 <column name='colour3'
+                     type="CHAR"
+                     size='7'
+                     description=""/>
+                 <column name='colour4'
+                     type="CHAR"
+                     size='7'
+                     description=""/>
+                 <column name="thumbnail_height"  
+                        type="INTEGER"
+                        default='40'
+                        description="In pixels"/>
+                 <column name="thumbnail_width"  
+                        type="INTEGER"
+                        default='40'
+                        description="In pixels"/>
+                 <column name="full_height"  
+                        type="INTEGER"
+                        default='320'
+                        description="In pixels"/>
+                 <column name="full_width"  
+                        type="INTEGER"
+                        default='350'
+                        description="In pixels"/>
+                 <foreign-key foreignTable="font_type"   onDelete="CASCADE">
+                         <reference foreign="name" local="font"/>
+                 </foreign-key>
+         </table>
+         
+         
+         
+        
+                 <table name='chart_specification' description='pick one of these up to help generate page contents. Assumes all the page content are contained in one ParameterSystem class and optionally pointed to by the contents of one enumerated type.'>
+                <column
+                     name="chart_name"
+                     type="CHAR"
+                     primaryKey='true'
+                     size='60' />
+                     
+                <column
+                     name="variable"
+                     type="CHAR"
+                     size='60'
+                     required="true"
+                     description="for example, income tax, vat"/>
+                     
+                <column
+                     name="vartype"
+                     type="CHAR"
+                     size='60'
+                     required="true"
+                    description="budget or eligibility"/>
+                     
+                <column
+                     name="system_to_use"
+                     type="CHAR"
+                     size='60'
+                     required="true"
+                     description="Pre, Post or Both"/>
+                     
+                <column
+                     name="breakdown_variable"
+                     type="CHAR"
+                     size='60'
+                     required="true"
+                     default='race'
+                     description="For example, age, gender, race"/>
+                     
+                <column
+                     name="up_is_good"
+                     type="INTEGER"
+                     required="false"
+                     default='1'
+                     description="Present increases as gains"/>
+                     
+                <column name="start_year"  
+                        required="false"
+                        type="INTEGER"
+                        description="Where to start, if this is a time-series model"/>
+                        
+                <column name="end_year"  
+                        required="false"
+                        type="INTEGER"
+                        description="Where to end, if this is a time-series model"/>
+                        
+                <column name="is_thumbnail"  
+                        required="false"
+                        type="INTEGER"
+                        description="Where to end, if this is a time-series model"/>
+                        
+                 <column name='chart_type'
+                     type="CHAR"
+                     size='60'
+                     required="true"
+                     description="For instance: bar, pie, time series"/>
+                 
+                 <column name='title'
+                     type="CHAR"
+                     size='120'
+                     description=""/>
+                     
+                 <column name='subtitle'
+                     type="CHAR"
+                     size='120'
+                     description=""/>
+                     
+                 <column name='x_axis_label_1'
+                     type="CHAR"
+                     size='120'
+                     description=""/>
+                     
+                 <column name='x_axis_label_2'
+                     type="CHAR"
+                     size='120'
+                     description=""/>
+                     
+                 <column name='y_axis_label_1'
+                     type="CHAR"
+                     size='120'
+                     description=""/>
+                     
+                 <column name='y_axis_label_2'
+                     type="CHAR"
+                     size='120'
+                     description=""/>
+                     
+                  <column name="isShare"
+                     type = 'INTEGER'
+                     default= '0' />
+                     
+                  <column name="autogenerate"
+                        type='INTEGER'
+                        default='1'
+                        description='generate the chart during the run itself'
+                        />
+              
+                 <foreign-key foreignTable="chart_main_variable"   onDelete="CASCADE">
+                         <reference foreign="name" local="variable"/>
+                 </foreign-key>
+                 
+                 <foreign-key foreignTable="chart_breakdown_variable"   onDelete="CASCADE">
+                         <reference foreign="name" local="breakdown_variable"/>
+                 </foreign-key>
+                 
+                 <foreign-key foreignTable="chart_type"   onDelete="CASCADE">
+                         <reference foreign="name" local="chart_type"/>
+                 </foreign-key>
+                 
+                
+                 <foreign-key foreignTable="vartypes"   onDelete="CASCADE">
+                         <reference foreign="name" local="vartype"/>
+                 </foreign-key>
+                 
+                 <foreign-key foreignTable="system_selection"   onDelete="CASCADE">
+                         <reference foreign="name" local="system_to_use"/>
+                 </foreign-key>
+         </table>
+
+        <table name='selected_breakdowns'> 
+                <column
+                     name="variable"
+                     type="CHAR"
+                     size='60'
+                     primaryKey='true'
+                     description="primary key"/>
+                <column
+                     name="value"
+                     type="CHAR"
+                     size='60'
+                     primaryKey='true'
+                     description="primary key"/>
+                <column 
+                     name="chart_name"
+                     type="CHAR"
+                     primaryKey='true'
+                     size='60' 
+                />
+                <foreign-key foreignTable="chart_specification"   onDelete="CASCADE">
+                     <reference foreign="chart_name" local="chart_name"/>
+                </foreign-key>
+                <foreign-key foreignTable="chart_breakdown_values"   onDelete="CASCADE">
+                       <reference foreign="variable" local="variable"/> 
+                       <reference foreign="value" local="value"/> 
+                </foreign-key>
+        </table>
+        
+        <table name="model_table_offsets" 
+               description="Asghar's tabulators splurge out great rows of real numbers as strings, one each in the same format for each variable (income tax, vat and so on). Each tabulation contains crosstabs of the variable by (say) gender and race. The locations of each crosstab within each file is described in the spreadsheet ppresentation_of_outputs_-_Gini.xls. This just returns the position of each crosstab in any file, once it has been parsed into an array of reals.">
+                <column
+                     name="row_variable"
+                     type="CHAR"
+                     size='60'
+                     primaryKey='true'
+                     description="primary key"/>
+                <column
+                     name="col_variable"
+                     type="CHAR"
+                     size='60'
+                     primaryKey='true'
+                     description="primary key"/>
+                <column
+                     name="table_offset"
+                     type="INTEGER"
+                     description=""/>
+                <column
+                     name="num_rows"
+                     type="INTEGER"
+                     description=""/>
+                <column
+                     name="num_cols"
+                     type="INTEGER"
+                     description=""/>
+                     
+                <foreign-key foreignTable="chart_breakdown_variable"   onDelete="CASCADE">
+                     <reference foreign="name" local="row_variable"/>
+                </foreign-key>
+                <foreign-key foreignTable="chart_breakdown_variable"   onDelete="CASCADE">
+                     <reference foreign="name" local="col_variable"/>
+                </foreign-key>
+                
+        </table>
+        
+        <table name="lorenz_and_gini">
+               <column name="run_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="Unique indenfier for this run associated with this run"/>
+                        
+                <column name="user_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="User associated with this run"/>
+                
+                <column name="model_name"  
+                        type="CHAR"
+                        primaryKey='true'
+                        size="30"
+                        description="The model associated with this run"/>
+                
+                <column
+                     name="year"
+                     type="INTEGER"
+                     primaryKey='true'
+                     description="data column"/>           
+                  
+                <column
+                     name="breakdown_variable"
+                     type="CHAR"
+                     size='60'
+                     primaryKey="true"
+                     default='race'
+                     description="For example, age, gender, race"/>
+                     
+                <column
+                     name="breakdown_value"
+                     type="CHAR"
+                     size='60'
+                     primaryKey="true"
+                     default='race'
+                     description="For example, male, female"/>
+
+                <column
+                     name="gini"
+                     type="REAL"
+                     description="data column"/>
+                     
+                <column 
+                     name='lorenz_curve_points'
+                     type='VARCHAR'
+                     size='1024'
+                     description='points as a hack php array' />
+                     
+               <foreign-key foreignTable="run"   onDelete="CASCADE">
+                        <reference foreign="run_id" local="run_id"/>
+                        <reference foreign="user_id" local="user_id"/>
+                        <reference foreign="model_name" local="model_name"/>
+               </foreign-key>
+      
+
+                   
+                <foreign-key foreignTable="chart_breakdown_values"   onDelete="CASCADE">
+                        <reference foreign="variable" local="breakdown_variable" /> 
+                        <reference foreign="value" local="breakdown_value"/>
+                </foreign-key>
+         </table>
+         
+         <table name="gain_lose_table">
+                <column name="run_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="Unique indenfier for this run associated with this run"/>
+                        
+                <column name="user_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="User associated with this run"/>
+                
+                <column name="model_name"  
+                        type="CHAR"
+                        primaryKey='true'
+                        size="30"
+                        description="The model associated with this run"/>
+        
+                <column
+                     name="year"
+                     type="INTEGER"
+                     primaryKey='true'
+                     description="data column"/>           
+                      
+                <column
+                     name="breakdown_variable"
+                     type="CHAR"
+                     size='60'
+                     primaryKey="true"
+                     default='race'
+                     description="For example, age, gender, race"/>
+                     
+                <column
+                     name="table_data"
+                     type="VARCHAR"
+                     size='1024'
+                     description="data column"/>
+                     
+                <foreign-key foreignTable="run"   onDelete="CASCADE">
+                        <reference foreign="run_id" local="run_id"/>
+                        <reference foreign="user_id" local="user_id"/>
+                        <reference foreign="model_name" local="model_name"/>
+                </foreign-key>
+       
+                <foreign-key foreignTable="chart_breakdown_variable"   onDelete="CASCADE">
+                         <reference foreign="name" local="breakdown_variable"/>
+                </foreign-key>
+         </table>
+         
+         <table name="monitor_lock">
+                <column name='run_id'
+                        type='CHAR'
+                        size='60'
+                        primaryKey='true' />
+         </table>
+         
+        <!--
+        A single value for a variable for 1 year
+        for a given user and saved dataset name
+        -->
+        <table name='macro_data_item' description='A single value for a variable for 1 year for a given user and saved dataset name'>
+
+               <column name="run_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="Unique indenfier for this run associated with this run"/>
+                        
+                <column name="user_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="User associated with this run"/>
+                
+                <column name="model_name"  
+                        type="CHAR"
+                        primaryKey='true'
+                        size="30"
+                        description="The model associated with this run"/>
+
+        
+                <column name="year"  
+                        required="true"
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="Year this parameter refers to, or -99"/>
+                <!--
+                something like "E22"
+                -->
+                <column name='variable'
+                     type="CHAR"
+                     size='120'
+                     primaryKey='true'
+                     description=""/>
+                     
+                <column name='endog_or_exog'
+                     type="CHAR"
+                     size='1'
+                     default='X'
+                     primaryKey = 'true'
+                     description="X endog E exog"/>
+
+                <column name='operation'
+                     type="CHAR"
+                     size='1'
+                     default='L'
+                     description="S share, P pct change, L level"/>
+                
+                <column name='value'
+                        type='DOUBLE'
+                        default='0.0' />
+                <foreign-key foreignTable="run"   onDelete="CASCADE">
+                        <reference foreign="run_id" local="run_id"/>
+                        <reference foreign="user_id" local="user_id"/>
+                        <reference foreign="model_name" local="model_name"/>
+                </foreign-key>
+
+        </table>
+
+        <table name='macro_output_buffer' description='everything blasted out by a single macro model run,, in raw form'>
+               <column name="run_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="Unique indenfier for this run associated with this run"/>
+                        
+                <column name="user_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="User associated with this run"/>
+                
+                <column name="model_name"  
+                        type="CHAR"
+                        primaryKey='true'
+                        size="30"
+                        description="The model associated with this run"/>
+                 <column 
+                     name='dataSource'
+                     type='VARCHAR'
+                     size='1024'
+                     description='' />
+                <foreign-key foreignTable="run"   onDelete="CASCADE">
+                        <reference foreign="run_id" local="run_id"/>
+                        <reference foreign="user_id" local="user_id"/>
+                        <reference foreign="model_name" local="model_name"/>
+                </foreign-key>
+                     
+         </table>
+         
+         
+         
+         <!-- 
+              modelling tim's orders and items in propel, so I can cleanly do discount modelling 
+              note these next 3 are not normalised since I have to keep consistent with Tim and use a single auto-increment
+              field in orders, so no fks to user and items 
+         -->
+         
+        <table name='item_cats' description=''>
+               <column name="cat_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="Unique indenfier for this item"/>
+               <column name="name"  
+                        type="VARCHAR"
+                        default=''
+                        size='250'
+                        description=""/>
+                <column name='date_created'
+                        type='DATE'
+                        default='0000-00-00'
+                         />
+                <column name='date_deleted'
+                        type='DATE'
+                        default='0000-00-00'
+                         />
+                <column name='is_deleted'
+                        default='0'
+                        type='INTEGER'
+                        size='1'/>
+                
+        </table>
+         
+         <table name='items' description=''>
+               <column name="item_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="Unique indenfier for this item"/>
+               <column name="cat_id"  
+                        type="INTEGER"
+                        default='0'
+                        description=""/>
+               <column name="name"  
+                        type="VARCHAR"
+                        default=''
+                        size='250'
+                        description=""/>
+               <column name="title"  
+                        type="VARCHAR"
+                        default=''
+                        size='250'
+                        description=""/>
+               <column name="description"  
+                        type="VARCHAR"
+                        default=''
+                        size='1024'
+                        description=""/>
+               <column name="notes"  
+                        type="VARCHAR"
+                        default=''
+                        size='250'
+                        description=""/>
+               <column name="amount"  
+                        type="DECIMAL"
+                        default='0'
+                        size='10'
+                        scale='2'
+                        description=""/>
+                <column name='date_created'
+                        type='DATE'
+                        default='0000-00-00'
+                         />
+                <column name='date_deleted'
+                        type='DATE'
+                        default='0000-00-00'
+                         />
+                <column name='is_deleted'
+                        default='0'
+                        type='INTEGER'
+                        size='1'/>
+                <foreign-key foreignTable="item_cats"    onDelete="CASCADE">
+                        <reference foreign="cat_id" local="cat_id"/>
+                </foreign-key>
+         </table>
+         
+         <table name='orders'>
+               <column name="order_id"  
+                        type="INTEGER"
+                        primaryKey='true'
+                        description="Unique indenfier for this item"/>
+               <column name="user_id"  
+                        type="INTEGER"
+                        description="User associated with this order"/>
+               <column name="item_id"  
+                        type="INTEGER"
+                        description="Item associated with this order"/>
+               <column name="quantity"  
+                        type="INTEGER"
+                        description=""/>
+               <column name="amount"  
+                        type="DECIMAL"
+                        default='0'
+                        size='10'
+                        scale='2'
+                        description=""/>
+               <column name="is_paid"  
+                        type="INTEGER"
+                        description=""/>
+               <column name="date_paid"  
+                        type="INTEGER"
+                        description=""/>
+                <column name='date_created'
+                        type='DATE'
+                        default='0000-00-00'
+                         />
+                <column name='date_deleted'
+                        type='DATE'
+                        default='0000-00-00'
+                         />
+                <column name='is_deleted'
+                        default='0'
+                        type='INTEGER'
+                        size='1'/>
+                <!--
+                        FIXME: this is not strictly legal, but
+                        1) mysql lets you away with it;
+                        2) I can't have user/items in the PK because I have to stay consistent with Tim's code.
+                -->
+                <foreign-key foreignTable="standard_user"    onDelete="CASCADE">
+                        <reference foreign="user_id" local="user_id"/>
+                </foreign-key>                
+                <foreign-key foreignTable="items"    onDelete="CASCADE">
+                        <reference foreign="item_id" local="item_id"/>
+                </foreign-key>                
+
+         </table>
+         
+         <!-- model Asghar's discount system as a simple rate/band combo -->
+         <table name='discount_sys'>
+                <column name='sys_type'
+                        type='CHAR'
+                        primaryKey='true'
+                        size='20'/>
+                <column name='banded'
+                        type='INTEGER'
+                        size='1'
+                        default='1' />                
+         </table>
+         
+         <table name='discount_rate_band'>
+                <column name='sys_type'
+                        type='CHAR'
+                        primaryKey='true'
+                        size='20'/>
+                <column name='band'
+                        type='INTEGER'
+                        primaryKey='true'
+                        />
+         
+                <column name='quantity'
+                        type='INTEGER'
+                        default='0' />
+                <column name='discount'
+                        type='REAL'
+                        default='0.0' />
+                <foreign-key foreignTable="discount_sys"   onDelete="CASCADE">
+                        <reference foreign="sys_type" local="sys_type"/>
+                </foreign-key>
+         </table>
+         
+</database>

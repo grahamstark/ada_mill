@@ -1,0 +1,48 @@
+--
+-- Created by ada_generator.py on $date
+-- 
+with Ada.Containers.Vectors;
+--
+-- FIXME: may not be needed
+--
+with Ada.Calendar;
+
+with Base_Types; use Base_Types;
+
+with Ada.Strings.Unbounded;
+#for $e in $adaTypePackages
+with $e;
+#end for
+
+-- === CUSTOM IMPORTS START ===
+#for $e in $customImports 
+$e 
+#end for
+-- === CUSTOM IMPORTS END ===
+
+package $name is
+
+   use Ada.Strings.Unbounded;
+   
+#for $e in $adaTypePackages
+   use $e;
+#end for
+
+   -- === CUSTOM TYPES START ===
+#for $e in $customTypes 
+$e 
+#end for
+   -- === CUSTOM TYPES END ===
+
+
+#for $rec in $records:
+$rec
+#end for;
+        
+   -- === CUSTOM PROCS START ===
+#for $e in $customProcs
+$e 
+#end for
+   -- === CUSTOM PROCS END ===
+
+end $name;

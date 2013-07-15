@@ -1,0 +1,23 @@
+-- see: http://docs.adacore.com/gnatcoll-docs/traces.html
+-- + on next line: enable everything by default
++
+-- log to this file
+>simple_pg.log
+--
+--  core modules
+--
+DB_COMMONS=yes
+CONNECTION_POOL=yes
+--
+-- testsuite
+--
+SIMPLE_PG_TEST=yes
+--
+-- io packages
+--
+STANDARD_USER_TYPE_IO=yes
+STANDARD_GROUP_TYPE_IO=yes
+GROUP_MEMBERS_TYPE_IO=yes
+-- 
+-- === CUSTOM LOGGING START ===
+-- === CUSTOM LOGGING END ===

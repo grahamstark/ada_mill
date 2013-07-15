@@ -1,0 +1,5 @@
+tar zcvf ~/archives/mill.tgz \
+  --exclude='.svn' \
+  --exclude='bin/*' \
+  --exclude='tmp/*' \
+  --exclude='build/*' .

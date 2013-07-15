@@ -1,0 +1,40 @@
+-- Sample project file; you'll need to modify this heavily. Should ultimately
+-- live in the root dir of the project
+--
+-- Created by ada_generator.py on 2013-05-24 16:29:54.675135
+-- 
+with "aunit";
+with "gnatcoll";
+
+-- === CUSTOM PROJECTS END ===
+
+project Simple_Pg is
+
+   for Languages use ("Ada");
+   for Source_Dirs use ("src/", "tests/" );
+   for Object_Dir use "bin/";
+   for Main use ("harness.adb" );
+   IncludeOpt := "";
+   LibOpt     := "";
+
+   for Exec_Dir use "bin/";
+
+   package Linker is
+      for Linker_Options use (GnatColl.Postgres_Path, "-lpq", "-lgnatcoll_postgres" );
+      for Default_Switches ("ada") use ("-g", "-ftest-coverage" );
+   end Linker;
+
+   package Binder is
+      for Default_Switches ("ada") use ("-static" );
+   end Binder;
+
+   package Compiler is
+      for Default_Switches ("ada") use ("-g", IncludeOPT );
+   end Compiler;
+
+   package Builder is
+      for Default_Switches ("ada")
+      use ("-g", "-gnatQ", IncludeOPT );
+   end Builder;
+   
+end Simple_Pg;

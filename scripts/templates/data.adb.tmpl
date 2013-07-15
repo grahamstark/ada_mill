@@ -1,0 +1,35 @@
+--
+-- Created by ada_generator.py on $date
+-- 
+
+with GNAT.Calendar.Time_IO;
+-- === CUSTOM IMPORTS START ===
+#for $e in $customImports 
+$e 
+#end for
+-- === CUSTOM IMPORTS END ===
+
+package body $name is
+
+   use ada.strings.Unbounded;
+   package tio renames GNAT.Calendar.Time_IO;
+
+   -- === CUSTOM TYPES START ===
+#for $e in $customTypes 
+$e 
+#end for
+   -- === CUSTOM TYPES END ===
+   
+   
+#for $ts in $toStrings:
+$ts
+
+#end for;
+        
+   -- === CUSTOM PROCS START ===
+#for $e in $customProcs
+$e 
+#end for
+   -- === CUSTOM PROCS END ===
+
+end $name;

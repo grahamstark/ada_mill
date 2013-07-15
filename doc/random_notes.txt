@@ -1,0 +1,188 @@
+Intro
+-----
+
+Mill is a simple persistence mechanism for Ada. It's based on the PHP Propel system (http://propel.phpdb.org/), which in turn is a port of
+the Java Torque project (http://db.apache.org/torque/). It's a code generator which takes and xml defintion file and writes a database
+definition and associated Ada code. The Ada code uses the Gnade (http://gnade.sourceforge.net/) ODBC binding as its' back end.
+
+Mill is different in to Propel and Torque in that those are Object Relational Mapping systems whereas 
+Mill is procedural, using records and functions instead of classes. 
+
+The generator is written in Python. You need to install:
+
+1) the Cheetah Python template engine: http://www.cheetahtemplate.org/
+2) Gnade: http://gnade.sourceforge.net/
+
+Using Mill
+----------
+
+Mill builds and sql schema, Ada database code, and some associated files from a pair of xml defintion files. These files use a slightly
+modified version of the Propel schema. 
+
+
+<database name="adrs_data">
+
+         <table name="chart_type">
+                <column
+                     name="name"
+                     type="CHAR"
+                     size='60'
+                     primaryKey='true'
+                     description="primary key"/>
+                <column
+                     name="description"
+                     type="CHAR"
+                     size='120'                     
+                     description=""/>
+        </table>
+        
+</database>
+
+maps to:
+
+(1) Ada record definition:
+
+--
+-- Created by ada_generator.py on 2007-12-30 19:05:00.488791
+-- 
+with Ada.Containers.Vectors;
+--
+-- FIXME: may not be needed
+--
+with Ada.Calendar;
+
+with base_types; use base_types;
+
+with Ada.Strings.Unbounded;
+
+package Adrs_Data_Ada_Data is     
+      --
+      -- record modelling chart_type : 
+      --
+      type Chart_Type is record
+         Name : Unbounded_String := MISSING_W_KEY;
+         Description : Unbounded_String := Ada.Strings.Unbounded.Null_Unbounded_String;
+         Chart_Specifications : Chart_Specification_List.Vector;
+      end record;
+
+      --
+      -- container for chart_type : 
+      --
+      package Chart_Type_List is new Ada.Containers.Vectors
+         (Element_Type => Chart_Type,
+         Index_Type => Positive );
+      --
+      -- default value for chart_type : 
+      --
+      Null_Chart_Type : constant Chart_Type := (
+         Name => MISSING_W_KEY,
+         Description => Ada.Strings.Unbounded.Null_Unbounded_String,
+         Chart_Specifications => Chart_Specification_List.Empty_Vector
+      );
+      
+end Adrs_Data_Ada_Data;
+
+
+
+(3) SQL 
+CREATE TABLE chart_type( 
+       name VARCHAR(60) not null default '',
+       description VARCHAR(120) default '',
+       PRIMARY KEY( name )
+) type = InnoDB;
+
+
+150 errors in sql: Propel does a lot of cleaning up of keys which this doesn't. In mine, 
+foreign keys need to exactly match the PKs of the referencing
+table (which is as it should be in normalised dbs 
+and *** HAVE TO HAVE ALL THE FIELDS DECLARED IN THE SAME ORDER IN THE XML ** This is not checked in mine.
+
+
+THINGS TO DO:
+
+add FIRST|NOW as only possible defaults for time types
+
+some kind of string type options
+
+global config with output dirs, etc..
+
+much better idiot checks on defaults
+
+MAPPINGS:
+
+xml                        sql           ada 
+DATE|DATETIME|TIMESTAMP    TIMESTAMP     Ada.Calendar.Time
+CHAR(N),VARCHAR(N)         VARCHAR(N)    Unbounded_String
+INTEGER                    INTEGER       Integer
+REAL|DOUBLE|LONGREAL       REAL          Real (mapped to Long_Float)
+BOOLEAN                    INTEGER       Boolean
+DECIMAL(M,N)               DECIMAL(M,N)  Decimal types defined in base_types.ads
+ENUM                       INTEGER       Enumerated type defined in base_types.ads
+
+DO:
+1) enclosing XML with directories
+
+
+MySQL UNICODE supporting drivers for Unix:
+NOT 3.1
+OpenLink: http://download.openlinksw.com/
+odbc 5 : http://dev.mysql.com/downloads/connector/odbc/5.1.html
+[mysql5]
+Description     = mysql driver 5.1 alpha
+Driver          = /opt/odbc/mysql5/lib/libmyodbc5.so
+Setup           = /opt/odbc/mysql5/lib/libmyodbc3S.so
+UsageCount      = 1
+CPTimeout       = 100
+CPReuse         = 10
+
+
+postgres
+(no password)
+CREATE ROLE root LOGIN
+GRANT ALL PRIVILEGES ON DATABASE f1 TO root;
+
+FIX: default for timestamp!!!!
+DEFAULT CURRENT_TIMESTAMP -- only 1 allowed in mysql
+
+CREATE ROLE graham_s LOGIN
+GRANT ALL PRIVILEGES ON DATABASE t1 TO graham_s;
+(graham_s is standard Linux user)
+http://www.postgresql.org/docs/8.2/interactive/app-psql.html
+http://www.postgresql.org/docs/8.2/interactive/auth-pg-hba-conf.html
+
+/etc/postgresql/8.2/main/pg_hba.conf : added : 
+# Allow any user on the local system to connect to any database under
+# any database user name using Unix-domain sockets (the default for local
+# connections).
+#
+# TYPE  DATABASE    USER        CIDR-ADDRESS          METHOD
+local   all         all                               trust
+docs:
+/usr/share/doc/odbc-postgresql
+
+odbc client command line
+ isql 
+ mysql
+ psql t1 root 
+ 
+http://www.flatmtn.com/computer/Linux-PostgreSQL.html
+http://www.flatmtn.com/computer/Linux-PostgreSQL.html
+
+Standard SQL comparisons;
+http://troels.arvin.dk/db/rdbms/
+
+Postgres and Unicode
+createdb --encoding='unicode' adrs_data_ada
+
+http://www.postgresql.org/docs/7.4/static/multibyte.html
+
+DB2
+
+db2 call:
+
+db2 -vf /home/graham_s/VirtualWorlds/projects/ada_propel/sample1/database/adrs_data_ada.sql -t
+datbase names <= 8 characters
+SQL1327N 
+An implicit connection attempt failed. database-name  is not a valid database name.
+varnames < 30 maximum length is "30".  SQLSTATE=42622
+

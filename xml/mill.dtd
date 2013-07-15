@@ -1,0 +1,109 @@
+<!--
+    Propel XML database schema DTD
+    $Id: database.dtd,v 1.7 2005/03/30 11:38:18 hlellelid Exp $
+
+    This is based very closely on the schema DTD for Torque, but
+    some differences do exist.
+-->
+
+<!--
+
+defaultPhpNamingMethod determines how a table or column name,
+from the name attribute in the xml database file, is converted to a
+PHP class or method name.
+
+     nochange   - indicates not change is performed.
+     underscore - Underscores are removed, First letter is
+              capitalized, first letter after an underscore
+              is capitalized, the rest of the letters are
+              converted to lowercase.
+     phpname   - same as underscore, but no letters are converted
+              to lowercase.
+-->
+
+<!ELEMENT database ( adaTypePackage*, table+ )>
+<!ATTLIST database
+  name CDATA #IMPLIED
+>
+
+<!ELEMENT adaTypePackage EMPTY>
+<!ATTLIST adaTypePackage
+  name CDATA #REQUIRED
+>
+
+
+<!ELEMENT external-schema EMPTY>
+<!ATTLIST external-schema
+  filename CDATA #REQUIRED
+>
+
+<!--
+     note: the interface="true", requires that useManagers=true in the
+     properties file.
+-->
+<!ELEMENT table( localAdaTypePackage*, column+, (foreign-key|index|unique)* )>
+<!ATTLIST table
+  name            CDATA #REQUIRED
+  description     CDATA #IMPLIED
+  adaExternalName CDATA #IMPLIED
+>
+
+
+<!ELEMENT column ((inheritance|vendor)*)>
+<!ATTLIST column
+  name CDATA #REQUIRED
+  primaryKey (true|false) "false"
+  required (true|false) "false"
+  type
+    (
+          BIT  | INTEGER  | FLOAT | BIGINT
+        | REAL | DECIMAL  | CHAR | VARCHAR 
+        | DATE | TIME     | TIMESTAMP   
+        | DOUBLE | ENUM   | BOOLEAN
+    ) "VARCHAR"
+  size CDATA #IMPLIED
+  scale CDATA #IMPLIED
+  default CDATA #IMPLIED
+  autoIncrement (true|false) "false"
+  description CDATA #IMPLIED
+  values CDATA #IMPLIED
+  adaTypeName CDATA #IMPLIED
+>
+
+
+<!ELEMENT foreign-key (reference+, vendor*)>
+<!ATTLIST foreign-key
+  foreignTable CDATA #REQUIRED
+  name CDATA #IMPLIED
+  onUpdate (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NONE|none) "none"
+  onDelete (CASCADE|cascade|SETNULL|setnull|RESTRICT|restrict|NONE|none) "none"
+>
+
+<!ELEMENT reference EMPTY>
+<!ATTLIST reference
+  local CDATA #REQUIRED
+  foreign CDATA #REQUIRED
+>
+
+<!ELEMENT index (index-column+)>
+<!ATTLIST index
+  name CDATA #IMPLIED
+>
+
+<!ELEMENT index-column (vendor*)>
+<!ATTLIST index-column
+  name CDATA #REQUIRED
+  size CDATA #IMPLIED
+>
+
+<!ELEMENT unique (unique-column+)>
+<!ATTLIST unique
+  name CDATA #IMPLIED
+>
+
+<!ELEMENT unique-column (vendor*)>
+<!ATTLIST unique-column
+  name CDATA #REQUIRED
+>
+
+

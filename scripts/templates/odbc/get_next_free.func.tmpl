@@ -1,0 +1,51 @@
+   -- 
+   -- Next highest avaiable value of $adaName - useful for saving  
+   --
+   $functionHeader
+      ps : sql.SQLHDBC := sql.SQL_NULL_HANDLE;
+      local_connection : Database_Connection;
+      locally_allocated_connection : Boolean;
+
+      query : constant String := "$statement";
+      ai : aliased $adaType;
+      has_data : boolean := true; 
+      output_len : aliased sql.SQLLEN;     
+   begin
+      if( connection = Null_Database_Connection )then
+         local_connection := Connection_Pool.Lease;
+         locally_allocated_connection := True;
+      else
+         local_connection := connection;
+         locally_allocated_connection := False;         
+      end if;
+   
+      ps := dodbc.Initialise_Prepared_Statement( local_connection.connection, query );       
+      dodbc.${whichBinding}_Out_Binding.SQLBindCol( 
+            StatementHandle  => ps, 
+            ColumnNumber     => 1, 
+            TargetValue      => ai'access, 
+            IndPtr           => output_len'Access );
+      SQLExecute( ps );
+      loop
+         dodbc.next_row( ps, has_data );
+         if( not has_data ) then
+            exit;
+         end if;
+         if( ai = Base_Types.MISSING_I_KEY ) then
+            ai := 1;
+         else
+            ai := ai + 1;
+         end if;        
+      end loop;
+      dodbc.Close_Prepared_Statement( ps );
+      if( locally_allocated_connection )then
+         Connection_Pool.Return_Connection( local_connection );
+      end if;
+      return ai;
+   exception 
+      when Error : others =>
+         Raise_Exception( d.DB_Exception'Identity, 
+            "next_free_user_id: exception thrown " & Exception_Information(Error) );
+      return  Base_Types.MISSING_I_KEY;    
+   end $functionName;
+

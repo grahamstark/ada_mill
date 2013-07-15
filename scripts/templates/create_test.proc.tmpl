@@ -1,0 +1,70 @@
+
+--
+-- test creating and deleting records  
+--
+--
+   $procedureHeader
+      --
+      -- local print iteration routine
+      --
+      $printHeader
+      $variableDeclaration;
+      begin
+         $retrieveUser;
+         $toString;
+      end print;
+
+   
+      $variableDeclaration;
+      $listDeclaration;
+      criteria  : d.Criteria;
+      startTime : Time;
+      endTime   : Time;
+      elapsed   : Duration;
+   begin
+      startTime := Clock;
+      Log( "Starting test $procName" );
+      
+      Log( "Clearing out the table" );
+      $clearTable;
+      
+      Log( "$procName: create tests" );
+      for i in 1 .. RECORDS_TO_ADD loop
+         #for k in $createKeyStatements:
+         $k;
+         #end for;
+         #for d in $createDataStatements:         
+         $d;
+         #end for;
+         $saveStatement;         
+      end loop;
+      
+      $completeListStatement;
+      
+      Log( "$procName: alter tests" );
+      for i in 1 .. RECORDS_TO_ALTER loop
+         $elementFromList;
+         #for d in $modifyDataStatements:
+         $d;
+         #end for;         
+         $updateStatement;         
+      end loop;
+      
+      Log( "$procName: delete tests" );
+      for i in RECORDS_TO_DELETE .. RECORDS_TO_ADD loop
+         $elementFromList;
+         $deleteStatement;         
+      end loop;
+      
+      Log( "$procName: retrieve all records" );
+      $iterate;
+      endTime := Clock;
+      elapsed := endTime - startTime;
+      Log( "Ending test $procName. Time taken = " & elapsed'Img );
+
+   exception 
+      when Error : others =>
+         Log( "$procName execute query failed with message " & Exception_Information(Error) );
+         assert( False,  
+            "$procName : exception thrown " & Exception_Information(Error) );
+   end $procName;

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<config>
+        <log>
+                <ident>propel-adrs</ident>
+                <level>1</level>
+                <name>/var/tmp/log/propel.log</name>
+        </log>
+        <propel>
+                <datasources default="adrs_data_ada">
+                        <!-- NB ONLY 1st one gets processed -->
+                        <datasource id="postgres_test">
+                                <adapter>postgres</adapter>
+                                <connection>
+                                        <hostspec>localhost</hostspec>
+                                        <database>adrsdat_pg</database>
+                                        <username>postgres</username>
+                                        <password></password>
+                                </connection>
+                        </datasource>
+                        <datasource id="db2_test">
+                                <adapter>db2</adapter>
+                                <connection>
+                                        <hostspec>localhost</hostspec>
+                                        <database>adrsdat</database>
+                                        <username>db2inst1</username>
+                                        <password>xxxx</password>
+                                </connection>
+                        </datasource>
+                        <datasource id="mysql_test">                        
+                                <adapter>mysql</adapter>
+                                <connection>
+                                        <hostspec>localhost</hostspec>
+                                        <database>adrsdat_mysql</database>
+                                        <username>root</username>
+                                        <password>xxx</password>
+                                </connection>
+                        </datasource>
+                </datasources>
+        </propel>
+</config>

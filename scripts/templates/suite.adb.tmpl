@@ -1,0 +1,13 @@
+--
+-- Created by ada_generator.py on $date
+-- 
+with AUnit.Test_Suites; use AUnit.Test_Suites;
+
+with $testFile;
+
+function Suite return Access_Test_Suite is
+        result : Access_Test_Suite := new Test_Suite;
+begin
+        Add_Test( result, new $testCase ); -- Adrs_Data_Ada_Tests.Test_Case
+        return result;
+end Suite;

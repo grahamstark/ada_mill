@@ -1,0 +1,116 @@
+--
+-- Created by ada_generator.py on $date
+-- 
+with $dataPackageName;
+with DB_Commons;
+with Base_Types;
+with ADA.Calendar;
+with Ada.Strings.Unbounded;
+
+#for $e in $dbWiths
+with $e;
+#end for
+
+#for $e in $adaTypePackages
+with $e;
+#end for
+
+-- === CUSTOM IMPORTS START ===
+#for $e in $customImports 
+$e 
+#end for
+-- === CUSTOM IMPORTS END ===
+
+package $IOName is
+  
+   package d renames DB_Commons;   
+   use Base_Types;
+   use Ada.Strings.Unbounded;
+   
+#for $e in $dbWiths
+   use $e;
+#end for
+   
+#for $e in $adaTypePackages
+   use $e;
+#end for
+
+   -- === CUSTOM TYPES START ===
+#for $e in $customTypes 
+$e 
+#end for
+   -- === CUSTOM TYPES END ===
+
+   
+#for $ass in $incr_integer_pk_fields:
+   $ass
+#end for;
+
+   --
+   -- returns true if the primary key parts of $outputRecordName match the defaults in $nullName
+   --
+   $isNullFunc
+   
+   --
+   -- returns the single $outputRecordName matching the primary key fields, or the $nullName record
+   -- if no such record exists
+   --
+   $pkFunc
+   
+   --
+   -- Retrieves a list of $outputRecordType matching the criteria, or throws an exception
+   --
+   $retrieveByCFunc
+   
+   --
+   -- Retrieves a list of $outputRecordType retrived by the sql string, or throws an exception
+   --
+   $retrieveBySFunc
+   
+   --
+   -- Save the given record, overwriting if it exists and overwrite is true, 
+   -- otherwise throws DB_Exception exception. 
+   --
+   $saveFunc
+   
+   --
+   -- Delete the given record. Throws DB_Exception exception. Sets value to $nullName
+   --
+   $deleteSpecificFunc
+   --
+   -- delete the records indentified by the criteria
+   --
+   procedure Delete( c : d.Criteria; $connectionString );
+   --
+   -- delete all the records identified by the where SQL clause 
+   --
+   procedure Delete( where_Clause : String; $connectionString );
+   --
+   -- functions to retrieve records from tables with foreign keys
+   -- referencing the table modelled by this package
+   --
+#for $ass in $associated:
+   $ass
+#end for
+
+   --
+   -- functions to add something to a criteria
+   --
+#for $cr in $criteria
+   $cr
+#end for
+   --
+   -- functions to add an ordering to a criteria
+   --
+#for $ord in $orderingStatements
+   $ord
+#end for
+
+   -- === CUSTOM PROCS START ===
+#for $e in $customProcs
+$e 
+#end for
+   -- === CUSTOM PROCS END ===
+
+  
+end $IOName;

@@ -1,0 +1,32 @@
+   $procedureHeader
+      ps : sql.SQLHDBC := sql.SQL_NULL_HANDLE;
+      connection : dodbc.Database_Connection := Connection_Pool.Lease;
+      query : Unbounded_String := INSERT_PART & " ";
+      c : d.Criteria;
+      $tmpVariableWithAssignment;
+   begin
+#for $cr in $allCriteria:
+      $cr;
+#end for;
+      if( overwrite ) then
+         $existsCheck
+            $updateCall;
+         end if;
+         return;
+      end if;
+      
+      query := query & "( " & d.To_Crude_Array_Of_Values( c ) & " )" ;
+      Log( "save; executing query" & query );
+      ps := dodbc.Initialise_Prepared_Statement( connection.connection, query );       
+      SQLExecute( ps );
+      dodbc.Close_Prepared_Statement( ps );
+      Connection_Pool.Return_Connection( connection );
+      Log( "save; execute query OK" );
+      
+   exception 
+      when Error : others =>
+         Log( "save; execute query failed with message " & Exception_Information(Error)  );
+         Raise_Exception( d.DB_Exception'Identity, 
+            "delete: exception thrown " & Exception_Information(Error) );
+   end Save_Complete;
+

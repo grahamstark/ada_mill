@@ -1,0 +1,38 @@
+   $procedureHeader   
+      c : d.Criteria;
+      $tmpVariableWithAssignment;
+      local_connection : Database_Connection;
+      is_local_connection : Boolean;
+   begin
+      if( connection = null )then
+          local_connection := Connection_Pool.Lease;
+          is_local_connection := True;
+      else
+          local_connection := connection;          
+          is_local_connection := False;
+      end if;
+#if $has_pk:   
+      if( overwrite ) then
+         $retrieveByPK;
+         $existsCheck
+            $updateCall;
+            return;
+         end if;
+      end if;
+#end if      
+#for $cr in $allCriteria:
+      $cr;
+#end for;
+      declare
+         query : constant String := INSERT_PART & " ( "  & d.To_Crude_Array_Of_Values( c ) & " )";
+      begin
+         Log( "save; executing query" & query );
+         gse.Execute( local_connection, query );
+         local_connection.Commit;
+         Check_Result( local_connection );
+      end;   
+      if( is_local_connection )then
+         Connection_Pool.Return_Connection( local_connection );
+      end if;
+   end Save;
+

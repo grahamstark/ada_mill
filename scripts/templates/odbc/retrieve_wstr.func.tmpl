@@ -1,0 +1,76 @@
+   $functionHeader
+      type Timestamp_Access is access all SQL_TIMESTAMP_STRUCT;
+      type Real_Access is access all Real;
+      type String_Access is access all String;
+
+      l : $listType;
+      ps : SQLHDBC := SQL_NULL_HANDLE;
+      has_data : Boolean := false;
+      local_connection : dodbc.Database_Connection;
+      locally_allocated_connection : Boolean;
+
+      query : constant String := SELECT_PART & " " & sqlstr;
+      --
+      -- aliased local versions of fields 
+      --
+#for $alias in $aliasDeclarations:
+      $alias;
+#end for      
+      --
+      -- access variables for any variables retrieved via access types
+      --
+#for $p in $pointers:
+      $p;
+#end for
+      --
+      -- length holders for each retrieved variable
+      --
+#for $len in $lenDeclarations:
+      $len;
+#end for
+      $variableDecl;
+   begin
+      Log( "retrieve made this as query " & query );
+      begin -- exception block
+         if( connection = Null_Database_Connection )then
+            local_connection := Connection_Pool.Lease;
+            locally_allocated_connection := True;
+         else
+            local_connection := connection;
+            locally_allocated_connection := False;         
+         end if;
+
+         ps := dodbc.Initialise_Prepared_Statement( local_connection.connection, query );       
+   #for $binding in $bindings:
+   $binding;
+   #end for
+         SQLExecute( ps );
+         loop
+            dodbc.next_row( ps, has_data );
+            if( not has_data ) then
+               exit;
+            end if;
+   #for $mapping in $mappingsFromAliasToRecord:
+            $mapping;
+   #end for
+            $addToMap;        
+         end loop;
+         Log( "retrieve: Query Run OK" );
+      exception 
+         when No_Data => Null; 
+         when Error : others =>
+            Raise_Exception( d.DB_Exception'Identity, 
+               "retrieve: exception " & Exception_Information(Error) );
+      end; -- exception block
+      begin
+         dodbc.Close_Prepared_Statement( ps );
+         if( locally_allocated_connection )then
+            Connection_Pool.Return_Connection( local_connection );
+         end if;
+      exception 
+         when Error : others =>
+            Raise_Exception( d.DB_Exception'Identity, 
+               "retrieve: exception " & Exception_Information(Error) );
+      end; -- exception block
+      return l;
+   end Retrieve;

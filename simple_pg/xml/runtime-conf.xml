@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<config>
+        <propel>
+                <datasources>
+                        <!-- NB ONLY 1st one gets processed -->
+                        <datasource id="simple_pg">
+                                <adapter>postgres</adapter>
+                                <connection>
+                                        <hostspec>localhost</hostspec>
+                                        <database>simple_pg</database>
+                                        <username>postgres</username>
+                                        <password></password>
+                                </connection>
+                        </datasource>
+                        <datasource id="simple_db2">
+                                <adapter>db2</adapter>
+                                <connection>
+                                        <hostspec>localhost</hostspec>
+                                        <database>simple_db2</database>
+                                        <username>db2inst1</username>
+                                        <password>xxxx</password>
+                                </connection>
+                        </datasource>
+                        <datasource id="simple_mysql">                        
+                                <adapter>mysql</adapter>
+                                <connection>
+                                        <hostspec>localhost</hostspec>
+                                        <database>simple_mysql</database>
+                                        <username>root</username>
+                                        <password>xxx</password>
+                                </connection>
+                        </datasource>
+                </datasources>
+        </propel>
+</config>

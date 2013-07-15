@@ -1,0 +1,15 @@
+   procedure Delete( where_Clause : String ) is
+      connection : gse.Database_Connection := Connection_Pool.Lease;      
+
+   begin
+      declare
+         query : constant String := DELETE_PART & where_Clause;
+      begin -- try catch block for execute
+         Log( "delete; executing query" & To_String(query) );
+         gse.Execute( conn, query );
+         Log( "delete; execute query OK" );
+      end;
+      Connection_Pool.Return_Connection( connection );
+   end Delete;
+
+

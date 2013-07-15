@@ -1,0 +1,11 @@
+   
+   procedure Check_Result( conn : in out gse.Database_Connection ) is
+      error_msg : constant String := gse.Error( conn );
+   begin
+      if( error_msg /= "" )then
+         Log( error_msg );
+         Connection_Pool.Return_Connection( conn );
+         Raise_Exception( db_commons.DB_Exception'Identity, error_msg );
+      end if;
+   end  Check_Result;     
+

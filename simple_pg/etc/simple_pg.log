@@ -1,0 +1,1517 @@
+[SIMPLE_PG_TEST] 1/1 Starting test Standard_User_Type_Create_Test
+[SIMPLE_PG_TEST] 2/2 Clearing out the table
+[STANDARD_USER_TYPE_IO] 1/3 delete; executing querydelete from standard_user  
+[SQL] 1/4 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 2/5 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 3/6 delete from standard_user   (0 tuples) PGRES_COMMAND_OK
+[STANDARD_USER_TYPE_IO] 2/7 delete; execute query OK
+[SQL] 4/8 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_USER_TYPE_IO] 3/9 delete criteria; execute query OK
+[SIMPLE_PG_TEST] 3/10 Standard_User_Type_Create_Test: create tests
+[SQL] 5/11 compute (): select max( user_id ) from standard_user
+[SQL] 6/12 PQprepare(stmt1)
+[SQL] 7/13 PREPARE cursor_stmt1 AS select max( user_id ) from standard_user
+[SQL] 8/14 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 9/15 (stmt1) (1 tuples) PGRES_TUPLES_OK
+[SQL] 10/17 Finalize stmt on server: stmt1
+[SQL] 11/18 DEALLOCATE cursor_stmt1 (PGRES_COMMAND_OK)
+[SIMPLE_PG_TEST] 4/19 Standard_User_Type_Create_Test execute query failed with message Exception name: CONSTRAINT_ERROR
+_SIMPLE_PG_TEST_ Message: s-valuti.adb:220 explicit raise
+[SIMPLE_PG_TEST] 5/20 Starting test Standard_Group_Type_Create_Test
+[SIMPLE_PG_TEST] 6/21 Clearing out the table
+[STANDARD_GROUP_TYPE_IO] 1/22 delete; executing querydelete from standard_group  
+[SQL] 12/23 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 13/24 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 14/25 delete from standard_group   (49 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 2/26 delete; execute query OK
+[SQL] 15/27 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 3/28 delete criteria; execute query OK
+[SIMPLE_PG_TEST] 7/29 Standard_Group_Type_Create_Test: create tests
+[STANDARD_GROUP_TYPE_IO] 4/30 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 1', 'dat forDescription' )
+[SQL] 16/31 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 17/32 insert into standard_group (name, description  ) values  ( 'k_ 1', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 18/33 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 5/34 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 2', 'dat forDescription' )
+[SQL] 19/35 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 20/36 insert into standard_group (name, description  ) values  ( 'k_ 2', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 21/37 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 6/38 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 3', 'dat forDescription' )
+[SQL] 22/39 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 23/40 insert into standard_group (name, description  ) values  ( 'k_ 3', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 24/41 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 7/42 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 4', 'dat forDescription' )
+[SQL] 25/43 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 26/44 insert into standard_group (name, description  ) values  ( 'k_ 4', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 27/45 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 8/46 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 5', 'dat forDescription' )
+[SQL] 28/47 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 29/48 insert into standard_group (name, description  ) values  ( 'k_ 5', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 30/49 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 9/50 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 6', 'dat forDescription' )
+[SQL] 31/51 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 32/52 insert into standard_group (name, description  ) values  ( 'k_ 6', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 33/53 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 10/54 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 7', 'dat forDescription' )
+[SQL] 34/55 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 35/56 insert into standard_group (name, description  ) values  ( 'k_ 7', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 36/57 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 11/58 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 8', 'dat forDescription' )
+[SQL] 37/59 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 38/60 insert into standard_group (name, description  ) values  ( 'k_ 8', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 39/61 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 12/62 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 9', 'dat forDescription' )
+[SQL] 40/63 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 41/64 insert into standard_group (name, description  ) values  ( 'k_ 9', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 42/65 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 13/66 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 10', 'dat forDescription' )
+[SQL] 43/67 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 44/68 insert into standard_group (name, description  ) values  ( 'k_ 10', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 45/69 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 14/70 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 11', 'dat forDescription' )
+[SQL] 46/71 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 47/72 insert into standard_group (name, description  ) values  ( 'k_ 11', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 48/73 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 15/74 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 12', 'dat forDescription' )
+[SQL] 49/75 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 50/76 insert into standard_group (name, description  ) values  ( 'k_ 12', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 51/77 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 16/78 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 13', 'dat forDescription' )
+[SQL] 52/79 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 53/80 insert into standard_group (name, description  ) values  ( 'k_ 13', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 54/81 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 17/82 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 14', 'dat forDescription' )
+[SQL] 55/83 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 56/84 insert into standard_group (name, description  ) values  ( 'k_ 14', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 57/85 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 18/86 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 15', 'dat forDescription' )
+[SQL] 58/87 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 59/88 insert into standard_group (name, description  ) values  ( 'k_ 15', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 60/89 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 19/90 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 16', 'dat forDescription' )
+[SQL] 61/91 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 62/92 insert into standard_group (name, description  ) values  ( 'k_ 16', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 63/93 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 20/94 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 17', 'dat forDescription' )
+[SQL] 64/95 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 65/96 insert into standard_group (name, description  ) values  ( 'k_ 17', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 66/97 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 21/98 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 18', 'dat forDescription' )
+[SQL] 67/99 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 68/100 insert into standard_group (name, description  ) values  ( 'k_ 18', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 69/101 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 22/102 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 19', 'dat forDescription' )
+[SQL] 70/103 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 71/104 insert into standard_group (name, description  ) values  ( 'k_ 19', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 72/105 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 23/106 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 20', 'dat forDescription' )
+[SQL] 73/107 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 74/108 insert into standard_group (name, description  ) values  ( 'k_ 20', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 75/109 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 24/110 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 21', 'dat forDescription' )
+[SQL] 76/111 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 77/112 insert into standard_group (name, description  ) values  ( 'k_ 21', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 78/113 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 25/114 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 22', 'dat forDescription' )
+[SQL] 79/115 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 80/116 insert into standard_group (name, description  ) values  ( 'k_ 22', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 81/117 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 26/118 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 23', 'dat forDescription' )
+[SQL] 82/119 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 83/120 insert into standard_group (name, description  ) values  ( 'k_ 23', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 84/121 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 27/122 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 24', 'dat forDescription' )
+[SQL] 85/123 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 86/124 insert into standard_group (name, description  ) values  ( 'k_ 24', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 87/125 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 28/126 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 25', 'dat forDescription' )
+[SQL] 88/127 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 89/128 insert into standard_group (name, description  ) values  ( 'k_ 25', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 90/129 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 29/130 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 26', 'dat forDescription' )
+[SQL] 91/131 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 92/132 insert into standard_group (name, description  ) values  ( 'k_ 26', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 93/133 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 30/134 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 27', 'dat forDescription' )
+[SQL] 94/135 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 95/136 insert into standard_group (name, description  ) values  ( 'k_ 27', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 96/137 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 31/138 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 28', 'dat forDescription' )
+[SQL] 97/139 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 98/140 insert into standard_group (name, description  ) values  ( 'k_ 28', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 99/141 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 32/142 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 29', 'dat forDescription' )
+[SQL] 100/143 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 101/144 insert into standard_group (name, description  ) values  ( 'k_ 29', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 102/145 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 33/146 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 30', 'dat forDescription' )
+[SQL] 103/147 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 104/148 insert into standard_group (name, description  ) values  ( 'k_ 30', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 105/149 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 34/150 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 31', 'dat forDescription' )
+[SQL] 106/151 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 107/152 insert into standard_group (name, description  ) values  ( 'k_ 31', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 108/153 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 35/154 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 32', 'dat forDescription' )
+[SQL] 109/155 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 110/156 insert into standard_group (name, description  ) values  ( 'k_ 32', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 111/157 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 36/158 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 33', 'dat forDescription' )
+[SQL] 112/159 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 113/160 insert into standard_group (name, description  ) values  ( 'k_ 33', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 114/161 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 37/162 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 34', 'dat forDescription' )
+[SQL] 115/163 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 116/164 insert into standard_group (name, description  ) values  ( 'k_ 34', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 117/165 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 38/166 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 35', 'dat forDescription' )
+[SQL] 118/167 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 119/168 insert into standard_group (name, description  ) values  ( 'k_ 35', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 120/169 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 39/170 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 36', 'dat forDescription' )
+[SQL] 121/171 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 122/172 insert into standard_group (name, description  ) values  ( 'k_ 36', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 123/173 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 40/174 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 37', 'dat forDescription' )
+[SQL] 124/175 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 125/176 insert into standard_group (name, description  ) values  ( 'k_ 37', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 126/177 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 41/178 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 38', 'dat forDescription' )
+[SQL] 127/179 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 128/180 insert into standard_group (name, description  ) values  ( 'k_ 38', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 129/181 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 42/182 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 39', 'dat forDescription' )
+[SQL] 130/183 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 131/184 insert into standard_group (name, description  ) values  ( 'k_ 39', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 132/185 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 43/186 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 40', 'dat forDescription' )
+[SQL] 133/187 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 134/188 insert into standard_group (name, description  ) values  ( 'k_ 40', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 135/189 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 44/190 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 41', 'dat forDescription' )
+[SQL] 136/191 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 137/192 insert into standard_group (name, description  ) values  ( 'k_ 41', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 138/193 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 45/194 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 42', 'dat forDescription' )
+[SQL] 139/195 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 140/196 insert into standard_group (name, description  ) values  ( 'k_ 42', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 141/197 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 46/198 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 43', 'dat forDescription' )
+[SQL] 142/199 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 143/200 insert into standard_group (name, description  ) values  ( 'k_ 43', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 144/201 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 47/202 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 44', 'dat forDescription' )
+[SQL] 145/203 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 146/204 insert into standard_group (name, description  ) values  ( 'k_ 44', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 147/205 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 48/206 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 45', 'dat forDescription' )
+[SQL] 148/207 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 149/208 insert into standard_group (name, description  ) values  ( 'k_ 45', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 150/209 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 49/210 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 46', 'dat forDescription' )
+[SQL] 151/211 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 152/212 insert into standard_group (name, description  ) values  ( 'k_ 46', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 153/213 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 50/214 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 47', 'dat forDescription' )
+[SQL] 154/215 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 155/216 insert into standard_group (name, description  ) values  ( 'k_ 47', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 156/217 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 51/218 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 48', 'dat forDescription' )
+[SQL] 157/219 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 158/220 insert into standard_group (name, description  ) values  ( 'k_ 48', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 159/221 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 52/222 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 49', 'dat forDescription' )
+[SQL] 160/223 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 161/224 insert into standard_group (name, description  ) values  ( 'k_ 49', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 162/225 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 53/226 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 50', 'dat forDescription' )
+[SQL] 163/227 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 164/228 insert into standard_group (name, description  ) values  ( 'k_ 50', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 165/229 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 54/230 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 51', 'dat forDescription' )
+[SQL] 166/231 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 167/232 insert into standard_group (name, description  ) values  ( 'k_ 51', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 168/233 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 55/234 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 52', 'dat forDescription' )
+[SQL] 169/235 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 170/236 insert into standard_group (name, description  ) values  ( 'k_ 52', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 171/237 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 56/238 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 53', 'dat forDescription' )
+[SQL] 172/239 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 173/240 insert into standard_group (name, description  ) values  ( 'k_ 53', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 174/241 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 57/242 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 54', 'dat forDescription' )
+[SQL] 175/243 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 176/244 insert into standard_group (name, description  ) values  ( 'k_ 54', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 177/245 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 58/246 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 55', 'dat forDescription' )
+[SQL] 178/247 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 179/248 insert into standard_group (name, description  ) values  ( 'k_ 55', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 180/249 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 59/250 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 56', 'dat forDescription' )
+[SQL] 181/251 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 182/252 insert into standard_group (name, description  ) values  ( 'k_ 56', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 183/253 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 60/254 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 57', 'dat forDescription' )
+[SQL] 184/255 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 185/256 insert into standard_group (name, description  ) values  ( 'k_ 57', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 186/257 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 61/258 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 58', 'dat forDescription' )
+[SQL] 187/259 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 188/260 insert into standard_group (name, description  ) values  ( 'k_ 58', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 189/261 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 62/262 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 59', 'dat forDescription' )
+[SQL] 190/263 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 191/264 insert into standard_group (name, description  ) values  ( 'k_ 59', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 192/265 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 63/266 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 60', 'dat forDescription' )
+[SQL] 193/267 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 194/268 insert into standard_group (name, description  ) values  ( 'k_ 60', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 195/269 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 64/270 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 61', 'dat forDescription' )
+[SQL] 196/271 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 197/272 insert into standard_group (name, description  ) values  ( 'k_ 61', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 198/273 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 65/274 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 62', 'dat forDescription' )
+[SQL] 199/275 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 200/276 insert into standard_group (name, description  ) values  ( 'k_ 62', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 201/277 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 66/278 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 63', 'dat forDescription' )
+[SQL] 202/279 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 203/280 insert into standard_group (name, description  ) values  ( 'k_ 63', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 204/281 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 67/282 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 64', 'dat forDescription' )
+[SQL] 205/283 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 206/284 insert into standard_group (name, description  ) values  ( 'k_ 64', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 207/285 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 68/286 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 65', 'dat forDescription' )
+[SQL] 208/287 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 209/288 insert into standard_group (name, description  ) values  ( 'k_ 65', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 210/289 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 69/290 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 66', 'dat forDescription' )
+[SQL] 211/291 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 212/292 insert into standard_group (name, description  ) values  ( 'k_ 66', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 213/293 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 70/294 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 67', 'dat forDescription' )
+[SQL] 214/295 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 215/296 insert into standard_group (name, description  ) values  ( 'k_ 67', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 216/297 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 71/298 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 68', 'dat forDescription' )
+[SQL] 217/299 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 218/300 insert into standard_group (name, description  ) values  ( 'k_ 68', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 219/301 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 72/302 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 69', 'dat forDescription' )
+[SQL] 220/303 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 221/304 insert into standard_group (name, description  ) values  ( 'k_ 69', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 222/305 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 73/306 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 70', 'dat forDescription' )
+[SQL] 223/307 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 224/308 insert into standard_group (name, description  ) values  ( 'k_ 70', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 225/309 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 74/310 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 71', 'dat forDescription' )
+[SQL] 226/311 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 227/312 insert into standard_group (name, description  ) values  ( 'k_ 71', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 228/313 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 75/314 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 72', 'dat forDescription' )
+[SQL] 229/315 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 230/316 insert into standard_group (name, description  ) values  ( 'k_ 72', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 231/317 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 76/318 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 73', 'dat forDescription' )
+[SQL] 232/319 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 233/320 insert into standard_group (name, description  ) values  ( 'k_ 73', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 234/321 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 77/322 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 74', 'dat forDescription' )
+[SQL] 235/323 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 236/324 insert into standard_group (name, description  ) values  ( 'k_ 74', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 237/325 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 78/326 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 75', 'dat forDescription' )
+[SQL] 238/327 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 239/328 insert into standard_group (name, description  ) values  ( 'k_ 75', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 240/329 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 79/330 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 76', 'dat forDescription' )
+[SQL] 241/331 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 242/332 insert into standard_group (name, description  ) values  ( 'k_ 76', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 243/333 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 80/334 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 77', 'dat forDescription' )
+[SQL] 244/335 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 245/336 insert into standard_group (name, description  ) values  ( 'k_ 77', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 246/337 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 81/338 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 78', 'dat forDescription' )
+[SQL] 247/339 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 248/340 insert into standard_group (name, description  ) values  ( 'k_ 78', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 249/341 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 82/342 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 79', 'dat forDescription' )
+[SQL] 250/343 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 251/344 insert into standard_group (name, description  ) values  ( 'k_ 79', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 252/345 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 83/346 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 80', 'dat forDescription' )
+[SQL] 253/347 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 254/348 insert into standard_group (name, description  ) values  ( 'k_ 80', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 255/349 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 84/350 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 81', 'dat forDescription' )
+[SQL] 256/351 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 257/352 insert into standard_group (name, description  ) values  ( 'k_ 81', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 258/353 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 85/354 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 82', 'dat forDescription' )
+[SQL] 259/355 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 260/356 insert into standard_group (name, description  ) values  ( 'k_ 82', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 261/357 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 86/358 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 83', 'dat forDescription' )
+[SQL] 262/359 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 263/360 insert into standard_group (name, description  ) values  ( 'k_ 83', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 264/361 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 87/362 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 84', 'dat forDescription' )
+[SQL] 265/363 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 266/364 insert into standard_group (name, description  ) values  ( 'k_ 84', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 267/365 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 88/366 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 85', 'dat forDescription' )
+[SQL] 268/367 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 269/368 insert into standard_group (name, description  ) values  ( 'k_ 85', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 270/369 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 89/370 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 86', 'dat forDescription' )
+[SQL] 271/371 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 272/372 insert into standard_group (name, description  ) values  ( 'k_ 86', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 273/373 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 90/374 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 87', 'dat forDescription' )
+[SQL] 274/375 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 275/376 insert into standard_group (name, description  ) values  ( 'k_ 87', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 276/377 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 91/378 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 88', 'dat forDescription' )
+[SQL] 277/379 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 278/380 insert into standard_group (name, description  ) values  ( 'k_ 88', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 279/381 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 92/382 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 89', 'dat forDescription' )
+[SQL] 280/383 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 281/384 insert into standard_group (name, description  ) values  ( 'k_ 89', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 282/385 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 93/386 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 90', 'dat forDescription' )
+[SQL] 283/387 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 284/388 insert into standard_group (name, description  ) values  ( 'k_ 90', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 285/389 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 94/390 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 91', 'dat forDescription' )
+[SQL] 286/391 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 287/392 insert into standard_group (name, description  ) values  ( 'k_ 91', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 288/393 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 95/394 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 92', 'dat forDescription' )
+[SQL] 289/395 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 290/396 insert into standard_group (name, description  ) values  ( 'k_ 92', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 291/397 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 96/398 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 93', 'dat forDescription' )
+[SQL] 292/399 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 293/400 insert into standard_group (name, description  ) values  ( 'k_ 93', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 294/401 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 97/402 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 94', 'dat forDescription' )
+[SQL] 295/403 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 296/404 insert into standard_group (name, description  ) values  ( 'k_ 94', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 297/405 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 98/406 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 95', 'dat forDescription' )
+[SQL] 298/407 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 299/408 insert into standard_group (name, description  ) values  ( 'k_ 95', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 300/409 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 99/410 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 96', 'dat forDescription' )
+[SQL] 301/411 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 302/412 insert into standard_group (name, description  ) values  ( 'k_ 96', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 303/413 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 100/414 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 97', 'dat forDescription' )
+[SQL] 304/415 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 305/416 insert into standard_group (name, description  ) values  ( 'k_ 97', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 306/417 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 101/418 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 98', 'dat forDescription' )
+[SQL] 307/419 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 308/420 insert into standard_group (name, description  ) values  ( 'k_ 98', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 309/421 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 102/422 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 99', 'dat forDescription' )
+[SQL] 310/423 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 311/424 insert into standard_group (name, description  ) values  ( 'k_ 99', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 312/425 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 103/426 save; executing queryinsert into standard_group (name, description  ) values  ( 'k_ 100', 'dat forDescription' )
+[SQL] 313/427 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 314/428 insert into standard_group (name, description  ) values  ( 'k_ 100', 'dat forDescription' ) (1 tuples) PGRES_COMMAND_OK
+[SQL] 315/429 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 104/430 retrieve made this as query select name, description  from standard_group   
+[SQL] 316/431 compute (): select name, description  from standard_group   
+[SQL] 317/432 PQprepare(stmt2)
+[SQL] 318/433 PREPARE cursor_stmt2 AS select name, description  from standard_group   
+[SQL] 319/434 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 320/435 (stmt2) (100 tuples) PGRES_TUPLES_OK
+[SQL] 321/437 Finalize stmt on server: stmt2
+[SQL] 322/438 DEALLOCATE cursor_stmt2 (PGRES_COMMAND_OK)
+[SIMPLE_PG_TEST] 8/439 Standard_Group_Type_Create_Test: alter tests
+[STANDARD_GROUP_TYPE_IO] 105/440 retrieve made this as query select name, description  from standard_group   where name = 'k_ 1' 
+[SQL] 323/441 compute (): select name, description  from standard_group   where name = 'k_ 1' 
+[SQL] 324/442 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 325/443 PQprepare(stmt3)
+[SQL] 326/444 PREPARE cursor_stmt3 AS select name, description  from standard_group   where name = 'k_ 1' 
+[SQL] 327/445 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 328/446 (stmt3) (1 tuples) PGRES_TUPLES_OK
+[SQL] 329/448 Finalize stmt on server: stmt3
+[SQL] 330/449 DEALLOCATE cursor_stmt3 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 106/450 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 1' 
+[SQL] 331/451 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 1'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 332/452 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 107/453 retrieve made this as query select name, description  from standard_group   where name = 'k_ 2' 
+[SQL] 333/454 compute (): select name, description  from standard_group   where name = 'k_ 2' 
+[SQL] 334/455 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 335/456 PQprepare(stmt4)
+[SQL] 336/457 PREPARE cursor_stmt4 AS select name, description  from standard_group   where name = 'k_ 2' 
+[SQL] 337/458 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 338/459 (stmt4) (1 tuples) PGRES_TUPLES_OK
+[SQL] 339/461 Finalize stmt on server: stmt4
+[SQL] 340/462 DEALLOCATE cursor_stmt4 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 108/463 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 2' 
+[SQL] 341/464 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 2'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 342/465 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 109/466 retrieve made this as query select name, description  from standard_group   where name = 'k_ 3' 
+[SQL] 343/467 compute (): select name, description  from standard_group   where name = 'k_ 3' 
+[SQL] 344/468 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 345/469 PQprepare(stmt5)
+[SQL] 346/470 PREPARE cursor_stmt5 AS select name, description  from standard_group   where name = 'k_ 3' 
+[SQL] 347/471 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 348/472 (stmt5) (1 tuples) PGRES_TUPLES_OK
+[SQL] 349/474 Finalize stmt on server: stmt5
+[SQL] 350/475 DEALLOCATE cursor_stmt5 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 110/476 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 3' 
+[SQL] 351/477 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 3'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 352/478 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 111/479 retrieve made this as query select name, description  from standard_group   where name = 'k_ 4' 
+[SQL] 353/480 compute (): select name, description  from standard_group   where name = 'k_ 4' 
+[SQL] 354/481 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 355/482 PQprepare(stmt6)
+[SQL] 356/483 PREPARE cursor_stmt6 AS select name, description  from standard_group   where name = 'k_ 4' 
+[SQL] 357/484 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 358/485 (stmt6) (1 tuples) PGRES_TUPLES_OK
+[SQL] 359/487 Finalize stmt on server: stmt6
+[SQL] 360/488 DEALLOCATE cursor_stmt6 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 112/489 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 4' 
+[SQL] 361/490 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 4'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 362/491 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 113/492 retrieve made this as query select name, description  from standard_group   where name = 'k_ 5' 
+[SQL] 363/493 compute (): select name, description  from standard_group   where name = 'k_ 5' 
+[SQL] 364/494 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 365/495 PQprepare(stmt7)
+[SQL] 366/496 PREPARE cursor_stmt7 AS select name, description  from standard_group   where name = 'k_ 5' 
+[SQL] 367/497 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 368/498 (stmt7) (1 tuples) PGRES_TUPLES_OK
+[SQL] 369/500 Finalize stmt on server: stmt7
+[SQL] 370/501 DEALLOCATE cursor_stmt7 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 114/502 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 5' 
+[SQL] 371/503 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 5'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 372/504 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 115/505 retrieve made this as query select name, description  from standard_group   where name = 'k_ 6' 
+[SQL] 373/506 compute (): select name, description  from standard_group   where name = 'k_ 6' 
+[SQL] 374/507 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 375/508 PQprepare(stmt8)
+[SQL] 376/509 PREPARE cursor_stmt8 AS select name, description  from standard_group   where name = 'k_ 6' 
+[SQL] 377/510 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 378/511 (stmt8) (1 tuples) PGRES_TUPLES_OK
+[SQL] 379/513 Finalize stmt on server: stmt8
+[SQL] 380/514 DEALLOCATE cursor_stmt8 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 116/515 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 6' 
+[SQL] 381/516 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 6'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 382/517 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 117/518 retrieve made this as query select name, description  from standard_group   where name = 'k_ 7' 
+[SQL] 383/519 compute (): select name, description  from standard_group   where name = 'k_ 7' 
+[SQL] 384/520 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 385/521 PQprepare(stmt9)
+[SQL] 386/522 PREPARE cursor_stmt9 AS select name, description  from standard_group   where name = 'k_ 7' 
+[SQL] 387/523 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 388/524 (stmt9) (1 tuples) PGRES_TUPLES_OK
+[SQL] 389/526 Finalize stmt on server: stmt9
+[SQL] 390/527 DEALLOCATE cursor_stmt9 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 118/528 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 7' 
+[SQL] 391/529 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 7'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 392/530 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 119/531 retrieve made this as query select name, description  from standard_group   where name = 'k_ 8' 
+[SQL] 393/532 compute (): select name, description  from standard_group   where name = 'k_ 8' 
+[SQL] 394/533 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 395/534 PQprepare(stmt10)
+[SQL] 396/535 PREPARE cursor_stmt10 AS select name, description  from standard_group   where name = 'k_ 8' 
+[SQL] 397/536 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 398/537 (stmt10) (1 tuples) PGRES_TUPLES_OK
+[SQL] 399/539 Finalize stmt on server: stmt10
+[SQL] 400/540 DEALLOCATE cursor_stmt10 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 120/541 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 8' 
+[SQL] 401/542 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 8'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 402/543 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 121/544 retrieve made this as query select name, description  from standard_group   where name = 'k_ 9' 
+[SQL] 403/545 compute (): select name, description  from standard_group   where name = 'k_ 9' 
+[SQL] 404/546 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 405/547 PQprepare(stmt11)
+[SQL] 406/548 PREPARE cursor_stmt11 AS select name, description  from standard_group   where name = 'k_ 9' 
+[SQL] 407/549 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 408/550 (stmt11) (1 tuples) PGRES_TUPLES_OK
+[SQL] 409/552 Finalize stmt on server: stmt11
+[SQL] 410/553 DEALLOCATE cursor_stmt11 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 122/554 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 9' 
+[SQL] 411/555 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 9'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 412/556 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 123/557 retrieve made this as query select name, description  from standard_group   where name = 'k_ 10' 
+[SQL] 413/558 compute (): select name, description  from standard_group   where name = 'k_ 10' 
+[SQL] 414/559 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 415/560 PQprepare(stmt12)
+[SQL] 416/561 PREPARE cursor_stmt12 AS select name, description  from standard_group   where name = 'k_ 10' 
+[SQL] 417/562 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 418/563 (stmt12) (1 tuples) PGRES_TUPLES_OK
+[SQL] 419/565 Finalize stmt on server: stmt12
+[SQL] 420/566 DEALLOCATE cursor_stmt12 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 124/567 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 10' 
+[SQL] 421/568 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 10'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 422/569 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 125/570 retrieve made this as query select name, description  from standard_group   where name = 'k_ 11' 
+[SQL] 423/571 compute (): select name, description  from standard_group   where name = 'k_ 11' 
+[SQL] 424/572 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 425/573 PQprepare(stmt13)
+[SQL] 426/574 PREPARE cursor_stmt13 AS select name, description  from standard_group   where name = 'k_ 11' 
+[SQL] 427/575 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 428/576 (stmt13) (1 tuples) PGRES_TUPLES_OK
+[SQL] 429/578 Finalize stmt on server: stmt13
+[SQL] 430/579 DEALLOCATE cursor_stmt13 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 126/580 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 11' 
+[SQL] 431/581 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 11'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 432/582 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 127/583 retrieve made this as query select name, description  from standard_group   where name = 'k_ 12' 
+[SQL] 433/584 compute (): select name, description  from standard_group   where name = 'k_ 12' 
+[SQL] 434/585 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 435/586 PQprepare(stmt14)
+[SQL] 436/587 PREPARE cursor_stmt14 AS select name, description  from standard_group   where name = 'k_ 12' 
+[SQL] 437/588 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 438/589 (stmt14) (1 tuples) PGRES_TUPLES_OK
+[SQL] 439/591 Finalize stmt on server: stmt14
+[SQL] 440/592 DEALLOCATE cursor_stmt14 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 128/593 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 12' 
+[SQL] 441/594 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 12'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 442/595 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 129/596 retrieve made this as query select name, description  from standard_group   where name = 'k_ 13' 
+[SQL] 443/597 compute (): select name, description  from standard_group   where name = 'k_ 13' 
+[SQL] 444/598 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 445/599 PQprepare(stmt15)
+[SQL] 446/600 PREPARE cursor_stmt15 AS select name, description  from standard_group   where name = 'k_ 13' 
+[SQL] 447/601 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 448/602 (stmt15) (1 tuples) PGRES_TUPLES_OK
+[SQL] 449/604 Finalize stmt on server: stmt15
+[SQL] 450/605 DEALLOCATE cursor_stmt15 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 130/606 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 13' 
+[SQL] 451/607 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 13'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 452/608 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 131/609 retrieve made this as query select name, description  from standard_group   where name = 'k_ 14' 
+[SQL] 453/610 compute (): select name, description  from standard_group   where name = 'k_ 14' 
+[SQL] 454/611 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 455/612 PQprepare(stmt16)
+[SQL] 456/613 PREPARE cursor_stmt16 AS select name, description  from standard_group   where name = 'k_ 14' 
+[SQL] 457/614 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 458/615 (stmt16) (1 tuples) PGRES_TUPLES_OK
+[SQL] 459/617 Finalize stmt on server: stmt16
+[SQL] 460/618 DEALLOCATE cursor_stmt16 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 132/619 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 14' 
+[SQL] 461/620 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 14'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 462/621 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 133/622 retrieve made this as query select name, description  from standard_group   where name = 'k_ 15' 
+[SQL] 463/623 compute (): select name, description  from standard_group   where name = 'k_ 15' 
+[SQL] 464/624 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 465/625 PQprepare(stmt17)
+[SQL] 466/626 PREPARE cursor_stmt17 AS select name, description  from standard_group   where name = 'k_ 15' 
+[SQL] 467/627 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 468/628 (stmt17) (1 tuples) PGRES_TUPLES_OK
+[SQL] 469/630 Finalize stmt on server: stmt17
+[SQL] 470/631 DEALLOCATE cursor_stmt17 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 134/632 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 15' 
+[SQL] 471/633 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 15'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 472/634 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 135/635 retrieve made this as query select name, description  from standard_group   where name = 'k_ 16' 
+[SQL] 473/636 compute (): select name, description  from standard_group   where name = 'k_ 16' 
+[SQL] 474/637 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 475/638 PQprepare(stmt18)
+[SQL] 476/639 PREPARE cursor_stmt18 AS select name, description  from standard_group   where name = 'k_ 16' 
+[SQL] 477/640 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 478/641 (stmt18) (1 tuples) PGRES_TUPLES_OK
+[SQL] 479/643 Finalize stmt on server: stmt18
+[SQL] 480/644 DEALLOCATE cursor_stmt18 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 136/645 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 16' 
+[SQL] 481/646 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 16'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 482/647 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 137/648 retrieve made this as query select name, description  from standard_group   where name = 'k_ 17' 
+[SQL] 483/649 compute (): select name, description  from standard_group   where name = 'k_ 17' 
+[SQL] 484/650 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 485/651 PQprepare(stmt19)
+[SQL] 486/652 PREPARE cursor_stmt19 AS select name, description  from standard_group   where name = 'k_ 17' 
+[SQL] 487/653 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 488/654 (stmt19) (1 tuples) PGRES_TUPLES_OK
+[SQL] 489/656 Finalize stmt on server: stmt19
+[SQL] 490/657 DEALLOCATE cursor_stmt19 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 138/658 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 17' 
+[SQL] 491/659 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 17'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 492/660 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 139/661 retrieve made this as query select name, description  from standard_group   where name = 'k_ 18' 
+[SQL] 493/662 compute (): select name, description  from standard_group   where name = 'k_ 18' 
+[SQL] 494/663 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 495/664 PQprepare(stmt20)
+[SQL] 496/665 PREPARE cursor_stmt20 AS select name, description  from standard_group   where name = 'k_ 18' 
+[SQL] 497/666 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 498/667 (stmt20) (1 tuples) PGRES_TUPLES_OK
+[SQL] 499/669 Finalize stmt on server: stmt20
+[SQL] 500/670 DEALLOCATE cursor_stmt20 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 140/671 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 18' 
+[SQL] 501/672 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 18'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 502/673 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 141/674 retrieve made this as query select name, description  from standard_group   where name = 'k_ 19' 
+[SQL] 503/675 compute (): select name, description  from standard_group   where name = 'k_ 19' 
+[SQL] 504/676 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 505/677 PQprepare(stmt21)
+[SQL] 506/678 PREPARE cursor_stmt21 AS select name, description  from standard_group   where name = 'k_ 19' 
+[SQL] 507/679 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 508/680 (stmt21) (1 tuples) PGRES_TUPLES_OK
+[SQL] 509/682 Finalize stmt on server: stmt21
+[SQL] 510/683 DEALLOCATE cursor_stmt21 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 142/684 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 19' 
+[SQL] 511/685 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 19'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 512/686 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 143/687 retrieve made this as query select name, description  from standard_group   where name = 'k_ 20' 
+[SQL] 513/688 compute (): select name, description  from standard_group   where name = 'k_ 20' 
+[SQL] 514/689 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 515/690 PQprepare(stmt22)
+[SQL] 516/691 PREPARE cursor_stmt22 AS select name, description  from standard_group   where name = 'k_ 20' 
+[SQL] 517/692 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 518/693 (stmt22) (1 tuples) PGRES_TUPLES_OK
+[SQL] 519/695 Finalize stmt on server: stmt22
+[SQL] 520/696 DEALLOCATE cursor_stmt22 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 144/697 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 20' 
+[SQL] 521/698 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 20'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 522/699 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 145/700 retrieve made this as query select name, description  from standard_group   where name = 'k_ 21' 
+[SQL] 523/701 compute (): select name, description  from standard_group   where name = 'k_ 21' 
+[SQL] 524/702 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 525/703 PQprepare(stmt23)
+[SQL] 526/704 PREPARE cursor_stmt23 AS select name, description  from standard_group   where name = 'k_ 21' 
+[SQL] 527/705 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 528/706 (stmt23) (1 tuples) PGRES_TUPLES_OK
+[SQL] 529/708 Finalize stmt on server: stmt23
+[SQL] 530/709 DEALLOCATE cursor_stmt23 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 146/710 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 21' 
+[SQL] 531/711 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 21'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 532/712 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 147/713 retrieve made this as query select name, description  from standard_group   where name = 'k_ 22' 
+[SQL] 533/714 compute (): select name, description  from standard_group   where name = 'k_ 22' 
+[SQL] 534/715 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 535/716 PQprepare(stmt24)
+[SQL] 536/717 PREPARE cursor_stmt24 AS select name, description  from standard_group   where name = 'k_ 22' 
+[SQL] 537/718 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 538/719 (stmt24) (1 tuples) PGRES_TUPLES_OK
+[SQL] 539/721 Finalize stmt on server: stmt24
+[SQL] 540/722 DEALLOCATE cursor_stmt24 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 148/723 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 22' 
+[SQL] 541/724 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 22'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 542/725 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 149/726 retrieve made this as query select name, description  from standard_group   where name = 'k_ 23' 
+[SQL] 543/727 compute (): select name, description  from standard_group   where name = 'k_ 23' 
+[SQL] 544/728 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 545/729 PQprepare(stmt25)
+[SQL] 546/730 PREPARE cursor_stmt25 AS select name, description  from standard_group   where name = 'k_ 23' 
+[SQL] 547/731 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 548/732 (stmt25) (1 tuples) PGRES_TUPLES_OK
+[SQL] 549/734 Finalize stmt on server: stmt25
+[SQL] 550/735 DEALLOCATE cursor_stmt25 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 150/736 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 23' 
+[SQL] 551/737 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 23'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 552/738 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 151/739 retrieve made this as query select name, description  from standard_group   where name = 'k_ 24' 
+[SQL] 553/740 compute (): select name, description  from standard_group   where name = 'k_ 24' 
+[SQL] 554/741 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 555/742 PQprepare(stmt26)
+[SQL] 556/743 PREPARE cursor_stmt26 AS select name, description  from standard_group   where name = 'k_ 24' 
+[SQL] 557/744 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 558/745 (stmt26) (1 tuples) PGRES_TUPLES_OK
+[SQL] 559/747 Finalize stmt on server: stmt26
+[SQL] 560/748 DEALLOCATE cursor_stmt26 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 152/749 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 24' 
+[SQL] 561/750 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 24'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 562/751 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 153/752 retrieve made this as query select name, description  from standard_group   where name = 'k_ 25' 
+[SQL] 563/753 compute (): select name, description  from standard_group   where name = 'k_ 25' 
+[SQL] 564/754 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 565/755 PQprepare(stmt27)
+[SQL] 566/756 PREPARE cursor_stmt27 AS select name, description  from standard_group   where name = 'k_ 25' 
+[SQL] 567/757 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 568/758 (stmt27) (1 tuples) PGRES_TUPLES_OK
+[SQL] 569/760 Finalize stmt on server: stmt27
+[SQL] 570/761 DEALLOCATE cursor_stmt27 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 154/762 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 25' 
+[SQL] 571/763 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 25'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 572/764 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 155/765 retrieve made this as query select name, description  from standard_group   where name = 'k_ 26' 
+[SQL] 573/766 compute (): select name, description  from standard_group   where name = 'k_ 26' 
+[SQL] 574/767 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 575/768 PQprepare(stmt28)
+[SQL] 576/769 PREPARE cursor_stmt28 AS select name, description  from standard_group   where name = 'k_ 26' 
+[SQL] 577/770 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 578/771 (stmt28) (1 tuples) PGRES_TUPLES_OK
+[SQL] 579/773 Finalize stmt on server: stmt28
+[SQL] 580/774 DEALLOCATE cursor_stmt28 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 156/775 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 26' 
+[SQL] 581/776 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 26'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 582/777 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 157/778 retrieve made this as query select name, description  from standard_group   where name = 'k_ 27' 
+[SQL] 583/779 compute (): select name, description  from standard_group   where name = 'k_ 27' 
+[SQL] 584/780 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 585/781 PQprepare(stmt29)
+[SQL] 586/782 PREPARE cursor_stmt29 AS select name, description  from standard_group   where name = 'k_ 27' 
+[SQL] 587/783 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 588/784 (stmt29) (1 tuples) PGRES_TUPLES_OK
+[SQL] 589/786 Finalize stmt on server: stmt29
+[SQL] 590/787 DEALLOCATE cursor_stmt29 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 158/788 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 27' 
+[SQL] 591/789 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 27'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 592/790 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 159/791 retrieve made this as query select name, description  from standard_group   where name = 'k_ 28' 
+[SQL] 593/792 compute (): select name, description  from standard_group   where name = 'k_ 28' 
+[SQL] 594/793 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 595/794 PQprepare(stmt30)
+[SQL] 596/795 PREPARE cursor_stmt30 AS select name, description  from standard_group   where name = 'k_ 28' 
+[SQL] 597/796 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 598/797 (stmt30) (1 tuples) PGRES_TUPLES_OK
+[SQL] 599/799 Finalize stmt on server: stmt30
+[SQL] 600/800 DEALLOCATE cursor_stmt30 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 160/801 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 28' 
+[SQL] 601/802 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 28'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 602/803 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 161/804 retrieve made this as query select name, description  from standard_group   where name = 'k_ 29' 
+[SQL] 603/805 compute (): select name, description  from standard_group   where name = 'k_ 29' 
+[SQL] 604/806 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 605/807 PQprepare(stmt31)
+[SQL] 606/808 PREPARE cursor_stmt31 AS select name, description  from standard_group   where name = 'k_ 29' 
+[SQL] 607/809 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 608/810 (stmt31) (1 tuples) PGRES_TUPLES_OK
+[SQL] 609/812 Finalize stmt on server: stmt31
+[SQL] 610/813 DEALLOCATE cursor_stmt31 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 162/814 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 29' 
+[SQL] 611/815 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 29'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 612/816 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 163/817 retrieve made this as query select name, description  from standard_group   where name = 'k_ 30' 
+[SQL] 613/818 compute (): select name, description  from standard_group   where name = 'k_ 30' 
+[SQL] 614/819 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 615/820 PQprepare(stmt32)
+[SQL] 616/821 PREPARE cursor_stmt32 AS select name, description  from standard_group   where name = 'k_ 30' 
+[SQL] 617/822 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 618/823 (stmt32) (1 tuples) PGRES_TUPLES_OK
+[SQL] 619/825 Finalize stmt on server: stmt32
+[SQL] 620/826 DEALLOCATE cursor_stmt32 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 164/827 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 30' 
+[SQL] 621/828 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 30'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 622/829 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 165/830 retrieve made this as query select name, description  from standard_group   where name = 'k_ 31' 
+[SQL] 623/831 compute (): select name, description  from standard_group   where name = 'k_ 31' 
+[SQL] 624/832 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 625/833 PQprepare(stmt33)
+[SQL] 626/834 PREPARE cursor_stmt33 AS select name, description  from standard_group   where name = 'k_ 31' 
+[SQL] 627/835 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 628/836 (stmt33) (1 tuples) PGRES_TUPLES_OK
+[SQL] 629/838 Finalize stmt on server: stmt33
+[SQL] 630/839 DEALLOCATE cursor_stmt33 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 166/840 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 31' 
+[SQL] 631/841 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 31'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 632/842 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 167/843 retrieve made this as query select name, description  from standard_group   where name = 'k_ 32' 
+[SQL] 633/844 compute (): select name, description  from standard_group   where name = 'k_ 32' 
+[SQL] 634/845 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 635/846 PQprepare(stmt34)
+[SQL] 636/847 PREPARE cursor_stmt34 AS select name, description  from standard_group   where name = 'k_ 32' 
+[SQL] 637/848 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 638/849 (stmt34) (1 tuples) PGRES_TUPLES_OK
+[SQL] 639/851 Finalize stmt on server: stmt34
+[SQL] 640/852 DEALLOCATE cursor_stmt34 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 168/853 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 32' 
+[SQL] 641/854 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 32'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 642/855 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 169/856 retrieve made this as query select name, description  from standard_group   where name = 'k_ 33' 
+[SQL] 643/857 compute (): select name, description  from standard_group   where name = 'k_ 33' 
+[SQL] 644/858 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 645/859 PQprepare(stmt35)
+[SQL] 646/860 PREPARE cursor_stmt35 AS select name, description  from standard_group   where name = 'k_ 33' 
+[SQL] 647/861 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 648/862 (stmt35) (1 tuples) PGRES_TUPLES_OK
+[SQL] 649/864 Finalize stmt on server: stmt35
+[SQL] 650/865 DEALLOCATE cursor_stmt35 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 170/866 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 33' 
+[SQL] 651/867 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 33'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 652/868 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 171/869 retrieve made this as query select name, description  from standard_group   where name = 'k_ 34' 
+[SQL] 653/870 compute (): select name, description  from standard_group   where name = 'k_ 34' 
+[SQL] 654/871 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 655/872 PQprepare(stmt36)
+[SQL] 656/873 PREPARE cursor_stmt36 AS select name, description  from standard_group   where name = 'k_ 34' 
+[SQL] 657/874 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 658/875 (stmt36) (1 tuples) PGRES_TUPLES_OK
+[SQL] 659/877 Finalize stmt on server: stmt36
+[SQL] 660/878 DEALLOCATE cursor_stmt36 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 172/879 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 34' 
+[SQL] 661/880 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 34'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 662/881 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 173/882 retrieve made this as query select name, description  from standard_group   where name = 'k_ 35' 
+[SQL] 663/883 compute (): select name, description  from standard_group   where name = 'k_ 35' 
+[SQL] 664/884 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 665/885 PQprepare(stmt37)
+[SQL] 666/886 PREPARE cursor_stmt37 AS select name, description  from standard_group   where name = 'k_ 35' 
+[SQL] 667/887 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 668/888 (stmt37) (1 tuples) PGRES_TUPLES_OK
+[SQL] 669/890 Finalize stmt on server: stmt37
+[SQL] 670/891 DEALLOCATE cursor_stmt37 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 174/892 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 35' 
+[SQL] 671/893 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 35'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 672/894 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 175/895 retrieve made this as query select name, description  from standard_group   where name = 'k_ 36' 
+[SQL] 673/896 compute (): select name, description  from standard_group   where name = 'k_ 36' 
+[SQL] 674/897 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 675/898 PQprepare(stmt38)
+[SQL] 676/899 PREPARE cursor_stmt38 AS select name, description  from standard_group   where name = 'k_ 36' 
+[SQL] 677/900 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 678/901 (stmt38) (1 tuples) PGRES_TUPLES_OK
+[SQL] 679/903 Finalize stmt on server: stmt38
+[SQL] 680/904 DEALLOCATE cursor_stmt38 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 176/905 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 36' 
+[SQL] 681/906 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 36'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 682/907 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 177/908 retrieve made this as query select name, description  from standard_group   where name = 'k_ 37' 
+[SQL] 683/909 compute (): select name, description  from standard_group   where name = 'k_ 37' 
+[SQL] 684/910 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 685/911 PQprepare(stmt39)
+[SQL] 686/912 PREPARE cursor_stmt39 AS select name, description  from standard_group   where name = 'k_ 37' 
+[SQL] 687/913 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 688/914 (stmt39) (1 tuples) PGRES_TUPLES_OK
+[SQL] 689/916 Finalize stmt on server: stmt39
+[SQL] 690/917 DEALLOCATE cursor_stmt39 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 178/918 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 37' 
+[SQL] 691/919 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 37'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 692/920 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 179/921 retrieve made this as query select name, description  from standard_group   where name = 'k_ 38' 
+[SQL] 693/922 compute (): select name, description  from standard_group   where name = 'k_ 38' 
+[SQL] 694/923 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 695/924 PQprepare(stmt40)
+[SQL] 696/925 PREPARE cursor_stmt40 AS select name, description  from standard_group   where name = 'k_ 38' 
+[SQL] 697/926 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 698/927 (stmt40) (1 tuples) PGRES_TUPLES_OK
+[SQL] 699/929 Finalize stmt on server: stmt40
+[SQL] 700/930 DEALLOCATE cursor_stmt40 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 180/931 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 38' 
+[SQL] 701/932 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 38'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 702/933 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 181/934 retrieve made this as query select name, description  from standard_group   where name = 'k_ 39' 
+[SQL] 703/935 compute (): select name, description  from standard_group   where name = 'k_ 39' 
+[SQL] 704/936 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 705/937 PQprepare(stmt41)
+[SQL] 706/938 PREPARE cursor_stmt41 AS select name, description  from standard_group   where name = 'k_ 39' 
+[SQL] 707/939 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 708/940 (stmt41) (1 tuples) PGRES_TUPLES_OK
+[SQL] 709/942 Finalize stmt on server: stmt41
+[SQL] 710/943 DEALLOCATE cursor_stmt41 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 182/944 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 39' 
+[SQL] 711/945 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 39'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 712/946 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 183/947 retrieve made this as query select name, description  from standard_group   where name = 'k_ 40' 
+[SQL] 713/948 compute (): select name, description  from standard_group   where name = 'k_ 40' 
+[SQL] 714/949 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 715/950 PQprepare(stmt42)
+[SQL] 716/951 PREPARE cursor_stmt42 AS select name, description  from standard_group   where name = 'k_ 40' 
+[SQL] 717/952 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 718/953 (stmt42) (1 tuples) PGRES_TUPLES_OK
+[SQL] 719/955 Finalize stmt on server: stmt42
+[SQL] 720/956 DEALLOCATE cursor_stmt42 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 184/957 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 40' 
+[SQL] 721/958 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 40'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 722/959 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 185/960 retrieve made this as query select name, description  from standard_group   where name = 'k_ 41' 
+[SQL] 723/961 compute (): select name, description  from standard_group   where name = 'k_ 41' 
+[SQL] 724/962 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 725/963 PQprepare(stmt43)
+[SQL] 726/964 PREPARE cursor_stmt43 AS select name, description  from standard_group   where name = 'k_ 41' 
+[SQL] 727/965 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 728/966 (stmt43) (1 tuples) PGRES_TUPLES_OK
+[SQL] 729/968 Finalize stmt on server: stmt43
+[SQL] 730/969 DEALLOCATE cursor_stmt43 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 186/970 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 41' 
+[SQL] 731/971 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 41'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 732/972 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 187/973 retrieve made this as query select name, description  from standard_group   where name = 'k_ 42' 
+[SQL] 733/974 compute (): select name, description  from standard_group   where name = 'k_ 42' 
+[SQL] 734/975 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 735/976 PQprepare(stmt44)
+[SQL] 736/977 PREPARE cursor_stmt44 AS select name, description  from standard_group   where name = 'k_ 42' 
+[SQL] 737/978 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 738/979 (stmt44) (1 tuples) PGRES_TUPLES_OK
+[SQL] 739/981 Finalize stmt on server: stmt44
+[SQL] 740/982 DEALLOCATE cursor_stmt44 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 188/983 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 42' 
+[SQL] 741/984 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 42'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 742/985 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 189/986 retrieve made this as query select name, description  from standard_group   where name = 'k_ 43' 
+[SQL] 743/987 compute (): select name, description  from standard_group   where name = 'k_ 43' 
+[SQL] 744/988 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 745/989 PQprepare(stmt45)
+[SQL] 746/990 PREPARE cursor_stmt45 AS select name, description  from standard_group   where name = 'k_ 43' 
+[SQL] 747/991 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 748/992 (stmt45) (1 tuples) PGRES_TUPLES_OK
+[SQL] 749/994 Finalize stmt on server: stmt45
+[SQL] 750/995 DEALLOCATE cursor_stmt45 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 190/996 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 43' 
+[SQL] 751/997 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 43'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 752/998 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 191/999 retrieve made this as query select name, description  from standard_group   where name = 'k_ 44' 
+[SQL] 753/1000 compute (): select name, description  from standard_group   where name = 'k_ 44' 
+[SQL] 754/1001 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 755/1002 PQprepare(stmt46)
+[SQL] 756/1003 PREPARE cursor_stmt46 AS select name, description  from standard_group   where name = 'k_ 44' 
+[SQL] 757/1004 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 758/1005 (stmt46) (1 tuples) PGRES_TUPLES_OK
+[SQL] 759/1007 Finalize stmt on server: stmt46
+[SQL] 760/1008 DEALLOCATE cursor_stmt46 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 192/1009 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 44' 
+[SQL] 761/1010 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 44'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 762/1011 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 193/1012 retrieve made this as query select name, description  from standard_group   where name = 'k_ 45' 
+[SQL] 763/1013 compute (): select name, description  from standard_group   where name = 'k_ 45' 
+[SQL] 764/1014 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 765/1015 PQprepare(stmt47)
+[SQL] 766/1016 PREPARE cursor_stmt47 AS select name, description  from standard_group   where name = 'k_ 45' 
+[SQL] 767/1017 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 768/1018 (stmt47) (1 tuples) PGRES_TUPLES_OK
+[SQL] 769/1020 Finalize stmt on server: stmt47
+[SQL] 770/1021 DEALLOCATE cursor_stmt47 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 194/1022 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 45' 
+[SQL] 771/1023 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 45'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 772/1024 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 195/1025 retrieve made this as query select name, description  from standard_group   where name = 'k_ 46' 
+[SQL] 773/1026 compute (): select name, description  from standard_group   where name = 'k_ 46' 
+[SQL] 774/1027 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 775/1028 PQprepare(stmt48)
+[SQL] 776/1029 PREPARE cursor_stmt48 AS select name, description  from standard_group   where name = 'k_ 46' 
+[SQL] 777/1030 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 778/1031 (stmt48) (1 tuples) PGRES_TUPLES_OK
+[SQL] 779/1033 Finalize stmt on server: stmt48
+[SQL] 780/1034 DEALLOCATE cursor_stmt48 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 196/1035 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 46' 
+[SQL] 781/1036 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 46'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 782/1037 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 197/1038 retrieve made this as query select name, description  from standard_group   where name = 'k_ 47' 
+[SQL] 783/1039 compute (): select name, description  from standard_group   where name = 'k_ 47' 
+[SQL] 784/1040 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 785/1041 PQprepare(stmt49)
+[SQL] 786/1042 PREPARE cursor_stmt49 AS select name, description  from standard_group   where name = 'k_ 47' 
+[SQL] 787/1043 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 788/1044 (stmt49) (1 tuples) PGRES_TUPLES_OK
+[SQL] 789/1046 Finalize stmt on server: stmt49
+[SQL] 790/1047 DEALLOCATE cursor_stmt49 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 198/1048 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 47' 
+[SQL] 791/1049 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 47'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 792/1050 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 199/1051 retrieve made this as query select name, description  from standard_group   where name = 'k_ 48' 
+[SQL] 793/1052 compute (): select name, description  from standard_group   where name = 'k_ 48' 
+[SQL] 794/1053 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 795/1054 PQprepare(stmt50)
+[SQL] 796/1055 PREPARE cursor_stmt50 AS select name, description  from standard_group   where name = 'k_ 48' 
+[SQL] 797/1056 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 798/1057 (stmt50) (1 tuples) PGRES_TUPLES_OK
+[SQL] 799/1059 Finalize stmt on server: stmt50
+[SQL] 800/1060 DEALLOCATE cursor_stmt50 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 200/1061 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 48' 
+[SQL] 801/1062 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 48'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 802/1063 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 201/1064 retrieve made this as query select name, description  from standard_group   where name = 'k_ 49' 
+[SQL] 803/1065 compute (): select name, description  from standard_group   where name = 'k_ 49' 
+[SQL] 804/1066 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 805/1067 PQprepare(stmt51)
+[SQL] 806/1068 PREPARE cursor_stmt51 AS select name, description  from standard_group   where name = 'k_ 49' 
+[SQL] 807/1069 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 808/1070 (stmt51) (1 tuples) PGRES_TUPLES_OK
+[SQL] 809/1072 Finalize stmt on server: stmt51
+[SQL] 810/1073 DEALLOCATE cursor_stmt51 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 202/1074 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 49' 
+[SQL] 811/1075 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 49'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 812/1076 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 203/1077 retrieve made this as query select name, description  from standard_group   where name = 'k_ 50' 
+[SQL] 813/1078 compute (): select name, description  from standard_group   where name = 'k_ 50' 
+[SQL] 814/1079 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 815/1080 PQprepare(stmt52)
+[SQL] 816/1081 PREPARE cursor_stmt52 AS select name, description  from standard_group   where name = 'k_ 50' 
+[SQL] 817/1082 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 818/1083 (stmt52) (1 tuples) PGRES_TUPLES_OK
+[SQL] 819/1085 Finalize stmt on server: stmt52
+[SQL] 820/1086 DEALLOCATE cursor_stmt52 (PGRES_COMMAND_OK)
+[STANDARD_GROUP_TYPE_IO] 204/1087 update; executing queryupdate standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 50' 
+[SQL] 821/1088 update standard_group set   description = 'Altered::dat forDescription'  where name = 'k_ 50'  (1 tuples) PGRES_COMMAND_OK
+[SQL] 822/1089 COMMIT (0 tuples) PGRES_COMMAND_OK
+[SIMPLE_PG_TEST] 9/1090 Standard_Group_Type_Create_Test: delete tests
+[STANDARD_GROUP_TYPE_IO] 205/1091 delete; executing querydelete from standard_group  where name = 'k_ 50' 
+[SQL] 823/1092 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 824/1093 delete from standard_group  where name = 'k_ 50'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 206/1094 delete; execute query OK
+[SQL] 825/1095 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 207/1096 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 208/1097 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 209/1098 delete; executing querydelete from standard_group  where name = 'k_ 51' 
+[SQL] 826/1099 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 827/1100 delete from standard_group  where name = 'k_ 51'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 210/1101 delete; execute query OK
+[SQL] 828/1102 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 211/1103 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 212/1104 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 213/1105 delete; executing querydelete from standard_group  where name = 'k_ 52' 
+[SQL] 829/1106 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 830/1107 delete from standard_group  where name = 'k_ 52'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 214/1108 delete; execute query OK
+[SQL] 831/1109 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 215/1110 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 216/1111 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 217/1112 delete; executing querydelete from standard_group  where name = 'k_ 53' 
+[SQL] 832/1113 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 833/1114 delete from standard_group  where name = 'k_ 53'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 218/1115 delete; execute query OK
+[SQL] 834/1116 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 219/1117 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 220/1118 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 221/1119 delete; executing querydelete from standard_group  where name = 'k_ 54' 
+[SQL] 835/1120 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 836/1121 delete from standard_group  where name = 'k_ 54'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 222/1122 delete; execute query OK
+[SQL] 837/1123 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 223/1124 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 224/1125 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 225/1126 delete; executing querydelete from standard_group  where name = 'k_ 55' 
+[SQL] 838/1127 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 839/1128 delete from standard_group  where name = 'k_ 55'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 226/1129 delete; execute query OK
+[SQL] 840/1130 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 227/1131 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 228/1132 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 229/1133 delete; executing querydelete from standard_group  where name = 'k_ 56' 
+[SQL] 841/1134 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 842/1135 delete from standard_group  where name = 'k_ 56'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 230/1136 delete; execute query OK
+[SQL] 843/1137 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 231/1138 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 232/1139 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 233/1140 delete; executing querydelete from standard_group  where name = 'k_ 57' 
+[SQL] 844/1141 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 845/1142 delete from standard_group  where name = 'k_ 57'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 234/1143 delete; execute query OK
+[SQL] 846/1144 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 235/1145 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 236/1146 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 237/1147 delete; executing querydelete from standard_group  where name = 'k_ 58' 
+[SQL] 847/1148 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 848/1149 delete from standard_group  where name = 'k_ 58'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 238/1150 delete; execute query OK
+[SQL] 849/1151 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 239/1152 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 240/1153 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 241/1154 delete; executing querydelete from standard_group  where name = 'k_ 59' 
+[SQL] 850/1155 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 851/1156 delete from standard_group  where name = 'k_ 59'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 242/1157 delete; execute query OK
+[SQL] 852/1158 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 243/1159 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 244/1160 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 245/1161 delete; executing querydelete from standard_group  where name = 'k_ 60' 
+[SQL] 853/1162 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 854/1163 delete from standard_group  where name = 'k_ 60'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 246/1164 delete; execute query OK
+[SQL] 855/1165 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 247/1166 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 248/1167 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 249/1168 delete; executing querydelete from standard_group  where name = 'k_ 61' 
+[SQL] 856/1169 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 857/1170 delete from standard_group  where name = 'k_ 61'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 250/1171 delete; execute query OK
+[SQL] 858/1172 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 251/1173 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 252/1174 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 253/1175 delete; executing querydelete from standard_group  where name = 'k_ 62' 
+[SQL] 859/1176 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 860/1177 delete from standard_group  where name = 'k_ 62'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 254/1178 delete; execute query OK
+[SQL] 861/1179 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 255/1180 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 256/1181 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 257/1182 delete; executing querydelete from standard_group  where name = 'k_ 63' 
+[SQL] 862/1183 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 863/1184 delete from standard_group  where name = 'k_ 63'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 258/1185 delete; execute query OK
+[SQL] 864/1186 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 259/1187 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 260/1188 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 261/1189 delete; executing querydelete from standard_group  where name = 'k_ 64' 
+[SQL] 865/1190 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 866/1191 delete from standard_group  where name = 'k_ 64'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 262/1192 delete; execute query OK
+[SQL] 867/1193 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 263/1194 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 264/1195 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 265/1196 delete; executing querydelete from standard_group  where name = 'k_ 65' 
+[SQL] 868/1197 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 869/1198 delete from standard_group  where name = 'k_ 65'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 266/1199 delete; execute query OK
+[SQL] 870/1200 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 267/1201 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 268/1202 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 269/1203 delete; executing querydelete from standard_group  where name = 'k_ 66' 
+[SQL] 871/1204 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 872/1205 delete from standard_group  where name = 'k_ 66'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 270/1206 delete; execute query OK
+[SQL] 873/1207 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 271/1208 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 272/1209 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 273/1210 delete; executing querydelete from standard_group  where name = 'k_ 67' 
+[SQL] 874/1211 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 875/1212 delete from standard_group  where name = 'k_ 67'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 274/1213 delete; execute query OK
+[SQL] 876/1214 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 275/1215 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 276/1216 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 277/1217 delete; executing querydelete from standard_group  where name = 'k_ 68' 
+[SQL] 877/1218 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 878/1219 delete from standard_group  where name = 'k_ 68'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 278/1220 delete; execute query OK
+[SQL] 879/1221 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 279/1222 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 280/1223 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 281/1224 delete; executing querydelete from standard_group  where name = 'k_ 69' 
+[SQL] 880/1225 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 881/1226 delete from standard_group  where name = 'k_ 69'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 282/1227 delete; execute query OK
+[SQL] 882/1228 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 283/1229 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 284/1230 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 285/1231 delete; executing querydelete from standard_group  where name = 'k_ 70' 
+[SQL] 883/1232 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 884/1233 delete from standard_group  where name = 'k_ 70'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 286/1234 delete; execute query OK
+[SQL] 885/1235 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 287/1236 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 288/1237 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 289/1238 delete; executing querydelete from standard_group  where name = 'k_ 71' 
+[SQL] 886/1239 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 887/1240 delete from standard_group  where name = 'k_ 71'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 290/1241 delete; execute query OK
+[SQL] 888/1242 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 291/1243 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 292/1244 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 293/1245 delete; executing querydelete from standard_group  where name = 'k_ 72' 
+[SQL] 889/1246 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 890/1247 delete from standard_group  where name = 'k_ 72'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 294/1248 delete; execute query OK
+[SQL] 891/1249 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 295/1250 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 296/1251 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 297/1252 delete; executing querydelete from standard_group  where name = 'k_ 73' 
+[SQL] 892/1253 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 893/1254 delete from standard_group  where name = 'k_ 73'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 298/1255 delete; execute query OK
+[SQL] 894/1256 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 299/1257 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 300/1258 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 301/1259 delete; executing querydelete from standard_group  where name = 'k_ 74' 
+[SQL] 895/1260 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 896/1261 delete from standard_group  where name = 'k_ 74'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 302/1262 delete; execute query OK
+[SQL] 897/1263 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 303/1264 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 304/1265 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 305/1266 delete; executing querydelete from standard_group  where name = 'k_ 75' 
+[SQL] 898/1267 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 899/1268 delete from standard_group  where name = 'k_ 75'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 306/1269 delete; execute query OK
+[SQL] 900/1270 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 307/1271 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 308/1272 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 309/1273 delete; executing querydelete from standard_group  where name = 'k_ 76' 
+[SQL] 901/1274 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 902/1275 delete from standard_group  where name = 'k_ 76'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 310/1276 delete; execute query OK
+[SQL] 903/1277 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 311/1278 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 312/1279 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 313/1280 delete; executing querydelete from standard_group  where name = 'k_ 77' 
+[SQL] 904/1281 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 905/1282 delete from standard_group  where name = 'k_ 77'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 314/1283 delete; execute query OK
+[SQL] 906/1284 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 315/1285 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 316/1286 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 317/1287 delete; executing querydelete from standard_group  where name = 'k_ 78' 
+[SQL] 907/1288 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 908/1289 delete from standard_group  where name = 'k_ 78'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 318/1290 delete; execute query OK
+[SQL] 909/1291 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 319/1292 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 320/1293 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 321/1294 delete; executing querydelete from standard_group  where name = 'k_ 79' 
+[SQL] 910/1295 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 911/1296 delete from standard_group  where name = 'k_ 79'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 322/1297 delete; execute query OK
+[SQL] 912/1298 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 323/1299 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 324/1300 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 325/1301 delete; executing querydelete from standard_group  where name = 'k_ 80' 
+[SQL] 913/1302 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 914/1303 delete from standard_group  where name = 'k_ 80'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 326/1304 delete; execute query OK
+[SQL] 915/1305 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 327/1306 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 328/1307 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 329/1308 delete; executing querydelete from standard_group  where name = 'k_ 81' 
+[SQL] 916/1309 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 917/1310 delete from standard_group  where name = 'k_ 81'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 330/1311 delete; execute query OK
+[SQL] 918/1312 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 331/1313 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 332/1314 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 333/1315 delete; executing querydelete from standard_group  where name = 'k_ 82' 
+[SQL] 919/1316 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 920/1317 delete from standard_group  where name = 'k_ 82'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 334/1318 delete; execute query OK
+[SQL] 921/1319 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 335/1320 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 336/1321 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 337/1322 delete; executing querydelete from standard_group  where name = 'k_ 83' 
+[SQL] 922/1323 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 923/1324 delete from standard_group  where name = 'k_ 83'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 338/1325 delete; execute query OK
+[SQL] 924/1326 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 339/1327 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 340/1328 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 341/1329 delete; executing querydelete from standard_group  where name = 'k_ 84' 
+[SQL] 925/1330 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 926/1331 delete from standard_group  where name = 'k_ 84'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 342/1332 delete; execute query OK
+[SQL] 927/1333 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 343/1334 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 344/1335 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 345/1336 delete; executing querydelete from standard_group  where name = 'k_ 85' 
+[SQL] 928/1337 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 929/1338 delete from standard_group  where name = 'k_ 85'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 346/1339 delete; execute query OK
+[SQL] 930/1340 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 347/1341 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 348/1342 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 349/1343 delete; executing querydelete from standard_group  where name = 'k_ 86' 
+[SQL] 931/1344 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 932/1345 delete from standard_group  where name = 'k_ 86'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 350/1346 delete; execute query OK
+[SQL] 933/1347 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 351/1348 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 352/1349 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 353/1350 delete; executing querydelete from standard_group  where name = 'k_ 87' 
+[SQL] 934/1351 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 935/1352 delete from standard_group  where name = 'k_ 87'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 354/1353 delete; execute query OK
+[SQL] 936/1354 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 355/1355 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 356/1356 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 357/1357 delete; executing querydelete from standard_group  where name = 'k_ 88' 
+[SQL] 937/1358 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 938/1359 delete from standard_group  where name = 'k_ 88'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 358/1360 delete; execute query OK
+[SQL] 939/1361 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 359/1362 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 360/1363 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 361/1364 delete; executing querydelete from standard_group  where name = 'k_ 89' 
+[SQL] 940/1365 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 941/1366 delete from standard_group  where name = 'k_ 89'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 362/1367 delete; execute query OK
+[SQL] 942/1368 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 363/1369 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 364/1370 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 365/1371 delete; executing querydelete from standard_group  where name = 'k_ 90' 
+[SQL] 943/1372 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 944/1373 delete from standard_group  where name = 'k_ 90'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 366/1374 delete; execute query OK
+[SQL] 945/1375 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 367/1376 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 368/1377 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 369/1378 delete; executing querydelete from standard_group  where name = 'k_ 91' 
+[SQL] 946/1379 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 947/1380 delete from standard_group  where name = 'k_ 91'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 370/1381 delete; execute query OK
+[SQL] 948/1382 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 371/1383 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 372/1384 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 373/1385 delete; executing querydelete from standard_group  where name = 'k_ 92' 
+[SQL] 949/1386 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 950/1387 delete from standard_group  where name = 'k_ 92'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 374/1388 delete; execute query OK
+[SQL] 951/1389 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 375/1390 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 376/1391 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 377/1392 delete; executing querydelete from standard_group  where name = 'k_ 93' 
+[SQL] 952/1393 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 953/1394 delete from standard_group  where name = 'k_ 93'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 378/1395 delete; execute query OK
+[SQL] 954/1396 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 379/1397 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 380/1398 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 381/1399 delete; executing querydelete from standard_group  where name = 'k_ 94' 
+[SQL] 955/1400 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 956/1401 delete from standard_group  where name = 'k_ 94'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 382/1402 delete; execute query OK
+[SQL] 957/1403 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 383/1404 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 384/1405 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 385/1406 delete; executing querydelete from standard_group  where name = 'k_ 95' 
+[SQL] 958/1407 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 959/1408 delete from standard_group  where name = 'k_ 95'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 386/1409 delete; execute query OK
+[SQL] 960/1410 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 387/1411 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 388/1412 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 389/1413 delete; executing querydelete from standard_group  where name = 'k_ 96' 
+[SQL] 961/1414 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 962/1415 delete from standard_group  where name = 'k_ 96'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 390/1416 delete; execute query OK
+[SQL] 963/1417 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 391/1418 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 392/1419 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 393/1420 delete; executing querydelete from standard_group  where name = 'k_ 97' 
+[SQL] 964/1421 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 965/1422 delete from standard_group  where name = 'k_ 97'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 394/1423 delete; execute query OK
+[SQL] 966/1424 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 395/1425 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 396/1426 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 397/1427 delete; executing querydelete from standard_group  where name = 'k_ 98' 
+[SQL] 967/1428 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 968/1429 delete from standard_group  where name = 'k_ 98'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 398/1430 delete; execute query OK
+[SQL] 969/1431 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 399/1432 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 400/1433 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 401/1434 delete; executing querydelete from standard_group  where name = 'k_ 99' 
+[SQL] 970/1435 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 971/1436 delete from standard_group  where name = 'k_ 99'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 402/1437 delete; execute query OK
+[SQL] 972/1438 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 403/1439 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 404/1440 delete record; execute query OK
+[STANDARD_GROUP_TYPE_IO] 405/1441 delete; executing querydelete from standard_group  where name = 'k_ 100' 
+[SQL] 973/1442 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 974/1443 delete from standard_group  where name = 'k_ 100'  (1 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 406/1444 delete; execute query OK
+[SQL] 975/1445 COMMIT (0 tuples) PGRES_COMMAND_OK
+[STANDARD_GROUP_TYPE_IO] 407/1446 delete criteria; execute query OK
+[STANDARD_GROUP_TYPE_IO] 408/1447 delete record; execute query OK
+[SIMPLE_PG_TEST] 10/1448 Standard_Group_Type_Create_Test: retrieve all records
+[SIMPLE_PG_TEST] 11/1449 Standard_Group_Type: Name = k_ 1Description = dat forDescription
+[SIMPLE_PG_TEST] 12/1450 Standard_Group_Type: Name = k_ 2Description = dat forDescription
+[SIMPLE_PG_TEST] 13/1451 Standard_Group_Type: Name = k_ 3Description = dat forDescription
+[SIMPLE_PG_TEST] 14/1452 Standard_Group_Type: Name = k_ 4Description = dat forDescription
+[SIMPLE_PG_TEST] 15/1453 Standard_Group_Type: Name = k_ 5Description = dat forDescription
+[SIMPLE_PG_TEST] 16/1454 Standard_Group_Type: Name = k_ 6Description = dat forDescription
+[SIMPLE_PG_TEST] 17/1455 Standard_Group_Type: Name = k_ 7Description = dat forDescription
+[SIMPLE_PG_TEST] 18/1456 Standard_Group_Type: Name = k_ 8Description = dat forDescription
+[SIMPLE_PG_TEST] 19/1457 Standard_Group_Type: Name = k_ 9Description = dat forDescription
+[SIMPLE_PG_TEST] 20/1458 Standard_Group_Type: Name = k_ 10Description = dat forDescription
+[SIMPLE_PG_TEST] 21/1459 Standard_Group_Type: Name = k_ 11Description = dat forDescription
+[SIMPLE_PG_TEST] 22/1460 Standard_Group_Type: Name = k_ 12Description = dat forDescription
+[SIMPLE_PG_TEST] 23/1461 Standard_Group_Type: Name = k_ 13Description = dat forDescription
+[SIMPLE_PG_TEST] 24/1462 Standard_Group_Type: Name = k_ 14Description = dat forDescription
+[SIMPLE_PG_TEST] 25/1463 Standard_Group_Type: Name = k_ 15Description = dat forDescription
+[SIMPLE_PG_TEST] 26/1464 Standard_Group_Type: Name = k_ 16Description = dat forDescription
+[SIMPLE_PG_TEST] 27/1465 Standard_Group_Type: Name = k_ 17Description = dat forDescription
+[SIMPLE_PG_TEST] 28/1466 Standard_Group_Type: Name = k_ 18Description = dat forDescription
+[SIMPLE_PG_TEST] 29/1467 Standard_Group_Type: Name = k_ 19Description = dat forDescription
+[SIMPLE_PG_TEST] 30/1468 Standard_Group_Type: Name = k_ 20Description = dat forDescription
+[SIMPLE_PG_TEST] 31/1469 Standard_Group_Type: Name = k_ 21Description = dat forDescription
+[SIMPLE_PG_TEST] 32/1470 Standard_Group_Type: Name = k_ 22Description = dat forDescription
+[SIMPLE_PG_TEST] 33/1471 Standard_Group_Type: Name = k_ 23Description = dat forDescription
+[SIMPLE_PG_TEST] 34/1472 Standard_Group_Type: Name = k_ 24Description = dat forDescription
+[SIMPLE_PG_TEST] 35/1473 Standard_Group_Type: Name = k_ 25Description = dat forDescription
+[SIMPLE_PG_TEST] 36/1474 Standard_Group_Type: Name = k_ 26Description = dat forDescription
+[SIMPLE_PG_TEST] 37/1475 Standard_Group_Type: Name = k_ 27Description = dat forDescription
+[SIMPLE_PG_TEST] 38/1476 Standard_Group_Type: Name = k_ 28Description = dat forDescription
+[SIMPLE_PG_TEST] 39/1477 Standard_Group_Type: Name = k_ 29Description = dat forDescription
+[SIMPLE_PG_TEST] 40/1478 Standard_Group_Type: Name = k_ 30Description = dat forDescription
+[SIMPLE_PG_TEST] 41/1479 Standard_Group_Type: Name = k_ 31Description = dat forDescription
+[SIMPLE_PG_TEST] 42/1480 Standard_Group_Type: Name = k_ 32Description = dat forDescription
+[SIMPLE_PG_TEST] 43/1481 Standard_Group_Type: Name = k_ 33Description = dat forDescription
+[SIMPLE_PG_TEST] 44/1482 Standard_Group_Type: Name = k_ 34Description = dat forDescription
+[SIMPLE_PG_TEST] 45/1483 Standard_Group_Type: Name = k_ 35Description = dat forDescription
+[SIMPLE_PG_TEST] 46/1484 Standard_Group_Type: Name = k_ 36Description = dat forDescription
+[SIMPLE_PG_TEST] 47/1485 Standard_Group_Type: Name = k_ 37Description = dat forDescription
+[SIMPLE_PG_TEST] 48/1486 Standard_Group_Type: Name = k_ 38Description = dat forDescription
+[SIMPLE_PG_TEST] 49/1487 Standard_Group_Type: Name = k_ 39Description = dat forDescription
+[SIMPLE_PG_TEST] 50/1488 Standard_Group_Type: Name = k_ 40Description = dat forDescription
+[SIMPLE_PG_TEST] 51/1489 Standard_Group_Type: Name = k_ 41Description = dat forDescription
+[SIMPLE_PG_TEST] 52/1490 Standard_Group_Type: Name = k_ 42Description = dat forDescription
+[SIMPLE_PG_TEST] 53/1491 Standard_Group_Type: Name = k_ 43Description = dat forDescription
+[SIMPLE_PG_TEST] 54/1492 Standard_Group_Type: Name = k_ 44Description = dat forDescription
+[SIMPLE_PG_TEST] 55/1493 Standard_Group_Type: Name = k_ 45Description = dat forDescription
+[SIMPLE_PG_TEST] 56/1494 Standard_Group_Type: Name = k_ 46Description = dat forDescription
+[SIMPLE_PG_TEST] 57/1495 Standard_Group_Type: Name = k_ 47Description = dat forDescription
+[SIMPLE_PG_TEST] 58/1496 Standard_Group_Type: Name = k_ 48Description = dat forDescription
+[SIMPLE_PG_TEST] 59/1497 Standard_Group_Type: Name = k_ 49Description = dat forDescription
+[SIMPLE_PG_TEST] 60/1498 Standard_Group_Type: Name = k_ 50Description = dat forDescription
+[SIMPLE_PG_TEST] 61/1499 Standard_Group_Type: Name = k_ 51Description = dat forDescription
+[SIMPLE_PG_TEST] 62/1500 Standard_Group_Type: Name = k_ 52Description = dat forDescription
+[SIMPLE_PG_TEST] 63/1501 Standard_Group_Type: Name = k_ 53Description = dat forDescription
+[SIMPLE_PG_TEST] 64/1502 Standard_Group_Type: Name = k_ 54Description = dat forDescription
+[SIMPLE_PG_TEST] 65/1503 Standard_Group_Type: Name = k_ 55Description = dat forDescription
+[SIMPLE_PG_TEST] 66/1504 Standard_Group_Type: Name = k_ 56Description = dat forDescription
+[SIMPLE_PG_TEST] 67/1505 Standard_Group_Type: Name = k_ 57Description = dat forDescription
+[SIMPLE_PG_TEST] 68/1506 Standard_Group_Type: Name = k_ 58Description = dat forDescription
+[SIMPLE_PG_TEST] 69/1507 Standard_Group_Type: Name = k_ 59Description = dat forDescription
+[SIMPLE_PG_TEST] 70/1508 Standard_Group_Type: Name = k_ 60Description = dat forDescription
+[SIMPLE_PG_TEST] 71/1509 Standard_Group_Type: Name = k_ 61Description = dat forDescription
+[SIMPLE_PG_TEST] 72/1510 Standard_Group_Type: Name = k_ 62Description = dat forDescription
+[SIMPLE_PG_TEST] 73/1511 Standard_Group_Type: Name = k_ 63Description = dat forDescription
+[SIMPLE_PG_TEST] 74/1512 Standard_Group_Type: Name = k_ 64Description = dat forDescription
+[SIMPLE_PG_TEST] 75/1513 Standard_Group_Type: Name = k_ 65Description = dat forDescription
+[SIMPLE_PG_TEST] 76/1514 Standard_Group_Type: Name = k_ 66Description = dat forDescription
+[SIMPLE_PG_TEST] 77/1515 Standard_Group_Type: Name = k_ 67Description = dat forDescription
+[SIMPLE_PG_TEST] 78/1516 Standard_Group_Type: Name = k_ 68Description = dat forDescription
+[SIMPLE_PG_TEST] 79/1517 Standard_Group_Type: Name = k_ 69Description = dat forDescription
+[SIMPLE_PG_TEST] 80/1518 Standard_Group_Type: Name = k_ 70Description = dat forDescription
+[SIMPLE_PG_TEST] 81/1519 Standard_Group_Type: Name = k_ 71Description = dat forDescription
+[SIMPLE_PG_TEST] 82/1520 Standard_Group_Type: Name = k_ 72Description = dat forDescription
+[SIMPLE_PG_TEST] 83/1521 Standard_Group_Type: Name = k_ 73Description = dat forDescription
+[SIMPLE_PG_TEST] 84/1522 Standard_Group_Type: Name = k_ 74Description = dat forDescription
+[SIMPLE_PG_TEST] 85/1523 Standard_Group_Type: Name = k_ 75Description = dat forDescription
+[SIMPLE_PG_TEST] 86/1524 Standard_Group_Type: Name = k_ 76Description = dat forDescription
+[SIMPLE_PG_TEST] 87/1525 Standard_Group_Type: Name = k_ 77Description = dat forDescription
+[SIMPLE_PG_TEST] 88/1526 Standard_Group_Type: Name = k_ 78Description = dat forDescription
+[SIMPLE_PG_TEST] 89/1527 Standard_Group_Type: Name = k_ 79Description = dat forDescription
+[SIMPLE_PG_TEST] 90/1528 Standard_Group_Type: Name = k_ 80Description = dat forDescription
+[SIMPLE_PG_TEST] 91/1529 Standard_Group_Type: Name = k_ 81Description = dat forDescription
+[SIMPLE_PG_TEST] 92/1530 Standard_Group_Type: Name = k_ 82Description = dat forDescription
+[SIMPLE_PG_TEST] 93/1531 Standard_Group_Type: Name = k_ 83Description = dat forDescription
+[SIMPLE_PG_TEST] 94/1532 Standard_Group_Type: Name = k_ 84Description = dat forDescription
+[SIMPLE_PG_TEST] 95/1533 Standard_Group_Type: Name = k_ 85Description = dat forDescription
+[SIMPLE_PG_TEST] 96/1534 Standard_Group_Type: Name = k_ 86Description = dat forDescription
+[SIMPLE_PG_TEST] 97/1535 Standard_Group_Type: Name = k_ 87Description = dat forDescription
+[SIMPLE_PG_TEST] 98/1536 Standard_Group_Type: Name = k_ 88Description = dat forDescription
+[SIMPLE_PG_TEST] 99/1537 Standard_Group_Type: Name = k_ 89Description = dat forDescription
+[SIMPLE_PG_TEST] 100/1538 Standard_Group_Type: Name = k_ 90Description = dat forDescription
+[SIMPLE_PG_TEST] 101/1539 Standard_Group_Type: Name = k_ 91Description = dat forDescription
+[SIMPLE_PG_TEST] 102/1540 Standard_Group_Type: Name = k_ 92Description = dat forDescription
+[SIMPLE_PG_TEST] 103/1541 Standard_Group_Type: Name = k_ 93Description = dat forDescription
+[SIMPLE_PG_TEST] 104/1542 Standard_Group_Type: Name = k_ 94Description = dat forDescription
+[SIMPLE_PG_TEST] 105/1543 Standard_Group_Type: Name = k_ 95Description = dat forDescription
+[SIMPLE_PG_TEST] 106/1544 Standard_Group_Type: Name = k_ 96Description = dat forDescription
+[SIMPLE_PG_TEST] 107/1545 Standard_Group_Type: Name = k_ 97Description = dat forDescription
+[SIMPLE_PG_TEST] 108/1546 Standard_Group_Type: Name = k_ 98Description = dat forDescription
+[SIMPLE_PG_TEST] 109/1547 Standard_Group_Type: Name = k_ 99Description = dat forDescription
+[SIMPLE_PG_TEST] 110/1548 Standard_Group_Type: Name = k_ 100Description = dat forDescription
+[SIMPLE_PG_TEST] 111/1549 Ending test Standard_Group_Type_Create_Test. Time taken =  4.770823000
+[SIMPLE_PG_TEST] 112/1550 Starting test Group_Members_Type_Create_Test
+[SIMPLE_PG_TEST] 113/1551 Clearing out the table
+[GROUP_MEMBERS_TYPE_IO] 1/1552 delete; executing querydelete from group_members  
+[SQL] 976/1553 Connecting to the database dbname=simple_pg user=postgres sslmode=allow ()
+[SQL] 977/1554 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 978/1555 delete from group_members   (0 tuples) PGRES_COMMAND_OK
+[GROUP_MEMBERS_TYPE_IO] 2/1556 delete; execute query OK
+[SQL] 979/1557 COMMIT (0 tuples) PGRES_COMMAND_OK
+[GROUP_MEMBERS_TYPE_IO] 3/1558 delete criteria; execute query OK
+[SIMPLE_PG_TEST] 114/1559 Group_Members_Type_Create_Test: create tests
+[SQL] 980/1560 compute (): select max( user_id ) from group_members
+[SQL] 981/1561 PQprepare(stmt53)
+[SQL] 982/1562 PREPARE cursor_stmt53 AS select max( user_id ) from group_members
+[SQL] 983/1563 BEGIN (0 tuples) PGRES_COMMAND_OK
+[SQL] 984/1564 (stmt53) (1 tuples) PGRES_TUPLES_OK
+[SQL] 985/1566 Finalize stmt on server: stmt53
+[SQL] 986/1567 DEALLOCATE cursor_stmt53 (PGRES_COMMAND_OK)
+[SIMPLE_PG_TEST] 115/1568 Group_Members_Type_Create_Test execute query failed with message Exception name: CONSTRAINT_ERROR
+_SIMPLE_PG_TEST_ Message: s-valuti.adb:220 explicit raise

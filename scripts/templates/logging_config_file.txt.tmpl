@@ -1,0 +1,26 @@
+-- see: http://docs.adacore.com/gnatcoll-docs/traces.html
+-- + on next line: enable everything by default
++
+-- log to this file
+>$logFileName
+--
+--  core modules
+--
+DB_COMMONS=no
+CONNECTION_POOL=no
+--
+-- testsuite
+--
+$testCase=yes
+--
+-- io packages
+--
+#for $package in $dbPackages:
+${package}=no
+#end for
+-- 
+-- === CUSTOM LOGGING START ===
+#for $e in $customLogs
+$e 
+#end for
+-- === CUSTOM LOGGING END ===

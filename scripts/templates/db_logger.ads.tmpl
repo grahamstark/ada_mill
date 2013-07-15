@@ -1,0 +1,38 @@
+--
+-- Created by ada_generator.py on $date
+-- 
+with Base_Types;
+--
+-- Graham's 10 minute DB_Logger
+--
+-- === CUSTOM IMPORTS START ===
+#for $e in $customImports 
+$e 
+#end for
+-- === CUSTOM IMPORTS END ===
+
+package DB_Logger is
+   -- === CUSTOM TYPES START ===
+#for $e in $customTypes 
+$e 
+#end for
+   -- === CUSTOM TYPES END ===
+   
+   type Log_Level is ( debug_level, info_level, warn_level, error_level );
+   
+   procedure set_Log_Level( new_level : Log_Level );
+   
+   procedure open( filename : String; maxSizeKB : integer := -1; line_break : String := Base_Types.UNIX_NEW_LINE );
+   
+   procedure debug( message : String );
+   procedure info( message : String );
+   procedure warn( message : String );
+   procedure error( message : String );
+
+   -- === CUSTOM PROCS START ===
+#for $e in $customProcs
+$e 
+#end for
+   -- === CUSTOM PROCS END ===
+   
+end DB_Logger;

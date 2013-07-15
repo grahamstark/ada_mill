@@ -1,0 +1,53 @@
+--
+-- Created by ada_generator.py on $date
+-- 
+
+-- === CUSTOM IMPORTS START ===
+#for $e in $customImports 
+$e 
+#end for
+-- === CUSTOM IMPORTS END ===
+
+
+package body Environment is
+   
+   SERVER_NAME       : constant String := "$hostname";
+   DATABASE_NAME     : constant String := "$database";
+   USER_NAME         : constant String := "$username";
+   PASSWORD          : Constant String := "$password";
+
+   -- === CUSTOM TYPES START ===
+#for $e in $customTypes 
+$e 
+#end for
+   -- === CUSTOM TYPES END ===
+
+
+   function Get_Server_Name return String is
+   begin
+      return SERVER_NAME;
+   end Get_Server_Name;
+
+   function Get_Database_Name return String is
+   begin
+      return DATABASE_NAME;
+   end Get_Database_Name;
+   
+   function Get_Username return String is
+   begin
+      return USER_NAME;
+   end Get_Username;
+   
+   function Get_Password return String is
+   begin
+      return PASSWORD;
+   end Get_Password;
+   
+   -- === CUSTOM PROCS START ===
+#for $e in $customProcs
+$e 
+#end for
+   -- === CUSTOM PROCS END ===
+
+end Environment;
+

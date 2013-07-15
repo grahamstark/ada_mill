@@ -1,0 +1,13 @@
+;
+; DB2 odbc ini file, created by mill.py on $date
+; Incorporate this in /etc/odbc.ini on a unix system; maybe turn on the tracing.
+; Assumes running on localhost.
+;
+; driver db2 driver is defined in odbcinst.ini; 
+;  see http://publib.boulder.ibm.com/infocenter/db2luw/v8/index.jsp?topic=/com.ibm.db2.udb.doc/ad/t0006349.htm
+; 
+;  
+$dbDecl
+Description     = $description
+Driver          = db2
+Database        = $database

@@ -1,0 +1,49 @@
+   $procedureHeader
+      ps : sql.SQLHDBC := sql.SQL_NULL_HANDLE;
+      local_connection : Database_Connection;
+      locally_allocated_connection : Boolean;
+      
+      query : Unbounded_String := UPDATE_PART & To_Unbounded_String(" ");
+      pk_c : d.Criteria;
+      values_c : d.Criteria;
+   begin
+      --
+      -- values to be updated
+      --
+#for $cr in $inputCriteria:
+      $cr;
+#end for;
+      --
+      -- primary key fields
+      --
+#for $cr in $pkCriteria:
+      $cr;
+#end for;
+      query := query & d.To_String( values_c, "," ) & d.to_string( pk_c );
+      Log( "update; executing query" & To_String(query) );
+      begin -- exception block 
+         if( connection = Null_Database_Connection )then
+            local_connection := Connection_Pool.Lease;
+            locally_allocated_connection := True;
+         else
+            local_connection := connection;
+            locally_allocated_connection := False;         
+         end if;
+
+         ps := dodbc.Initialise_Prepared_Statement( local_connection.connection, query );
+         
+         SQLExecute( ps );
+         Log( "update; execute query OK" );
+      exception 
+         when No_Data => Null; -- ignore if no updates made
+         when Error : others =>
+            Log( "update: failed with message " & Exception_Information(Error)  );
+            Raise_Exception( d.DB_Exception'Identity, 
+               "update: exception thrown " & Exception_Information(Error) );
+      end; -- exception block
+      dodbc.Close_Prepared_Statement( ps );
+      if( locally_allocated_connection )then
+         Connection_Pool.Return_Connection( local_connection );
+      end if;
+   end Update;
+

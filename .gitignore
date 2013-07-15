@@ -1,0 +1,10 @@
+*.ali
+*.o
+*.pyc
+bin/*
+docs/*.pdf
+docs/*.docx
+docs/*.doc
+docs/*.rtf
+docs/*.bib
+*~
