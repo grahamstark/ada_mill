@@ -46,6 +46,7 @@ PHP class or method name.
   name            CDATA #REQUIRED
   description     CDATA #IMPLIED
   adaExternalName CDATA #IMPLIED
+  defaultInstanceName CDATA #IMPLIED
 >
 
 

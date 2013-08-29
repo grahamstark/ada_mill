@@ -183,7 +183,9 @@ class Variable:
         def getDefaultAdaValue( self ):
                 default = 'FIXME';
                 if( self.isPrimaryKey ):
-                        if( self.schemaType == 'CHAR') or (self.schemaType == 'VARCHAR'):
+                        if( not self.default is None ):
+                                default = self.default
+                        elif( self.schemaType == 'CHAR') or (self.schemaType == 'VARCHAR'):
                                 ## fixme maybe string instead?
                                 default = 'MISSING_W_KEY'
                         elif self.schemaType == 'INTEGER' or self.schemaType == 'BIGINT':
@@ -630,6 +632,9 @@ def parseTable( xtable, databaseAdapter ):
         if( description == None ):
                 description = ''
         stable = Table( name, description, adaExternalName )
+        defaultInstanceName = get( xtable, 'defaultInstanceName', '' )
+        if( defaultInstanceName != '' ):
+                stable.adaInstanceName = defaultInstanceName 
         for column in xtable.iter( "column" ):
                 varname = column.get( 'name' )
                 stype = column.get( 'type' )

@@ -55,6 +55,29 @@ def isIntegerTypeInPostgres( variable ):
         return ( variable.schemaType == 'INTEGER' ) or ( variable.schemaType == 'BOOLEAN' ) or ( variable.schemaType == 'ENUM' ) or ( variable.schemaType == 'BIGINT' )
 
 
+def makeValueFunction( variable, posStr ):
+        """
+        single prec real integer or subtype: use native function
+        else use Type'Value( getTheString( ))
+        """
+        if( variable.hasUserDefinedAdaType()):
+                v =  variable.adaTypeName + "'Value( gse.Value( cursor, " + posStr + " ));\n"               
+        elif( variable.schemaType == 'BIGINT' ):
+                v = "Long_Integer'Value( gse.Value( cursor, " + posStr + " ));\n"
+        elif( variable.schemaType == 'BOOLEAN' ):
+                v = "gse.Boolean_Value( cursor, " + posStr + " ));\n"
+                needsCasting = 0
+        elif( variable.schemaType == 'INTEGER' ) or ( variable.schemaType == 'ENUM' ): 
+                v = "gse.Integer_Value( cursor, " + posStr + " );\n"
+        elif( variable.isFloatingPointType() ): 
+                v = variable.adaType+"'Value( gse.Value( cursor, " + posStr + " ));\n"
+        elif( variable.isDateType() ):
+                v = "gse.Time_Value( cursor, " + posStr + " );\n"
+        elif( variable.isStringType() ):
+                v = "gse.Value( cursor, " + posStr + " );\n"
+        return v;
+        
+        
 def makeBinding( databaseAdapter, instanceName, var, pos ):
         """
          Postgres binding declarations for each type we support,
@@ -73,7 +96,7 @@ def makeBinding( databaseAdapter, instanceName, var, pos ):
                                 binding += INDENT*6 + instanceName+'.'+var.adaName + " := Boolean'Val( i );\n";
                         binding += INDENT*5 + "end;"
                 else:
-                        binding += INDENT*5 + instanceName+'.'+var.adaName + " := " + var.adaType + "( gse.Integer_Value( cursor, " + posStr + " ));\n"
+                        binding += INDENT*5 + instanceName+'.'+var.adaName + " := " + makeValueFunction( var, posStr ); # var.adaType + "( gse.Integer_Value( cursor, " + posStr + " ));\n"
                 binding += INDENT*4 + "end if;"
         elif( var.isStringType() ):
                 charType = databaseAdapter.supportedSqlCharType
@@ -82,7 +105,7 @@ def makeBinding( databaseAdapter, instanceName, var, pos ):
                 binding += INDENT*4 + "end if;"
         elif( var.isNumericType() ):
                 binding = INDENT*4 + "if not gse.Is_Null( cursor, " + posStr + " )then\n"
-                binding += INDENT*5 + instanceName+'.'+var.adaName + ":= " + var.adaType + "( gse.Float_Value( cursor, " + posStr + " ));\n"
+                binding += INDENT*5 + instanceName+'.'+var.adaName + ":= " + makeValueFunction( var, posStr ); # var.adaType + "( gse.Float_Value( cursor, " + posStr + " ));\n"
                 binding += INDENT*4 + "end if;"
         elif ( var.isDateType() ):
                 binding = INDENT*4 + "if not gse.Is_Null( cursor, " + posStr + " )then\n"
@@ -171,11 +194,12 @@ def makeNextFreeFunc( table, var ):
         template.functionName = "Next_Free_"+var.adaName
         template.adaName = var.adaName
         template.adaType = var.getAdaType( True )
+        template.getFunction = makeValueFunction( var, "0" )
         if( var.sqlType == 'BIGINT' ):
                 template.whichBinding = 'L'
         else:
                 template.whichBinding = 'I'
-        s = str(template) 
+        s = str( template ) 
         return s
   
 def makeDeleteProcBody( table ):

@@ -4,7 +4,7 @@
    $functionHeader
       query      : constant String := "$statement";
       cursor     : gse.Forward_Cursor;
-      ai         : Integer := 0;
+      ai         : $adaType := 0;
       ps : gse.Prepared_Statement;
       local_connection : Database_Connection;
       is_local_connection : Boolean;
@@ -22,7 +22,7 @@
       cursor.Fetch( local_connection, ps );
       Check_Result( local_connection );
       if( gse.Has_Row( cursor ))then
-         ai := gse.Integer_Value( cursor, 0 );
+         ai := $getFunction
       end if;
       if( is_local_connection )then
          Connection_Pool.Return_Connection( local_connection );

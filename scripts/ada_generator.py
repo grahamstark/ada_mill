@@ -746,7 +746,7 @@ def make_io_adb( database, table ):
                 template.criteria.append( makeCriteriaBody( var ))
                 template.orderingStatements.append( makeAddOrderingColumnBody( var ));
                 if( var.isStringType() ):
-                        template.criteria.append( makeCriteriaBody( var , True ))
+                        template.criteria.append( makeCriteriaBody( var ,True ))
                 if( var.isPrimaryKey ):
                         if( var.isIntegerType() ):
                                 template.incr_integer_pk_fields.append( asp.makeNextFreeFunc( table, var ) );
