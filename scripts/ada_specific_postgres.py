@@ -55,11 +55,14 @@ def isIntegerTypeInPostgres( variable ):
         return ( variable.schemaType == 'INTEGER' ) or ( variable.schemaType == 'BOOLEAN' ) or ( variable.schemaType == 'ENUM' ) or ( variable.schemaType == 'BIGINT' )
 
 
-def makeValueFunction( variable, posStr ):
+def makeValueFunction( variable, posStr, default_value=None ):
         """
         single prec real integer or subtype: use native function
         else use Type'Value( getTheString( ))
         """
+        defstr = '' 
+        if( default_value != None ):
+                posStr = posStr + ", " + default_value
         if( variable.hasUserDefinedAdaType()):
                 v =  variable.adaTypeName + "'Value( gse.Value( cursor, " + posStr + " ));\n"               
         elif( variable.schemaType == 'BIGINT' ):
@@ -194,7 +197,7 @@ def makeNextFreeFunc( table, var ):
         template.functionName = "Next_Free_"+var.adaName
         template.adaName = var.adaName
         template.adaType = var.getAdaType( True )
-        template.getFunction = makeValueFunction( var, "0" )
+        template.getFunction = makeValueFunction( var, "0", "0" )
         if( var.sqlType == 'BIGINT' ):
                 template.whichBinding = 'L'
         else:
