@@ -83,7 +83,7 @@ def makeConfiguredInsertParamsHeader( table ):
                 elif ( var.isDateType() ):
                         typ = 'Parameter_Date'
                         default = 'Clock'
-                s = '{:>4d} : {:<20} : {:<18} : {:<20} : {:>20} '.format( p, var.adaName, typ, var.adaType, default )
+                s = '{:>4d} : {:<24} : {:<18} : {:<20} : {:>8} '.format( p, var.adaName, typ, var.adaType, default )
                 comments.append( s )
         template.n = p 
         template.comments = comments;
