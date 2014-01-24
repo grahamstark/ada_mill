@@ -1,0 +1,8 @@
+   function Get_Prepared_Insert_Statement( connection : Database_Connection ) return gse.Prepared_Statement is 
+      ps : gse.Prepared_Statement; 
+      query : constant String := INSERT_PART & " ( $posIndicators )"; 
+   begin 
+      ps := gse.Prepare( query, On_Server => True ); 
+      return ps; 
+   end Get_Prepared_Insert_Statement; 
+
