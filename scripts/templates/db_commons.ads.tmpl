@@ -30,7 +30,7 @@ $e
    -- NULL_Conn : constant Connection := null;
 
    
-   subtype Real is Base_Types.Real;
+   -- subtype Real is Base_Types.Real;
    subtype Decimal is Base_Types.Decimal;
    --
    --  Simple date time record to serve as an intermediate type
@@ -43,7 +43,7 @@ $e
       hour,
       minute,
       second : integer;
-      fraction : Real;
+      fraction : Long_Float;
    end record;
    
    function Date_Time_To_Ada_Time( dTime : Date_Time_Rec ) return Ada.Calendar.Time; 
@@ -83,13 +83,13 @@ $e
       varname : String;
       op : operation_type;
       join : join_type; 
-      value : Big_Integer  ) return Criterion;
+      value : Big_Int  ) return Criterion;
                                   
    function Make_Criterion_Element( 
       varname : String;
       op : operation_type;
       join : join_type; 
-      value : Real  ) return Criterion;
+      value : Long_Float  ) return Criterion;
                                   
    function Make_Criterion_Element( 
       varname : String;

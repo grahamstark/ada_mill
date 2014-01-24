@@ -1,10 +1,13 @@
 import sys, os
-from string import capwords, strip
+from string import capwords, strip, replace, lower
 import re
 
 INDENT = '   '
      
 MAXLENGTH = 120
+
+def packageNameToFileName( packageName ):
+        return replace( lower( packageName ), '.', '-' );
 
 def readLinesBetween( fileName, startRE, endRE ):
         """

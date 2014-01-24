@@ -39,6 +39,20 @@ from ada_generator_libs import makeRetrieveSHeader, makeSaveProcHeader, makeUpda
 
 CONNECTION_STRING = "connection : Database_Connection := Null_Database_Connection"
 
+# FIXME these next 2 are actually the same for all Native DB interfaces, not just postgres
+def makePreparedInsertStatementBody( table ):
+        return ''
+
+def makeConfiguredInsertParamsBody( table ):        
+        return ''
+
+def makePreparedInsertStatementHeader( table ):
+        return ''
+
+def makeConfiguredInsertParamsHeader( table ):        
+        return ''
+        
+
 def templatesPath():
         return WORKING_PATHS.templatesPath+WORKING_PATHS.sep+'odbc'+WORKING_PATHS.sep;
 

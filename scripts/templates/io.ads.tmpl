@@ -31,6 +31,7 @@ package $IOName is
    use $e;
 #end for
    
+use $dataPackageName;
 #for $e in $adaTypePackages
    use $e;
 #end for
@@ -105,6 +106,10 @@ $e
 #for $ord in $orderingStatements
    $ord
 #end for
+
+$configuredInsertParamsHeader
+
+$preparedInsertStatementHeader
 
    -- === CUSTOM PROCS START ===
 #for $e in $customProcs

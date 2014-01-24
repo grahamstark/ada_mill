@@ -51,6 +51,49 @@ def writeProjectFile( database ):
         outfile.write( str(template) )
         outfile.close()
 
+# FIXME these next 2 are actually the same for all Native DB interfaces, not just postgres
+def makePreparedInsertStatementHeader():
+        return 'function Get_Prepared_Insert_Statement( connection : Database_Connection ) return gse.Prepared_Statement'        
+
+def makePreparedInsertStatementBody( table ):
+        template = Template( file=templatesPath() + 'prepared_insert_statement.tmpl' )
+        queries = []
+        p = 0
+        for var in table.variables:
+                p += 1
+                queries.append( "${0:d}".format( p ))
+        template.posIndicators = ", ".join( queries )
+        return str(template)
+
+def makeConfiguredInsertParamsHeader():
+        return 'function Get_Configured_Insert_Params return GNATCOLL.SQL.Exec.SQL_Parameters';
+       
+def makeConfiguredInsertParamsBody( table ):        
+        template = Template( file=templatesPath() + 'configured_insert_params.tmpl' )
+        p = 0
+        n = len( table.variables )
+        for var in table.variables:
+                p += 1
+                if( isIntegerTypeInPostgres( var )):
+                        typ = 'Parameter_Integer'
+                        default = '0'
+                elif( var.isStringType() ):
+                        typ = 'Parameter_Text'
+                        default = 'null';
+                elif( var.isNumericType() ):
+                        typ = 'Parameter_Float'
+                        default = '0.0'
+                elif ( var.isDateType() ):
+                        typ = 'Parameter_Date'
+                        default = 'Clock'
+                s = '        {0:d} => ( ${1:s}, ${2:s} )'.format( p, typ, default )
+                if( p < n ):
+                        s += ","
+        template.n = p
+        template.rows.append( s )    
+        return str(template)
+        
+
 def isIntegerTypeInPostgres( variable ):
         return ( variable.schemaType == 'INTEGER' ) or ( variable.schemaType == 'BOOLEAN' ) or ( variable.schemaType == 'ENUM' ) or ( variable.schemaType == 'BIGINT' )
 
@@ -62,11 +105,15 @@ def makeValueFunction( variable, posStr, default_value=None ):
         """
         defstr = '' 
         if( default_value != None ):
-                posStr = posStr + ", " + default_value
+                if not ( variable.hasUserDefinedAdaType() or variable.schemaType == 'BIGINT' or variable.isFloatingPointType() or variable.isStringType()):
+                        # posStr = posStr + ", \"" + default_value+'"'
+                        # no defaults for pure 'value'
+                        # fixme add a clause
+                        posStr = posStr + ", " + default_value
         if( variable.hasUserDefinedAdaType()):
                 v =  variable.adaTypeName + "'Value( gse.Value( cursor, " + posStr + " ));\n"               
         elif( variable.schemaType == 'BIGINT' ):
-                v = "Long_Integer'Value( gse.Value( cursor, " + posStr + " ));\n"
+                v = "Big_Int'Value( gse.Value( cursor, " + posStr + " ));\n"
         elif( variable.schemaType == 'BOOLEAN' ):
                 v = "gse.Boolean_Value( cursor, " + posStr + " ));\n"
                 needsCasting = 0
@@ -170,7 +217,8 @@ def getDBWiths():
         retrieve function.
         """
         return ["GNATCOLL.SQL_Impl",
-                "GNATCOLL.SQL.Postgres" ]
+                "GNATCOLL.SQL.Postgres",
+                "DB_Commons.PSQL"]
 
 def getDBRenames():
         """
@@ -178,7 +226,8 @@ def getDBRenames():
         """
         return { "gsi" : "GNATCOLL.SQL_Impl",
                  "gse" : "GNATCOLL.SQL.Exec",
-                 "gsp" : "GNATCOLL.SQL.Postgres" };
+                 "gsp" : "GNATCOLL.SQL.Postgres",
+                 "dbp" : "DB_Commons.PSQL"};
 
 def getDBUses():
         """
@@ -211,10 +260,21 @@ def makeDeleteProcBody( table ):
   
 def makeDriverCommons():
         """
-        This does nothing! Needed for compatibility with odbc version
-        Write versions of support files db_commons, db_commons-psql to src/
-        We just add some headers to each; otherwise they're uncustomised.
         """
+        targets = [ 'db_commons-psql' ]
+        exts = [ 'adb', 'ads' ]
+        for target in targets:
+                for ext in exts:
+                        outfileName = WORKING_PATHS.srcDir + target+"."+ext
+                        template = Template( file=templatesPath()+target+"."+ext+"."+"tmpl" )
+                        template.customImports = readLinesBetween( outfileName, ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
+                        template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
+                        template.customProcs = readLinesBetween( outfileName, ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
+                        template.date = datetime.datetime.now()
+                        outfile = file( outfileName, 'w' );
+                        outfile.write( str(template) )
+                        outfile.close()
+        
         return
        
 def writeConnectionPoolADB():

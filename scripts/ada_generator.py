@@ -32,7 +32,9 @@ import datetime
 from sys_targets import TARGETS
 from paths import WORKING_PATHS
 from table_model import DataSource
-from utils import makePlural, adafyName, makePaddedString, INDENT, MAXLENGTH, readLinesBetween, makeUniqueArray
+from utils import makePlural, adafyName, makePaddedString, \
+        INDENT, MAXLENGTH, readLinesBetween, makeUniqueArray, \
+        packageNameToFileName
 from ada_generator_libs import makeRetrieveSHeader, makeSaveProcHeader, \
         makeUpdateProcHeader, makeDeleteSpecificProcHeader, makeCriterionList, \
         makePrimaryKeyCriterion, makeNextFreeHeader, makeDeleteSpecificProcBody
@@ -208,7 +210,7 @@ def make_io_ads( database, adaTypePackages, table ):
                 elif TARGETS.databaseType == 'sqlite':
                         import ada_specific_sqlite as asp
 
-        dataPackageName = database.adaDataPackageName;
+        dataPackageName = database.adaDataPackageName();
         outfileName = (WORKING_PATHS.srcDir+table.adaTypeName+'_io.ads').lower()
         template = Template( file=WORKING_PATHS.templatesPath+"io.ads.tmpl" )
         template.connectionString = asp.CONNECTION_STRING        
@@ -260,6 +262,9 @@ def make_io_ads( database, adaTypePackages, table ):
                         assocFunc = makeAssociatedRetrieveHeader( table, referencingTableName, referencedTable.adaQualifiedListName, asp.CONNECTION_STRING, ';' )
                         template.associated.append( assocFunc );
         template.dataPackageName = dataPackageName 
+        template.preparedInsertStatementHeader = asp.makePreparedInsertStatementHeader()
+        template.configuredInsertParamsHeader = asp.makeConfiguredInsertParamsHeader()
+
         outfile = file( outfileName, 'w' );        
         outfile.write( str(template) ) 
         outfile.close()
@@ -439,7 +444,7 @@ def makeDefaultRecordDecl( table ):
 def makeDataADS( database ):
         """
          Write a .ads file containing all the data records and container declarations 
-         writes to a file <database_name>_data.ads in the src output directory. 
+         writes to a file  in the src output directory. 
         """
         rtabs = database.tables[:]
         rtabs.reverse()
@@ -452,8 +457,8 @@ def makeDataADS( database ):
                         record += makeToStringDecl( table, ';' );
                         records.append( record );
         if( len( records ) > 0 ):
-                outfileName = WORKING_PATHS.srcDir+(database.dataSource.database+'_data.ads')
-                
+                outfileName = WORKING_PATHS.srcDir+packageNameToFileName( database.adaDataPackageName() )+'.ads'
+                print "makeDataADS writing to " + outfileName
                 customImports = readLinesBetween( outfileName, ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
                 customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
                 customProcs = readLinesBetween( outfileName, ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
@@ -470,20 +475,21 @@ def makeDataADS( database ):
                 template.date = datetime.datetime.now()
                 outfile.write( str(template) )
                 outfile.close
+                
         
 def makeDataADB( database ):
         """
          Write a .adb file  
-         writes to a file <database_name>_data.adb in the src output directory. 
+         writes to a file in the src output directory. 
         """
         rtabs = database.tables[:]
         rtabs.reverse()
         template = Template( file=WORKING_PATHS.templatesPath+"data.adb.tmpl" )
         template.toStrings = []
-        template.name = database.adaDataPackageName
+        template.name = database.adaDataPackageName()
         template.date = datetime.datetime.now()
         n_tables = 0
-        outfileName = WORKING_PATHS.srcDir+database.dataSource.database+'_data.adb'
+        outfileName = WORKING_PATHS.srcDir+packageNameToFileName( database.adaDataPackageName())+'.adb'
         for table in rtabs:
                 if( table.adaExternalName == '' ):
                         n_tables += 1
@@ -663,7 +669,7 @@ def writeTestCaseADB( database ):
         template.customProcs = readLinesBetween( outfileName, ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
         template.logFileName = WORKING_PATHS.etcDir+ 'logging_config_file.txt'
         
-        template.datapackage = adafyName( database.dataSource.database+"_Data" );
+        template.datapackage = adafyName( database.adaDataPackageName() );
         template.dbPackages = []
         template.otherPackages = database.adaTypePackagesCompleteSet
         template.createRegisters = []
@@ -731,7 +737,7 @@ def make_io_adb( database, table ):
         template.deletePart = makeDeletePartString( table )
         template.updatePart = makeUpdatePartString( table )
         template.IOName = table.adaTypeName+"_IO"
-        template.IOName_Upper_Case = (table.adaTypeName+"_IO").upper()
+        template.IOName_Upper_Case = ( table.adaTypeName+"_IO").upper()
         template.criteria = []
         template.nullName = table.adaQualifiedNullName;
         template.orderingStatements = []
@@ -755,7 +761,7 @@ def make_io_adb( database, table ):
         else:
                 template.pkFunc = ''
         template.has_primary_key = table.hasPrimaryKey();
-        template.isNullFunc = makeIsNullFunc( table, database.adaDataPackageName )
+        template.isNullFunc = makeIsNullFunc( table, database.adaDataPackageName() )
 
         template.retrieveByCFunc = makeRetrieveCFunc( table, asp.CONNECTION_STRING );
         
@@ -776,10 +782,12 @@ def make_io_adb( database, table ):
                         childFunc = makeChildRetrieveBody( table, referencingTable, fk, asp.CONNECTION_STRING )
                         template.associated.append( childFunc );
                 else:
-                        listAdaName = database.adaDataPackageName+"."+referencingTable.adaTypeName+"_List.Vector"
+                        listAdaName = database.adaDataPackageName() +"."+referencingTable.adaTypeName+"_List.Vector"
                         assocFunc = makeAssociatedRetrieveBody( table, referencingTable, fk, asp.CONNECTION_STRING ); #, listAdaName, fk )
                         template.associated.append( assocFunc );
-        template.dataPackageName = database.adaDataPackageName 
+        template.dataPackageName = database.adaDataPackageName() 
+        template.preparedInsertStatementBody = asp.makePreparedInsertStatementBody( table )
+        template.configuredInsertParamsBody = asp.makeConfiguredInsertParamsBody( table )
         outfile = file( outfileName, 'w' );
         outfile.write( str(template) ) 
         outfile.close()

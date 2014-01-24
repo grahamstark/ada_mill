@@ -121,7 +121,7 @@ class Variable:
         def getODBCType( self, databaseAdapter ):
                 odbcType = self.schemaType.lower()
                 if self.schemaType == 'DECIMAL' :
-                        odbcType = 'Real' ## ocbc can handle extracting decimal cols as reals, which we can then cast into decimals
+                        odbcType = 'Long_Float' ## ocbc can handle extracting decimal cols as reals, which we can then cast into decimals
                 elif self.schemaType == 'REAL' or self.schemaType == 'DOUBLE' or self.schemaType == 'FLOAT':
                         odbcType = 'Real'
                 elif self.schemaType == 'CHAR' or self.schemaType == 'VARCHAR':
@@ -134,7 +134,7 @@ class Variable:
                 elif self.schemaType == 'ENUM' or self.schemaType == 'BOOLEAN' :
                         odbcType = 'Integer'
                 elif self.schemaType == 'BIGINT':
-                        odbcType = 'Big_Integer'
+                        odbcType = 'Big_Int'
                 return odbcType
 
         def getSQLType( self, databaseAdapter ):
@@ -166,7 +166,7 @@ class Variable:
                 elif self.schemaType == 'DECIMAL' :
                         adaType = makeAdaDecimalTypeName( self.size, self.scale )
                 elif self.schemaType == 'REAL' or self.schemaType == 'DOUBLE' or self.schemaType == 'FLOAT':
-                        adaType = 'Real'
+                        adaType = 'Long_Float'
                 elif self.schemaType == 'CHAR' or self.schemaType == 'VARCHAR':
                         adaType = 'Unbounded_String';
                 elif ( self.isDateType() ):                                
@@ -174,7 +174,7 @@ class Variable:
                 elif self.schemaType == 'ENUM':  # FIXME we need to properly find the reference to the corresponding enumerated_type class here
                         adaType = self.tablename + "_" + self.varname + "_Enum"
                 elif self.schemaType == 'BIGINT':
-                        adaType = 'Big_Integer'
+                        adaType = 'Big_Int'
                 return adaType
 
         
@@ -320,11 +320,12 @@ class Table:
                 self.indexes = []
                 self.name = name
                 self.adaExternalName = adaExternalName
-                self.adaInstanceName = adafyName( name ).lower()
+                self.adaInstanceName = 'a_' + adafyName( name ).lower()
                 if( self.adaExternalName != '' ):
                         self.adaTypeName = adaExternalName
                 else:
-                        self.adaTypeName = adafyName( name ) + "_Type"
+                        self.adaTypeName = adafyName( name ) 
+                        # + "_Type"
                 self.adaNullName = 'Null_' + self.adaTypeName 
                 self.adaIOPackageName = self.adaTypeName+"_IO";
                 self.adaContainerName = self.adaTypeName+"_List"
@@ -489,6 +490,7 @@ class EnumeratedValue:
 class Database:
         def __init__( self, dataSource ):
                 self.adaTypePackages = []
+                self.adaDataPackage = None
                 self.adaTypePackagesCompleteSet = []
                 
                 self.tables = []
@@ -496,10 +498,15 @@ class Database:
                 self.decimalTypes = {}
                 self.enumeratedTypes = {}
                 self.tableLocations = {}
-                self.adaDataPackageName = adafyName( self.dataSource.database )+"_Data"; 
                 self.description = ''
                 self.name = ''
                 self.databaseAdapter = getDatabaseAdapter( self.dataSource )
+                
+        def adaDataPackageName( self ):
+                if( self.adaDataPackage == None ):
+                        return adafyName( self.dataSource.database )+"_Data";
+                else:
+                        return self.adaDataPackage
                 
         def addTable( self, table ):
                 self.tables.append( table )
@@ -517,7 +524,8 @@ class Database:
                                 targetTable.addChildRelation( fk, tab.name )
                 
         def __repr__( self ):
-                s = "============ DATASOURCE ==============\n";
+                s = "name %(name)s \n" % { 'name' : self.name } 
+                s += "============ DATASOURCE ==============\n";
                 s += "%(ds)s " % { 'ds' : self.dataSource }
                 s += "============ TABLES ==============\n";
                 for t in self.tables:
@@ -612,6 +620,10 @@ def tableToXML( table, document ):
   
 def databaseToXML( database ):
         dbElem = etree.Element( "database", name=database.name )
+        if( tab.adaDataPackage != None ):
+                 packageElem = etree.Element( "adaDataPackage" )
+                 packageElem.set( 'name', tab.adaDataPackage ) 
+                 dbEleme.append( packageElem )
         for tab in database.tables:
                 dbElem.append( tableToXML( tab, dbElem ))
         return dbElem
@@ -667,14 +679,14 @@ def parseTable( xtable, databaseAdapter ):
                 
                 stable.addVariable( var, isPrimary )
         for fk in xtable.iter( "foreign-key" ):
-                stable.addForeignKey( makeForeignKey( fk ) )
+                stable.addForeignKey( makeForeignKey( fk ))
         for ui in xtable.iter( "unique" ):
-                stable.addUniqueIndex( makeUniqueIndex(ui) )
+                stable.addUniqueIndex( makeUniqueIndex( ui ))
         for i in xtable.iter( "index" ):
-                stable.addIndex( makeIndex(i) )
+                stable.addIndex( makeIndex( i ))
         for apackage in xtable.iter( "localAdaTypePackage" ):
                 stable.adaTypePackages.append( apackage.get( 'name' ))
-        stable.adaTypePackages = makeUniqueArray(  stable.adaTypePackages )     
+        stable.adaTypePackages = makeUniqueArray( stable.adaTypePackages )     
         return stable;
 
 def makeUniqueIndex( xindex ):
@@ -696,16 +708,19 @@ def parseXMLFiles():
         tablesSchema = etree.parse( WORKING_PATHS.xmlDir+'database-schema.xml').getroot()
         for apackage in tablesSchema.iter( "adaTypePackage" ):
                 database.adaTypePackages.append( apackage.get( 'name' ))
-        
+        for adp in tablesSchema.iter( "adaDataPackage" ):
+                database.adaDataPackage = adp.get( 'name' )
+                print "got adaDataPackage " + database.adaDataPackage                
         database.adaTypePackages = makeUniqueArray( database.adaTypePackages )     
         print "database.adaTypePackages"
         print database.adaTypePackages
         database.adaTypePackagesCompleteSet = database.adaTypePackages;
         for db in tablesSchema.iter("database"):
                 database.name = db.get( 'name' ) 
+                
         for table in tablesSchema.iter( "table" ):
                 stable = parseTable( table, database.databaseAdapter )
-                stable.fixupNames( database.adaDataPackageName )
+                stable.fixupNames( database.adaDataPackageName() )
                 database.addTable( stable )
                 database.adaTypePackagesCompleteSet += stable.adaTypePackages
         database.adaTypePackagesCompleteSet = makeUniqueArray( database.adaTypePackagesCompleteSet );
