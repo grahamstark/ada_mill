@@ -21,9 +21,9 @@ PHP class or method name.
               to lowercase.
 -->
 
-<!ELEMENT database ( adaTypePackage*, table+ )>
+<!ELEMENT database ( adaTypePackage*, adaDataPackage?, table+ )>
 <!ATTLIST database
-  name CDATA #IMPLIED
+  name           CDATA #IMPLIED
 >
 
 <!ELEMENT adaTypePackage EMPTY>
@@ -31,6 +31,10 @@ PHP class or method name.
   name CDATA #REQUIRED
 >
 
+<!ELEMENT adaDataPackage EMPTY>
+<!ATTLIST adaDataPackage
+  name CDATA #REQUIRED
+>
 
 <!ELEMENT external-schema EMPTY>
 <!ATTLIST external-schema
