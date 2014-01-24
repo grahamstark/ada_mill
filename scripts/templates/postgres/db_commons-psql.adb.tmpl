@@ -1,6 +1,9 @@
 -- 
 -- Created by ada_generator.py on $date
 -- 
+
+with Ada.Exceptions;
+
 -- === CUSTOM IMPORTS START ===
 #for $e in $customImports 
 $e 
@@ -20,6 +23,16 @@ $e
       dexec.Execute( connection, script );
    end Execute_Script;
  
+   procedure Check_Result( conn : dexec.Database_Connection ) is
+   use Ada.Exceptions;
+      error_msg : constant String := dexec.Error( conn );
+   begin
+      if( error_msg /= "" )then
+         Raise_Exception( Mill_Exception'Identity, error_msg );
+      end if;
+   end  Check_Result;     
+
+   
    -- === CUSTOM PROCS START ===
 #for $e in $customProcs
 $e 

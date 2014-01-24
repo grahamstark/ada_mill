@@ -263,7 +263,7 @@ def make_io_ads( database, adaTypePackages, table ):
                         template.associated.append( assocFunc );
         template.dataPackageName = dataPackageName 
         template.preparedInsertStatementHeader = asp.makePreparedInsertStatementHeader()
-        template.configuredInsertParamsHeader = asp.makeConfiguredInsertParamsHeader()
+        template.configuredInsertParamsHeader = asp.makeConfiguredInsertParamsHeader( table )
 
         outfile = file( outfileName, 'w' );        
         outfile.write( str(template) ) 

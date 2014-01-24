@@ -53,7 +53,7 @@ def writeProjectFile( database ):
 
 # FIXME these next 2 are actually the same for all Native DB interfaces, not just postgres
 def makePreparedInsertStatementHeader():
-        return 'function Get_Prepared_Insert_Statement( connection : Database_Connection ) return gse.Prepared_Statement'        
+        return '   function Get_Prepared_Insert_Statement return GNATCOLL.SQL.Exec.Prepared_Statement;'        
 
 def makePreparedInsertStatementBody( table ):
         template = Template( file=templatesPath() + 'prepared_insert_statement.tmpl' )
@@ -65,13 +65,10 @@ def makePreparedInsertStatementBody( table ):
         template.posIndicators = ", ".join( queries )
         return str(template)
 
-def makeConfiguredInsertParamsHeader():
-        return 'function Get_Configured_Insert_Params return GNATCOLL.SQL.Exec.SQL_Parameters';
-       
-def makeConfiguredInsertParamsBody( table ):        
-        template = Template( file=templatesPath() + 'configured_insert_params.tmpl' )
+def makeConfiguredInsertParamsHeader( table ):
+        comments = []
+        template = Template( file=templatesPath() + 'configured_insert_params_header.tmpl' )
         p = 0
-        n = len( table.variables )
         for var in table.variables:
                 p += 1
                 if( isIntegerTypeInPostgres( var )):
@@ -86,11 +83,38 @@ def makeConfiguredInsertParamsBody( table ):
                 elif ( var.isDateType() ):
                         typ = 'Parameter_Date'
                         default = 'Clock'
-                s = '        {0:d} => ( ${1:s}, ${2:s} )'.format( p, typ, default )
+                s = '{:>4d} : {:<20} : {:<18} : {:<20} : {:>20} '.format( p, var.adaName, typ, var.adaType, default )
+                comments.append( s )
+        template.n = p 
+        template.comments = comments;
+        return str( template );
+       
+def makeConfiguredInsertParamsBody( table ):        
+        template = Template( file=templatesPath() + 'configured_insert_params.tmpl' )
+        p = 0
+        n = len( table.variables )
+        rows = []
+        for var in table.variables:
+                p += 1
+                if( isIntegerTypeInPostgres( var )):
+                        typ = 'Parameter_Integer'
+                        default = '0'
+                elif( var.isStringType() ):
+                        typ = 'Parameter_Text'
+                        default = 'null';
+                elif( var.isNumericType() ):
+                        typ = 'Parameter_Float'
+                        default = '0.0'
+                elif ( var.isDateType() ):
+                        typ = 'Parameter_Date'
+                        default = 'Clock'
+                s = '        {0:>2d} => ( {1:s}, {2:s} )'.format( p, typ, default )
                 if( p < n ):
                         s += ","
+                s += "   -- " + " : " + var.adaName + " (" + var.adaType +")" 
+                rows.append( s )
         template.n = p
-        template.rows.append( s )    
+        template.rows = rows
         return str(template)
         
 

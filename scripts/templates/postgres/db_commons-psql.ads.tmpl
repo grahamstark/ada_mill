@@ -19,7 +19,8 @@ $e
    -- === CUSTOM TYPES END ===
    
    procedure Execute_Script( connection : dexec.Database_Connection; script : String );
-
+   procedure Check_Result( conn : dexec.Database_Connection );
+   
    -- === CUSTOM PROCS START ===
 #for $e in $customProcs
 $e 
