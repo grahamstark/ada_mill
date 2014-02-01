@@ -127,6 +127,7 @@ def makeValueFunction( variable, posStr, default_value=None ):
         single prec real integer or subtype: use native function
         else use Type'Value( getTheString( ))
         """
+        print variable.schemaType
         defstr = '' 
         if( default_value != None ):
                 if not ( variable.hasUserDefinedAdaType() or variable.schemaType == 'BIGINT' or variable.isFloatingPointType() or variable.isStringType()):
@@ -135,7 +136,9 @@ def makeValueFunction( variable, posStr, default_value=None ):
                         # fixme add a clause
                         posStr = posStr + ", " + default_value
         if( variable.hasUserDefinedAdaType()):
-                v =  variable.adaTypeName + "'Value( gse.Value( cursor, " + posStr + " ));\n"               
+                v =  variable.adaTypeName + "'Value( gse.Value( cursor, " + posStr + " ));\n" 
+        elif( variable.isDecimalType() ):
+                v = variable.adaType+"'Value( gse.Value( cursor, " + posStr + " ));\n" 
         elif( variable.schemaType == 'BIGINT' ):
                 v = "Big_Int'Value( gse.Value( cursor, " + posStr + " ));\n"
         elif( variable.schemaType == 'BOOLEAN' ):
@@ -168,7 +171,7 @@ def makeBinding( databaseAdapter, instanceName, var, pos ):
                                 binding += INDENT*6 + instanceName+'.'+var.adaName + " := " + var.adaType+"'Val( i );\n";
                         else:                                
                                 binding += INDENT*6 + instanceName+'.'+var.adaName + " := Boolean'Val( i );\n";
-                        binding += INDENT*5 + "end;"
+                        binding += INDENT*5 + "end;\n"
                 else:
                         binding += INDENT*5 + instanceName+'.'+var.adaName + " := " + makeValueFunction( var, posStr ); # var.adaType + "( gse.Integer_Value( cursor, " + posStr + " ));\n"
                 binding += INDENT*4 + "end if;"
@@ -269,14 +272,10 @@ def makeNextFreeFunc( table, var ):
         template.statement = "select max( "+var.varname+" ) from "+table.name
         template.functionName = "Next_Free_"+var.adaName
         template.adaName = var.adaName
+        template.default = var.getDefaultAdaValue()
         template.adaType = var.getAdaType( True )
         template.getFunction = makeValueFunction( var, "0", "0" )
-        if( var.sqlType == 'BIGINT' ):
-                template.whichBinding = 'L'
-        else:
-                template.whichBinding = 'I'
-        s = str( template ) 
-        return s
+        return str( template );
   
 def makeDeleteProcBody( table ):
         template = Template( file=templatesPath()+"delete.func.tmpl" )

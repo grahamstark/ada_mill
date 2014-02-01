@@ -2,11 +2,11 @@
    -- Next highest avaiable value of $adaName - useful for saving  
    --
    $functionHeader
-      query      : constant String := "$statement";
-      cursor     : gse.Forward_Cursor;
-      ai         : $adaType := 0;
-      ps : gse.Prepared_Statement;
-      local_connection : Database_Connection;
+      query               : constant String := "$statement";
+      cursor              : gse.Forward_Cursor;
+      ai                  : $adaType := $default;
+      ps                  : gse.Prepared_Statement;
+      local_connection    : Database_Connection;
       is_local_connection : Boolean;
 
    begin

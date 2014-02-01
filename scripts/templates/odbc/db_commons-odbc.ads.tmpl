@@ -27,7 +27,7 @@ $e
    
    package L_Out_Binding is new GNU.DB.SQLCLI.IntegerBinding( Big_Int );
    package I_Out_Binding is new GNU.DB.SQLCLI.IntegerBinding( Integer );
-   package R_Out_Binding is new GNU.DB.SQLCLI.FloatBinding( Real );
+   package R_Out_Binding is new GNU.DB.SQLCLI.FloatBinding( Long_Float );
    
    Null_Database_Connection : constant Database_Connection := 
       ( Environment => SQL_NULL_HANDLE, connection => SQL_NULL_HANDLE );

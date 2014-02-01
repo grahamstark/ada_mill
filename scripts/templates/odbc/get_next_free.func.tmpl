@@ -2,14 +2,14 @@
    -- Next highest avaiable value of $adaName - useful for saving  
    --
    $functionHeader
-      ps : sql.SQLHDBC := sql.SQL_NULL_HANDLE;
-      local_connection : Database_Connection;
+      ps : sql.SQLHDBC             := sql.SQL_NULL_HANDLE;
+      local_connection             : Database_Connection;
       locally_allocated_connection : Boolean;
 
-      query : constant String := "$statement";
-      ai : aliased $adaType;
-      has_data : boolean := true; 
-      output_len : aliased sql.SQLLEN;     
+      query                        : constant String := "$statement";
+      ai                           : aliased $adaType := $default;
+      has_data                     : boolean := true; 
+      output_len                   : aliased sql.SQLLEN;     
    begin
       if( connection = Null_Database_Connection )then
          local_connection := Connection_Pool.Lease;

@@ -179,12 +179,19 @@ class Variable:
 
         
 
+        
+
         # always as a String
         def getDefaultAdaValue( self ):
                 default = 'FIXME';
                 if( self.isPrimaryKey ):
-                        if( not self.default is None ):
-                                default = self.default
+                        if( not self.default is None ) and ( self.default != '' ):
+                                if( self.schemaType == 'CHAR') or (self.schemaType == 'VARCHAR'):
+                                        default = 'To_Unbounded_String( "'+self.default+'" )'
+                                else:
+                                        default = self.default
+                        elif self.hasUserDefinedAdaType():
+                                default = self.adaTypeName+"'First" 
                         elif( self.schemaType == 'CHAR') or (self.schemaType == 'VARCHAR'):
                                 ## fixme maybe string instead?
                                 default = 'MISSING_W_KEY'
@@ -255,7 +262,7 @@ class Variable:
                 return ( self.schemaType == 'DECIMAL' ) 
         
         def isFloatingPointType( self ):
-                return ( self.schemaType == 'REAL' ) or (self.schemaType == 'DOUBLE')   
+                return ( self.schemaType == 'REAL' ) or ( self.schemaType == 'DOUBLE' ) or ( self.schemaType == 'FLOAT' ) or ( self.schemaType == 'LONGFLOAT' )   
       
         def isNumericType( self ):
                 return ( self.schemaType == 'DECIMAL' ) or ( self.schemaType == 'INTEGER' ) or ( self.schemaType == 'REAL' ) or (self.schemaType == 'DOUBLE')   
@@ -277,7 +284,7 @@ class Variable:
                 self.varname = varname;
                 self.enum = None
                 self.adaTypeName = adaTypeName
-                self.adaName = adafyName( varname )
+                self.adaName = adafyName( varname ).lower()
                 self.schemaType = upper( schemaType)
                 self.default = default
                 self.size = getDefaultSize( schemaType, size )                

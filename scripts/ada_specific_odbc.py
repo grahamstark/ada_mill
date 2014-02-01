@@ -46,7 +46,7 @@ def makePreparedInsertStatementBody( table ):
 def makeConfiguredInsertParamsBody( table ):        
         return ''
 
-def makePreparedInsertStatementHeader( table ):
+def makePreparedInsertStatementHeader():
         return ''
 
 def makeConfiguredInsertParamsHeader( table ):        
@@ -223,6 +223,7 @@ def makeNextFreeFunc( table, var ):
         template.functionName = "Next_Free_"+var.adaName
         template.adaName = var.adaName
         template.adaType = var.getAdaType( True )
+        template.default = var.getDefaultAdaValue()
         if( var.sqlType == 'BIGINT' ):
                 template.whichBinding = 'L'
         else:
