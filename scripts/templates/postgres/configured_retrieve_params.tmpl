@@ -1,0 +1,11 @@
+   function Get_Configured_Retrieve_Params return GNATCOLL.SQL.Exec.SQL_Parameters is
+   use GNATCOLL.SQL_Impl;
+      params : constant SQL_Parameters( 1 .. $n ) := (
+#for $r in $rows
+$r
+#end for 
+      );
+   begin
+      return params;
+   end Get_Configured_Retrieve_Params;
+

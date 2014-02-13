@@ -1,0 +1,8 @@
+   -- 
+   -- returns an array of GNATColl SQL Parameters indexed 1 .. $n, as follows
+   -- Pos  |       Name               | SQL Type           | Ada Type             | Default
+#for $c in $comments
+   -- $c
+   -- NOTE the ordering is different that for insert (pk variables last)
+#end for 
+   function Get_Configured_Retrieve_Params return GNATCOLL.SQL.Exec.SQL_Parameters;
