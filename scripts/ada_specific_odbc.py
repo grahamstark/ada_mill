@@ -40,6 +40,11 @@ from ada_generator_libs import makeRetrieveSHeader, makeSaveProcHeader, makeUpda
 CONNECTION_STRING = "connection : Database_Connection := Null_Database_Connection"
 
 # FIXME these next 2 are actually the same for all Native DB interfaces, not just postgres
+
+
+def makeMapFromCursorHeader( adaQualifiedOutputRecord ):
+        return ""  
+
 def makePreparedInsertStatementBody( table ):
         return ''
 
@@ -50,6 +55,18 @@ def makePreparedInsertStatementHeader():
         return ''
 
 def makeConfiguredInsertParamsHeader( table ):        
+        return ''
+        
+def makePreparedRetrieveStatementBody( table ):
+        return ''
+
+def makeConfiguredRetrieveParamsBody( table ):        
+        return ''
+
+def makePreparedRetrieveStatementHeader():
+        return ''
+
+def makeConfiguredRetrieveParamsHeader( table ):        
         return ''
         
 

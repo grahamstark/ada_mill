@@ -28,7 +28,7 @@
       $cr;
 #end for;
       declare
-         query : constant String := INSERT_PART & " ( "  & d.To_Crude_Array_Of_Values( c ) & " )";
+         query : constant String := DB_Commons.Add_Schema_To_Query( INSERT_PART ) & " ( "  & d.To_Crude_Array_Of_Values( c ) & " )";
       begin
          Log( "save; executing query" & query );
          gse.Execute( local_connection, query );

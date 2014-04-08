@@ -3,7 +3,7 @@
 
    begin
       declare
-         query : constant String := DELETE_PART & where_Clause;
+         query : constant String := DB_Commons.Add_Schema_To_Query( DELETE_PART ) & where_Clause;
       begin -- try catch block for execute
          Log( "delete; executing query" & To_String(query) );
          gse.Execute( conn, query );

@@ -62,11 +62,12 @@ class DatabaseAdapter:
                         self.supportedSqlCharType = 'SQL_C_CHAR'
 
 def getDatabaseAdapter( dataSource ):
-        
+        # FIXME we need to distinguish between a schema and database better (e.g. in Postgres)
         if( dataSource.databaseType == 'postgres' ):
                 adapter = DatabaseAdapter( 0, "TIMESTAMP '1901-01-01 00:00:00.000000'", '' );
-                adapter.databasePreamble += 'drop database if exists ' + dataSource.database+";\n"
+                adapter.databasePreamble += 'drop schema if exists ' + dataSource.database+" cascade;\n"
                 adapter.databasePreamble += "create database "+ dataSource.database +" with encoding 'UTF-8';\n\n"
+                # adapter.databasePreamble += "SET search_path="+dataSource.database +";\n"
                 adapter.databasePreamble += "\c "+dataSource.database+";\n"
         elif( dataSource.databaseType == 'mysql' ):
                 adapter = DatabaseAdapter( 0, "TIMESTAMP '0000-00-00 00:00:00.000000'", " type = InnoDB" );
@@ -184,6 +185,12 @@ class Variable:
         # always as a String
         def getDefaultAdaValue( self ):
                 default = 'FIXME';
+                if( self.default != None ) and ( self.default != '' ) and ( not self.isDateType()):
+                        default = self.default
+                        if( self.schemaType == 'CHAR') or (self.schemaType == 'VARCHAR'):
+                                default = 'To_Unbounded_String( "'+default+'" )'
+                        # print "returning with default value " + default
+                        return default
                 if( self.isPrimaryKey ):
                         if( not self.default is None ) and ( self.default != '' ):
                                 if( self.schemaType == 'CHAR') or (self.schemaType == 'VARCHAR'):
@@ -341,6 +348,20 @@ class Table:
                 self.enumeratedTypes = {}
                 self.description = description
                 self.childRelations = {}
+                
+        def getPrimaryKeyVariables( self ):
+                vs = []
+                for v in self.variables:
+                        if( v.isPrimaryKey ):
+                                vs.append( v )
+                return vs
+                
+        def getNonPrimaryKeyVariables( self ):
+                vs = []
+                for v in self.variables:
+                        if( not v.isPrimaryKey ):
+                                vs.append( v )
+                return vs
                 
         def fixupNames( self, dataPackageName ):
                 if( self.adaExternalName == '' ):

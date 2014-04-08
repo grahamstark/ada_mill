@@ -6,9 +6,11 @@ with Ada.Containers.Vectors;
 with Ada.Exceptions;  
 with Ada.Strings.Unbounded; 
 with Ada.Text_IO.Editing;
+with GNATColl.Traces;
+with GNATCOLL.Templates;
+
 with Text_IO;
 with Base_Types; use Base_Types;
-with GNATColl.Traces;
 
 -- === CUSTOM IMPORTS START ===
 #for $e in $customImports 
@@ -34,6 +36,36 @@ $e
       GNATColl.Traces.Trace( log_trace, s );
    end Log;
 
+   default_schema : Unbounded_String := Null_Unbounded_String;
+   
+   function Get_Default_Schema return String is
+      s : constant String := To_String( default_schema );
+   begin
+      if s'Length > 0 then
+         return ( if( s( s'Length ) = '.' )then s else s & "." );
+      end if;
+      return "";
+   end Get_Default_Schema;
+
+   procedure Set_Default_Schema( name : String ) is
+   begin
+      if( name = "" )then
+         default_schema := Null_Unbounded_String;
+      else
+         default_schema := To_Unbounded_String( name );
+      end if;
+   end  Set_Default_Schema;
+   
+   function Add_Schema_To_Query( query : String ) return String is
+      val : aliased String := Get_Default_Schema;
+      key : aliased String := "SCHEMA";
+      subs : constant GNATColl.Templates.Substitution_Array( 1 .. 1 ) := 
+         ( 1 => ( Name  => key'Unchecked_Access, 
+                  Value => val'Unchecked_Access ));
+      outs : constant String := GNATColl.Templates.Substitute( query, subs );
+   begin
+      return outs;      
+   end Add_Schema_To_Query;
    
    -- return a string like '2007-09-24 16:07:47'
    function to_string( t : Date_Time_Rec ) return String is      

@@ -3,7 +3,8 @@
       local_connection : Database_Connection;
       locally_allocated_connection : Boolean;
       
-      query : Unbounded_String := UPDATE_PART & To_Unbounded_String(" ");
+      query : Unbounded_String := DB_Commons.Add_Schema_To_Query( UPDATE_PART ) & 
+        To_Unbounded_String(" ");
       pk_c : d.Criteria;
       values_c : d.Criteria;
    begin

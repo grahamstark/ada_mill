@@ -1,6 +1,6 @@
    function Get_Prepared_Insert_Statement return gse.Prepared_Statement is 
       ps : gse.Prepared_Statement; 
-      query : constant String := INSERT_PART & " ( $posIndicators )"; 
+      query : constant String := DB_Commons.Add_Schema_To_Query( INSERT_PART ) & " ( $posIndicators )"; 
    begin 
       ps := gse.Prepare( query, On_Server => True ); 
       return ps; 

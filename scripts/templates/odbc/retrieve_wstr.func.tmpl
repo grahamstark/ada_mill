@@ -9,7 +9,7 @@
       local_connection : dodbc.Database_Connection;
       locally_allocated_connection : Boolean;
 
-      query : constant String := SELECT_PART & " " & sqlstr;
+      query : constant String := DB_Commons.Add_Schema_To_Query( SELECT_PART ) & " " & sqlstr;
       --
       -- aliased local versions of fields 
       --

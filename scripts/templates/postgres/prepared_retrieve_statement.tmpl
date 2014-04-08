@@ -1,6 +1,7 @@
    function Get_Prepared_Retrieve_Statement return gse.Prepared_Statement is 
       ps : gse.Prepared_Statement; 
-      query : constant String := "select $dataIndicators from $tableName where $pkIndicators"; 
+      query : constant String := DB_Commons.Add_Schema_To_Query( SELECT_PART ) 
+         & " from $tableName where $pkIndicators"; 
    begin 
       ps := gse.Prepare( query, On_Server => True ); 
       return ps; 

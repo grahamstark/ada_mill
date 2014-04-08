@@ -51,9 +51,29 @@ def writeProjectFile( database ):
         outfile.write( str(template) )
         outfile.close()
 
+def makeMapFromCursorHeader( adaQualifiedOutputRecord ):
+        return INDENT + "function Map_From_Cursor( cursor : GNATCOLL.SQL.Exec.Forward_Cursor ) return " + adaQualifiedOutputRecord +";"  
+
 # FIXME these next 2 are actually the same for all Native DB interfaces, not just postgres
 def makePreparedInsertStatementHeader():
         return '   function Get_Prepared_Insert_Statement return GNATCOLL.SQL.Exec.Prepared_Statement;'        
+
+def makePreparedRetrieveStatementHeader():
+        return '   function Get_Prepared_Retrieve_Statement return GNATCOLL.SQL.Exec.Prepared_Statement;'        
+
+def makePreparedRetrieveStatementBody( table ):
+        template = Template( file=templatesPath() + 'prepared_retrieve_statement.tmpl' )
+        pk_queries = []
+        data_queries = []        
+        p = 0
+        template.tableName = table.name
+        for var in table.getPrimaryKeyVariables():
+                p += 1
+                pk_queries.append( "${0:s} = ${1:d}".format( var.varname, p ))
+        template.dataIndicators = ", ".join( data_queries )
+        template.pkIndicators = " and ".join( pk_queries )
+        return str(template)
+        
 
 def makePreparedInsertStatementBody( table ):
         template = Template( file=templatesPath() + 'prepared_insert_statement.tmpl' )
@@ -65,11 +85,11 @@ def makePreparedInsertStatementBody( table ):
         template.posIndicators = ", ".join( queries )
         return str(template)
 
-def makeConfiguredInsertParamsHeader( table ):
+def makeConfiguredParamsHeader( templateName, variableList ):
         comments = []
-        template = Template( file=templatesPath() + 'configured_insert_params_header.tmpl' )
+        template = Template( file=templatesPath() + templateName + '.tmpl' )
         p = 0
-        for var in table.variables:
+        for var in variableList:
                 p += 1
                 if( isIntegerTypeInPostgres( var )):
                         typ = 'Parameter_Integer'
@@ -88,13 +108,21 @@ def makeConfiguredInsertParamsHeader( table ):
         template.n = p 
         template.comments = comments;
         return str( template );
+
+
+def makeConfiguredRetrieveParamsHeader( table ):
+        variables = table.getPrimaryKeyVariables()
+        return makeConfiguredParamsHeader( 'configured_retrieve_params_header', variables );
+
+def makeConfiguredInsertParamsHeader( table ):
+        return makeConfiguredParamsHeader( 'configured_insert_params_header', table.variables );
        
-def makeConfiguredInsertParamsBody( table ):        
-        template = Template( file=templatesPath() + 'configured_insert_params.tmpl' )
+def makeConfiguredParamsBody( templateName, variableList ):        
+        template = Template( file=templatesPath() + templateName + '.tmpl' )
         p = 0
-        n = len( table.variables )
+        n = len( variableList )
         rows = []
-        for var in table.variables:
+        for var in variableList:
                 p += 1
                 if( isIntegerTypeInPostgres( var )):
                         typ = 'Parameter_Integer'
@@ -116,6 +144,14 @@ def makeConfiguredInsertParamsBody( table ):
         template.n = p
         template.rows = rows
         return str(template)
+
+
+def makeConfiguredRetrieveParamsBody( table ):
+        variables = table.getPrimaryKeyVariables()        
+        return makeConfiguredParamsBody( 'configured_retrieve_params', variables );        
+
+def makeConfiguredInsertParamsBody( table ):
+        return makeConfiguredParamsBody( 'configured_insert_params', table.variables );        
         
 
 def isIntegerTypeInPostgres( variable ):
@@ -127,7 +163,6 @@ def makeValueFunction( variable, posStr, default_value=None ):
         single prec real integer or subtype: use native function
         else use Type'Value( getTheString( ))
         """
-        print variable.schemaType
         defstr = '' 
         if( default_value != None ):
                 if not ( variable.hasUserDefinedAdaType() or variable.schemaType == 'BIGINT' or variable.isFloatingPointType() or variable.isStringType()):
@@ -162,32 +197,32 @@ def makeBinding( databaseAdapter, instanceName, var, pos ):
         """
         posStr = `pos`
         if( isIntegerTypeInPostgres( var )):
-                binding = INDENT*4 + "if not gse.Is_Null( cursor, " + posStr + " )then\n"
+                binding = INDENT*2 + "if not gse.Is_Null( cursor, " + posStr + " )then\n"
                 if( var.schemaType == 'ENUM' ) or ( var.schemaType == 'BOOLEAN' ):
-                        binding += INDENT*5 + "declare\n"
-                        binding += INDENT*6 + "i : constant Integer := gse.Integer_Value( cursor, " + posStr + " );\n"
-                        binding += INDENT*5 + "begin\n"
+                        binding += INDENT*3 + "declare\n"
+                        binding += INDENT*4 + "i : constant Integer := gse.Integer_Value( cursor, " + posStr + " );\n"
+                        binding += INDENT*2 + "begin\n"
                         if( var.schemaType == 'ENUM' ):
-                                binding += INDENT*6 + instanceName+'.'+var.adaName + " := " + var.adaType+"'Val( i );\n";
+                                binding += INDENT*4 + instanceName+'.'+var.adaName + " := " + var.adaType+"'Val( i );\n";
                         else:                                
-                                binding += INDENT*6 + instanceName+'.'+var.adaName + " := Boolean'Val( i );\n";
-                        binding += INDENT*5 + "end;\n"
+                                binding += INDENT*4 + instanceName+'.'+var.adaName + " := Boolean'Val( i );\n";
+                        binding += INDENT*4 + "end;\n"
                 else:
-                        binding += INDENT*5 + instanceName+'.'+var.adaName + " := " + makeValueFunction( var, posStr ); # var.adaType + "( gse.Integer_Value( cursor, " + posStr + " ));\n"
-                binding += INDENT*4 + "end if;"
+                        binding += INDENT*3 + instanceName+'.'+var.adaName + " := " + makeValueFunction( var, posStr ); # var.adaType + "( gse.Integer_Value( cursor, " + posStr + " ));\n"
+                binding += INDENT*2 + "end if;"
         elif( var.isStringType() ):
                 charType = databaseAdapter.supportedSqlCharType
-                binding = INDENT*4 + "if not gse.Is_Null( cursor, " + posStr + " )then\n"
-                binding += INDENT*5 + instanceName+'.'+var.adaName + ":= To_Unbounded_String( gse.Value( cursor, " + posStr + " ));\n" 
-                binding += INDENT*4 + "end if;"
+                binding = INDENT*2 + "if not gse.Is_Null( cursor, " + posStr + " )then\n"
+                binding += INDENT*3 + instanceName+'.'+var.adaName + ":= To_Unbounded_String( gse.Value( cursor, " + posStr + " ));\n" 
+                binding += INDENT*2 + "end if;"
         elif( var.isNumericType() ):
-                binding = INDENT*4 + "if not gse.Is_Null( cursor, " + posStr + " )then\n"
-                binding += INDENT*5 + instanceName+'.'+var.adaName + ":= " + makeValueFunction( var, posStr ); # var.adaType + "( gse.Float_Value( cursor, " + posStr + " ));\n"
-                binding += INDENT*4 + "end if;"
+                binding = INDENT*2 + "if not gse.Is_Null( cursor, " + posStr + " )then\n"
+                binding += INDENT*3 + instanceName+'.'+var.adaName + ":= " + makeValueFunction( var, posStr ); # var.adaType + "( gse.Float_Value( cursor, " + posStr + " ));\n"
+                binding += INDENT*2 + "end if;"
         elif ( var.isDateType() ):
-                binding = INDENT*4 + "if not gse.Is_Null( cursor, " + posStr + " )then\n"
-                binding += INDENT*5 + instanceName+'.'+var.adaName + " := gse.Time_Value( cursor, " + posStr + " );\n" 
-                binding += INDENT*4 + "end if;"
+                binding = INDENT*2 + "if not gse.Is_Null( cursor, " + posStr + " )then\n"
+                binding += INDENT*3 + instanceName+'.'+var.adaName + " := gse.Time_Value( cursor, " + posStr + " );\n" 
+                binding += INDENT*2 + "end if;"
         else:
                 binding = "FIXME: MISSED BINDING FOR VAR " + var.varname
         return binding;
@@ -225,6 +260,7 @@ def makeRetrieveSFunc( table, database ):
         template.bindings = []
         template.adaInstanceName = table.adaInstanceName
         template.variableDecl = table.adaInstanceName + " : " + table.adaQualifiedOutputRecord
+        template.adaQualifiedOutputRecord = table.adaQualifiedOutputRecord
         
         pos = 0
         for var in table.variables:
@@ -269,7 +305,7 @@ def makeNextFreeFunc( table, var ):
         """
         template = Template( file=templatesPath()+"get_next_free.func.tmpl" )
         template.functionHeader = makeNextFreeHeader( var, CONNECTION_STRING, ' is' )
-        template.statement = "select max( "+var.varname+" ) from "+table.name
+        template.statement = "select coalesce( max( "+var.varname+" ) + 1, 1 ) from %{SCHEMA}"+table.name
         template.functionName = "Next_Free_"+var.adaName
         template.adaName = var.adaName
         template.default = var.getDefaultAdaValue()

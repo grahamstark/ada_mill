@@ -31,6 +31,13 @@ $e
 
    Mill_Exception : exception;
    
+   -- rudimentary schema handling
+   function Get_Default_Schema return String;
+   procedure Set_Default_Schema( name : String );
+   
+   -- schema placeholder should be delimited %{SCHEMA}
+   function Add_Schema_To_Query( query : String ) return String;
+   
    -- subtype Real is Base_Types.Real;
    subtype Decimal is Base_Types.Decimal;
    --

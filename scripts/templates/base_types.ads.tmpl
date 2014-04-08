@@ -38,7 +38,8 @@ $e
    
    -- type Real is new Long_Float;
    type Decimal is delta 0.01 digits 10;
-   type Big_Int is range -9223372036854775808 .. 9223372036854775807;
+   subtype Big_Int is Long_Long_Integer;
+
    --
    --
    --

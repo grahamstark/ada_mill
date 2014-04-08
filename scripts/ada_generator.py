@@ -56,7 +56,7 @@ def makeUpdateStatement( table ):
         
 
 def makeInsertStatement( table ):
-        s = "insert into "+table.name+" values( "
+        s = "insert into %{SCHEMA}"+table.name+" values( "
 
 def makeCastStatement( var ):
         if( var.hasUserDefinedAdaType() ):
@@ -262,9 +262,13 @@ def make_io_ads( database, adaTypePackages, table ):
                         assocFunc = makeAssociatedRetrieveHeader( table, referencingTableName, referencedTable.adaQualifiedListName, asp.CONNECTION_STRING, ';' )
                         template.associated.append( assocFunc );
         template.dataPackageName = dataPackageName 
+        
         template.preparedInsertStatementHeader = asp.makePreparedInsertStatementHeader()
         template.configuredInsertParamsHeader = asp.makeConfiguredInsertParamsHeader( table )
-
+        
+        template.preparedRetrieveStatementHeader = asp.makePreparedRetrieveStatementHeader()
+        template.configuredRetrieveParamsHeader = asp.makeConfiguredRetrieveParamsHeader( table )
+        template.mapFromCursorHeader = asp.makeMapFromCursorHeader( table.adaQualifiedOutputRecord );
         outfile = file( outfileName, 'w' );        
         outfile.write( str(template) ) 
         outfile.close()
@@ -290,25 +294,25 @@ def sqlVariablesList( table ):
         return s                
 
 def makeDeletePartString( table ):
-        s = 'DELETE_PART : constant String := "delete from '+table.name+' "'
+        s = 'DELETE_PART : constant String := "delete from %{SCHEMA}'+table.name+' "'
         return s
 
 def makeSelectPartString( table ):
         s = 'SELECT_PART : constant String := "select " &'+"\n"
         s += sqlVariablesList( table )
         s += " &\n";
-        s += INDENT*3 + '" from '+table.name+' " '
+        s += INDENT*3 + '" from %{SCHEMA}'+table.name+' " '
         return s
         
 def makeInsertPartString( table ):
-        s = 'INSERT_PART : constant String := "insert into '+table.name+' (" &'+"\n"
+        s = 'INSERT_PART : constant String := "insert into %{SCHEMA}'+table.name+' (" &'+"\n"
         s += sqlVariablesList( table )
         s += " &\n";
         s += INDENT*3 + '" ) values " '
         return s
 
 def makeUpdatePartString( table ):
-        s = 'UPDATE_PART : constant String := "update '+table.name+' set  "'
+        s = 'UPDATE_PART : constant String := "update %{SCHEMA}'+table.name+' set  "'
         return s
 
 def  makeEnvironmentADB( runtime ):
@@ -637,18 +641,21 @@ def makeCreateTest( databaseName, table ):
                                 key = varname+'.'+var.adaName+ ' := To_Unbounded_String( "k_" & i\'img )' 
                         elif var.isIntegerType():
                                 key = varname+'.'+var.adaName+ ' := '+ table.adaTypeName +'_IO.Next_Free_'+var.adaName  
+                        else:
+                                key = varname+'.'+var.adaName+ ' := '+ table.adaTypeName +"'First"
                         template.createKeyStatements.append( key )
                 else:
                         assign = "-- missing"+varname+" declaration "
                         if( var.isStringType() ):
-                                data = 'dat for'+var.adaName
-                                assign = varname+'.'+var.adaName+ ' := To_Unbounded_String("'+data+'")'
+                                data = 'dat for'+var.adaName 
+                                assign = varname+'.'+var.adaName+ ' := To_Unbounded_String("'+data+'" & i''Img )'
                                 template.modifyDataStatements.append( varname+'.'+var.adaName+ ' := To_Unbounded_String("Altered::'+data+'")' )
                         elif( var.isDateType() ):
                                 assign = varname+'.'+var.adaName+ ' := Ada.Calendar.Clock'
                         elif( var.isFloatingPointType() ):
-                                assign = varname+'.'+var.adaName+ ' := 1010100.012'
+                                assign = varname+'.'+var.adaName+ ' := 1010100.012 + ' + var.adaType + "( i )'Img"
                         elif( var.isDecimalType() ):
+                                # fixme breaks if this is a unique key
                                 v = '10201.'+( int(var.scale)*'1')
                                 assign = varname+'.'+var.adaName+ ' := '+v
                         ## finish??
@@ -786,8 +793,13 @@ def make_io_adb( database, table ):
                         assocFunc = makeAssociatedRetrieveBody( table, referencingTable, fk, asp.CONNECTION_STRING ); #, listAdaName, fk )
                         template.associated.append( assocFunc );
         template.dataPackageName = database.adaDataPackageName() 
+        
         template.preparedInsertStatementBody = asp.makePreparedInsertStatementBody( table )
         template.configuredInsertParamsBody = asp.makeConfiguredInsertParamsBody( table )
+        
+        template.preparedRetrieveStatementBody = asp.makePreparedRetrieveStatementBody( table )
+        template.configuredRetrieveParamsBody = asp.makeConfiguredRetrieveParamsBody( table )
+        
         outfile = file( outfileName, 'w' );
         outfile.write( str(template) ) 
         outfile.close()

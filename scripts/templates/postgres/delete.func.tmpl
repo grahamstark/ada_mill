@@ -1,7 +1,7 @@
-   procedure Delete( where_Clause : String; connection : gse.Database_Connection := null ) is
+   procedure Delete( where_clause : String; connection : gse.Database_Connection := null ) is
       local_connection : gse.Database_Connection;     
       is_local_connection : Boolean;
-      query : constant String := DELETE_PART & where_Clause;
+      query : constant String := DB_Commons.Add_Schema_To_Query( DELETE_PART ) & where_clause;
    begin
       if( connection = null )then
           local_connection := Connection_Pool.Lease;

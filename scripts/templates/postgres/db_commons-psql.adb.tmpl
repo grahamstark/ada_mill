@@ -4,6 +4,7 @@
 
 with Ada.Exceptions;
 
+
 -- === CUSTOM IMPORTS START ===
 #for $e in $customImports 
 $e 
@@ -11,6 +12,7 @@ $e
 -- === CUSTOM IMPORTS END ===
 
 package body DB_Commons.PSQL is
+
 
    -- === CUSTOM TYPES START ===
 #for $e in $customTypes 
@@ -32,6 +34,23 @@ $e
       end if;
    end  Check_Result;     
 
+
+   function Make_SQL_Parameter_Discrete( t : Some_Discrete_Type )  return dexec.SQL_Parameter is
+   begin
+      return dexec."+"( Some_Discrete_Type'Pos( t ));   
+   end Make_SQL_Parameter_Discrete;
+   
+   function Make_SQL_Parameter_Float( f : Some_Floating_Type ) return dexec.SQL_Parameter is
+   begin
+      return dexec."+"( Float( f ));
+   end Make_SQL_Parameter_Float;
+         
+   function "+" ( s : Unbounded_String ) return dexec.SQL_Parameter is
+      ss : aliased String := To_String( s );
+   begin
+      return dexec."+"( ss'Access );
+   end "+";
+   
    
    -- === CUSTOM PROCS START ===
 #for $e in $customProcs

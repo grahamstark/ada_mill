@@ -2,22 +2,21 @@
    -- Next highest avaiable value of $adaName - useful for saving  
    --
    $functionHeader
-      query               : constant String := "$statement";
+      query               : constant String := 
+         DB_Commons.Add_Schema_To_Query( "$statement" );
       cursor              : gse.Forward_Cursor;
-      ai                  : $adaType := $default;
+      ai                  : $adaType;
       ps                  : gse.Prepared_Statement;
       local_connection    : Database_Connection;
       is_local_connection : Boolean;
-
    begin
       if( connection = null )then
-          local_connection := Connection_Pool.Lease;
-          is_local_connection := True;
+         local_connection := Connection_Pool.Lease;
+         is_local_connection := True;
       else
-          local_connection := connection;          
-          is_local_connection := False;
+         local_connection := connection;          
+         is_local_connection := False;
       end if;
-
       ps := gse.Prepare( query, On_Server => True );
       cursor.Fetch( local_connection, ps );
       Check_Result( local_connection );
@@ -27,6 +26,6 @@
       if( is_local_connection )then
          Connection_Pool.Return_Connection( local_connection );
       end if;
-      return ai+1;
+      return ai;
    end $functionName;
 

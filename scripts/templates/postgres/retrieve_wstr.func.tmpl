@@ -1,9 +1,19 @@
+   function Map_From_Cursor( cursor : gse.Forward_Cursor ) return $adaQualifiedOutputRecord is
+      $variableDecl;
+   begin
+#for $binding in $bindings:
+$binding
+#end for
+      return $adaInstanceName;
+   end Map_From_Cursor;
+   
    $functionHeader
       l : $listType;
       ps : gse.Prepared_Statement;
       local_connection : Database_Connection;
       is_local_connection : Boolean;
-      query : constant String := SELECT_PART & " " & sqlstr;
+      query : constant String := DB_Commons.Add_Schema_To_Query( SELECT_PART ) 
+         & " " & sqlstr;
       cursor   : gse.Forward_Cursor;
    begin
       if( connection = null )then
@@ -19,11 +29,8 @@
       Check_Result( local_connection );
       while gse.Has_Row( cursor ) loop
          declare
-           $variableDecl;
+            $variableDecl := Map_From_Cursor( cursor );
          begin
-#for $binding in $bindings:
-$binding
-#end for
             $addToMap; 
          end;
          gse.Next( cursor );
