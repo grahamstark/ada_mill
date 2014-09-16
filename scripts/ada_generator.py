@@ -648,8 +648,8 @@ def makeCreateTest( databaseName, table ):
                         assign = "-- missing"+varname+" declaration "
                         if( var.isStringType() ):
                                 data = 'dat for'+var.adaName 
-                                assign = varname+'.'+var.adaName+ ' := To_Unbounded_String("'+data+'" & i''Img )'
-                                template.modifyDataStatements.append( varname+'.'+var.adaName+ ' := To_Unbounded_String("Altered::'+data+'")' )
+                                assign = varname+'.'+var.adaName+ ' := To_Unbounded_String("'+data+'" & i\'Img )'
+                                template.modifyDataStatements.append( varname+'.'+var.adaName+ ' := To_Unbounded_String("Altered::'+data+'" & i\'Img)' )
                         elif( var.isDateType() ):
                                 assign = varname+'.'+var.adaName+ ' := Ada.Calendar.Clock'
                         elif( var.isFloatingPointType() ):

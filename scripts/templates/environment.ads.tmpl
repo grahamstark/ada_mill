@@ -19,6 +19,11 @@ $e
    function Get_Database_Name return String;   
    function Get_Username return String;
    function Get_Password return String;
+   
+   procedure Set_Server_Name( name : String );
+   procedure Set_Database_Name( name : String );
+   procedure Set_Username( name : String );
+   procedure Set_Password( pwd : String );
 
    -- === CUSTOM PROCS START ===
 #for $e in $customProcs
