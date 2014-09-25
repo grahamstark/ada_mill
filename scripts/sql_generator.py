@@ -47,15 +47,20 @@ def writeTable( table, databaseAdapter ):
         clauses = []
         for var in table.variables:
                 varstring =  INDENT+var.varname+ " " + var.sqlType
+                if var.isArray:
+                        varstring += "[] "
+                
                 if( var.notNull ):
                         varstring += ' not null'
                 if( var.default != None ):
                         varstring += ' default '
                         default = var.getDefaultSQLValue( databaseAdapter )
                         if( var.isStringType() ):
-                                varstring += "'"+default+"'";
-                        else:
-                                varstring += default;
+                                default = "'"+default+"'";
+                        if var.arrayInfo != None:
+                                default = var.arrayInfo.sqlArrayDefaultDeclaration( default );
+                        varstring += default;
+                        
                 clauses.append( varstring )
         if( table.hasPrimaryKey() ):
                 constraintCount += 1                        

@@ -91,7 +91,10 @@ def makeConfiguredParamsHeader( templateName, variableList ):
         p = 0
         for var in variableList:
                 p += 1
-                if( isIntegerTypeInPostgres( var )):
+                if var.arrayInfo != None:
+                        typ = 'Parameter_Text'
+                        default = '"'+var.arrayInfo.sqlArrayDefaultDeclaration( var.getDefaultAdaValue() )+'"'
+                elif( isIntegerTypeInPostgres( var )):
                         typ = 'Parameter_Integer'
                         default = '0'
                 elif( var.isStringType() ):
@@ -124,16 +127,19 @@ def makeConfiguredParamsBody( templateName, variableList ):
         rows = []
         for var in variableList:
                 p += 1
-                if( isIntegerTypeInPostgres( var )):
+                if var.arrayInfo != None:
+                        typ = 'Parameter_Text'
+                        default = '"'+var.arrayInfo.sqlArrayDefaultDeclaration( var.getDefaultAdaValue() )+'"'
+                elif isIntegerTypeInPostgres( var ):
                         typ = 'Parameter_Integer'
                         default = '0'
-                elif( var.isStringType() ):
+                elif var.isStringType():
                         typ = 'Parameter_Text'
                         default = 'null';
-                elif( var.isNumericType() ):
+                elif var.isNumericType():
                         typ = 'Parameter_Float'
                         default = '0.0'
-                elif ( var.isDateType() ):
+                elif var.isDateType():
                         typ = 'Parameter_Date'
                         default = 'Clock'
                 s = '        {0:>2d} => ( {1:s}, {2:s} )'.format( p, typ, default )
@@ -196,7 +202,16 @@ def makeBinding( databaseAdapter, instanceName, var, pos ):
         
         """
         posStr = `pos`
-        if( isIntegerTypeInPostgres( var )):
+        if var.arrayInfo != None:
+                varname = instanceName+'.'+var.adaName
+                binding = INDENT*2 + "if not gse.Is_Null( cursor, " + posStr + " )then\n"
+                binding += INDENT*3 + "declare\n"
+                binding += INDENT*4 + "s : constant String := gse.Value( cursor, " + posStr + " );\n"
+                binding += INDENT*3 + "begin\n"
+                binding += INDENT*4 + var.arrayInfo.arrayFromStringDeclaration( varname ) + ";\n";
+                binding += INDENT*3 + "end;\n"
+                binding += INDENT*2 + "end if;"
+        elif isIntegerTypeInPostgres( var ):
                 binding = INDENT*2 + "if not gse.Is_Null( cursor, " + posStr + " )then\n"
                 if( var.schemaType == 'ENUM' ) or ( var.schemaType == 'BOOLEAN' ):
                         binding += INDENT*3 + "declare\n"

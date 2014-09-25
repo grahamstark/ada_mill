@@ -104,8 +104,12 @@ $e
       op : operation_type;
       join : join_type; 
       t : Ada.Calendar.Time  ) return Criterion;
-                                  
-                                  
+
+   --
+   -- Array type handling; despite this being generic, we actually
+   -- need to near-identical copies, one for float data and one for
+   -- discrete (integers and enums).
+   --
    generic
       type Dec is delta<> digits<>;
       function Make_Decimal_Criterion_Element( 
@@ -128,10 +132,49 @@ $e
    procedure add_to_criteria( cr : in out Criteria; ob : Order_By_Element );
    
    DB_Exception : exception;
+
+   --
+   -- Packages for reading and writing arrays in the format used in Postgres. 
+   -- You need two near-dupicates here.
+   -- Odd that you can't have a generic *numeric*, but there you go..
+   --
+   generic
+      type Index is (<>);
+      type Data_Type is digits<>;
+      type Array_Type is array( Index range <> ) of Data_Type;   
+   package Float_Mapper is
    
-   private 
+     procedure SQL_Map_To_Array( s : String; a : out Array_Type );
+     function Array_To_SQL_String( a : Array_Type ) return String;
+     function To_String( a : Array_Type ) return String;
+     function Make_Criterion_Element( 
+         varname : String;
+         op : operation_type;
+         join : join_type; 
+         value : Array_Type  ) return Criterion;
+
+   end Float_Mapper;
+   
+   generic
+      type Index is (<>);
+      type Data_Type is (<>);
+      type Array_Type is array( Index range <> ) of Data_Type;   
+   package Discrete_Mapper is
+   
+     procedure SQL_Map_To_Array( s : String; a : out Array_Type );
+     function Array_To_SQL_String( a : Array_Type ) return String;
+     function To_String( a : Array_Type ) return String;
+     function Make_Criterion_Element( 
+         varname : String;
+         op : operation_type;
+         join : join_type; 
+         value : Array_Type  ) return Criterion;
+   
+   end Discrete_Mapper;
+   
+private 
  
-   use ada.strings.Unbounded;
+   use Ada.Strings.Unbounded;
    
    package String80 is new Ada.Strings.Bounded.Generic_Bounded_Length (80);
    

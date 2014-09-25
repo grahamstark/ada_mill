@@ -45,8 +45,9 @@ class DatabaseAdapter:
         """
         Container for database - specific things like support for unicode, formats for timestamps
         """
-        def __init__( self, doesUnicode, timestampDefault, tablePostText ):
+        def __init__( self, doesUnicode, timestampDefault, tablePostText, supportsTextType ):
                 self.doesUnicode = doesUnicode;
+                self.supportsTextType = supportsTextType
                 self.timestampDefault = timestampDefault
                 self.tablePostText = tablePostText
                 # next 2 not really needed as we can't handle blobs and clobs in 
@@ -64,13 +65,13 @@ class DatabaseAdapter:
 def getDatabaseAdapter( dataSource ):
         # FIXME we need to distinguish between a schema and database better (e.g. in Postgres)
         if( dataSource.databaseType == 'postgres' ):
-                adapter = DatabaseAdapter( 0, "TIMESTAMP '1901-01-01 00:00:00.000000'", '' );
+                adapter = DatabaseAdapter( 0, "TIMESTAMP '1901-01-01 00:00:00.000000'", '', 1 );
                 adapter.databasePreamble += 'drop schema if exists ' + dataSource.database+" cascade;\n"
                 adapter.databasePreamble += "create database "+ dataSource.database +" with encoding 'UTF-8';\n\n"
                 # adapter.databasePreamble += "SET search_path="+dataSource.database +";\n"
                 adapter.databasePreamble += "\c "+dataSource.database+";\n"
         elif( dataSource.databaseType == 'mysql' ):
-                adapter = DatabaseAdapter( 0, "TIMESTAMP '0000-00-00 00:00:00.000000'", " type = InnoDB" );
+                adapter = DatabaseAdapter( 0, "TIMESTAMP '0000-00-00 00:00:00.000000'", " type = InnoDB", 0 );
                 adapter.longBinaryType = 'LONGTEXT' 
                 adapter.longCharType = 'LONGTEXT'
                 adapter.databasePreamble += 'drop database if exists ' + dataSource.database+";\n"
@@ -80,7 +81,7 @@ def getDatabaseAdapter( dataSource ):
                 adapter.databasePreamble += "SET FOREIGN_KEY_CHECKS = 0;"
                 adapter.databasePostText += "SET FOREIGN_KEY_CHECKS = 1;\n"
         elif( dataSource.databaseType == 'db2' ):  ## note that DB2 does actually support unicode, but this version jams it off everywhere.
-                adapter = DatabaseAdapter( 0, "'1901-01-01 00:00:00.000000'", '' );
+                adapter = DatabaseAdapter( 0, "'1901-01-01 00:00:00.000000'", '', 0 );
                 adapter.safeVariableNameLength = 18
                 adapter.databasePreamble += "-- Disconnect from any existing database connection\n"
                 adapter.databasePreamble += "CONNECT RESET;\n"
@@ -88,7 +89,7 @@ def getDatabaseAdapter( dataSource ):
                 adapter.databasePreamble += "CREATE DATABASE " + dataSource.database + " USING CODESET UTF-8 TERRITORY UK;\n" 
                 adapter.databasePreamble += "CONNECT TO "  + dataSource.database +";\n"
         elif( dataSource.databaseType == 'firebird' ):
-                adapter = DatabaseAdapter( 0, "TIMESTAMP '1901-01-01 00:00:00'", '' );
+                adapter = DatabaseAdapter( 0, "TIMESTAMP '1901-01-01 00:00:00'", '', 1 );
                 adapter.databasePreamble += "CREATE DATABASE '%(db)s.fdb' page_size 8192 user '%(user)s' password '%(pass)s' DEFAULT CHARACTER SET UTF8;" % { 'db' : dataSource.database, 'pass' : dataSource.password, 'user' : dataSource.username }
                 adapter.databasePreamble += "CONNECT '%(db)s.fdb' user %(user)s password %(pass)s;" % { 'db' : dataSource.database, 'pass' : dataSource.password, 'user' : dataSource.username }
         return adapter
@@ -114,8 +115,109 @@ def valIfNotNoneOrBlank( s, default ):
         if( notNoneOrBlank( s )):
                 return s;
         return default;
+        
+class ArrayInfo:
+        def __init__( 
+                self,
+                isExternallyDefined, 
+                arrayFirst, 
+                arrayLast, 
+                arrayIndexType, 
+                arrayAdaIndexTypeName,  
+                arrayEnumValues, 
+                arrayName,
+                dataType ):
+                self.isExternallyDefined = isExternallyDefined 
+                self.first = arrayFirst
+                self.last = arrayLast
+                self.indexType = arrayIndexType
+                self.adaIndexTypeName = arrayAdaIndexTypeName
+                self.enumValues = arrayEnumValues
+                print "got %d enums " % ( len(self.enumValues) )
+                if self.indexType == 'ENUM':
+                        self.enumName = arrayAdaIndexTypeName
+                self.name = arrayName
+                self.dataType = dataType
+                if self.adaIndexTypeName == None:
+                        self.adaIndexTypeName = 'Positive'
+                if self.first == None:
+                        if self.indexType == 'ENUM':
+                                self.first = arrayEnumValues[0]
+                        else:
+                                self.first = 1
+                if self.last == None:
+                        if self.indexType == 'ENUM':
+                                self.last = arrayEnumValues[-1]
+                        else:
+                                self.first = 1
+                if self.indexType == 'ENUM':
+                        p1 = arrayEnumValues.index( self.first )
+                        p2 = arrayEnumValues.index( self.last )
+                        # print "p2 = %d p2=%d " % (p1, p2)
+                        self.length = 1 + ( p2 - p1 )  
+                else:
+                        self.last = int( self.last )
+                        self.first = int( self.first )
+                        self.length = 1 + self.last - self.first
+        #      type AA_Type is array( Integer range<> ) of Long_Float;
+        #      type AE_Type is array( AEnum range<> ) of Integer;
+        #      package fp is new DB_Commons.Float_Mapper( Index => Integer, Data_Type=>Long_Float, Array_Type=>AA_Type );
+        #      package dp is new DB_Commons.Discrete_Mapper( Index => AEnum, Data_Type=>Integer, Array_Type=>AE_Type );
+        #      a : AA_Type( 1 .. 12 );
+        
+        def packageName( self ):
+                return "%(arrayname)s_Package"%{ 'arrayname':self.name } 
+             
+        def packageDeclaration( self, isDiscrete ):
+                floatOrDiscrete = 'Discrete' if isDiscrete else 'Float';
+                return "package %(packagename)s is new DB_Commons.%(floatOrDiscrete)s_Mapper( Index=> %(index)s, Data_Type=>%(datatype)s, Array_Type=>%(arraytype)s );" %\
+                       { 'packagename': self.packageName(), 'adaname':self.name, \
+                       'floatOrDiscrete':floatOrDiscrete, 'index':self.adaIndexTypeName, \
+                       'datatype': self.dataType, 'arraytype':self.name }
+                
+        def rangeString( self ):
+                if self.first == None and self.last == None:
+                        s = self.indexType + "'Range"
+                elif self.first != None and self.last == None:
+                        s = self.first + " .. " + self.indexType + "'Last"
+                elif self.first == None and self.last != None:
+                        s = self.indexType + "'First .. " + self.last
+                else:
+                        s = str(self.first) + " .. " + str(self.last)
+                return s
+                
+        def typeDeclaration( self, default ):
+                out = {}
+                if self.isExternallyDefined:
+                        return {'',''}
+                rangestr = self.rangeString()
+                initstr = " := ( others => " + default + ")" 
+                s1 = "type %s_U is array( %s<> ) of %s;"%( self.name, self.adaIndexTypeName, self.dataType )
+                s2 = "subtype %s is %s_U range %s;"%( self.name, self.name, rangestr )    
+                return [s1,s2] 
+                
+                
+        def sqlArrayDefaultDeclaration( self, default ):
+                s = "array[ "
+                for i in range( 0, self.length ):
+                        s += default
+                        if i < self.length-1:
+                                s += ", "        
+                s += " ]"   
+                return s
+                
+        def arrayDeclaration( self, default ):
+                return self.name + " := ( others => " + default + " )"
+                
+        def arrayFromStringDeclaration( self, varname ):
+                return self.packageName() + ".SQL_Map_To_Array( s, " + varname+" )" 
 
-
+        def stringFromArrayDeclaration( self, varname ):
+                return " := " + self.packageName() + ".Array_To_SQL_String( " + varname + " )"
+         
+        def toStringDeclaration( self, varname ):
+                return " := " + self.packageName() + ".To_String( " + varname + " )";
+        
 
 class Variable:
         
@@ -142,7 +244,10 @@ class Variable:
                 if( self.isFloatingPointType() ):
                         sqlType = 'DOUBLE PRECISION'
                 elif( self.schemaType == 'CHAR' or self.schemaType == 'VARCHAR' ):
-                        sqlType = 'VARCHAR('+str( self.size )+')'
+                        if databaseAdapter.supportsTextType:
+                                sqlType = 'TEXT'
+                        else:
+                                sqlType = 'VARCHAR('+str( self.size )+')'
                 elif self.schemaType == 'DECIMAL' :
                         sqlType = 'DECIMAL(' + self.size+', '+ self.scale + ')'
                 elif self.schemaType == 'BOOLEAN' or self.schemaType == 'ENUM' :
@@ -179,8 +284,11 @@ class Variable:
                 return adaType
 
         
-
+        def isDiscreteTypeInAda( self ):
+                return self.schemaType == 'ENUM' or self.schemaType == 'BIGINT' or self.schemaType == 'INTEGER' or self.schemaType=='BOOLEAN'
         
+        def isFloatingPointTypeInAda( self ):
+                return self.schemaType == 'FLOAT' or self.schemaType == 'REAL' or self.schemaType=='DOUBLE'
 
         # always as a String
         def getDefaultAdaValue( self ):
@@ -276,20 +384,24 @@ class Variable:
 
         def isIntegerType( self ):
                 return ( self.schemaType == 'INTEGER' ) or ( self.schemaType == 'BIGINT' )   
-        
+                
         def isIntegerTypeInODBC( self ):
                 return ( self.schemaType == 'INTEGER' ) or ( self.schemaType == 'BOOLEAN' ) or ( self.schemaType == 'ENUM' ) or ( self.schemaType == 'BIGINT' )
         
         def isStringType( self ):
                 return (self.schemaType == 'CHAR') or (self.schemaType == 'VARCHAR'); 
         
+        def addArray( self, arrayInfo ):
+                self.arrayInfo = arrayInfo;
+                if self.arrayInfo.name == None:
+                        self.arrayInfo.name = self.name +"_Array";
+                        
         def isDateType( self ):
                 return (self.schemaType == 'TIMESTAMP') or (self.schemaType == 'TIME') or (self.schemaType == 'DATE')
         
         def __init__( self, databaseAdapter, tablename, varname, adaTypeName, schemaType, default, size, scale, description, autoIncrement, notNull, isPrimaryKey ):
                 self.tablename = tablename
                 self.varname = varname;
-                self.enum = None
                 self.adaTypeName = adaTypeName
                 self.adaName = adafyName( varname ).lower()
                 self.schemaType = upper( schemaType)
@@ -303,9 +415,13 @@ class Variable:
                 self.odbcType = self.getODBCType( databaseAdapter )
                 self.notNull = notNull
                 self.isPrimaryKey = isPrimaryKey
+                self.enum = None
                 if( self.schemaType == 'ENUM' ):
                         self.values = []
+                self.arrayInfo = None                        
                 
+                
+
         def __repr__( self ):
                 return "varname |%(varname)s| schemaType |%(schemaType)s| default |%(def)s| size |%(size)s| " % \
                         { 'varname': self.varname, 'schemaType' : self.sqlType, 'def' : self.default,
@@ -348,6 +464,7 @@ class Table:
                 self.enumeratedTypes = {}
                 self.description = description
                 self.childRelations = {}
+                
                 
         def getPrimaryKeyVariables( self ):
                 vs = []
@@ -409,7 +526,7 @@ class Table:
                 
         def hasIndexes( self ):
                 return len( self.indexes ) > 0;
-        
+                
         def addVariable( self, varClass, isPrimary ):
                 if( varClass.schemaType == 'DECIMAL' ):
                         dtype = DecimalType( varClass.size, varClass.scale );
@@ -418,6 +535,15 @@ class Table:
                         etype = EnumeratedType( self.name, varClass.varname, varClass.adaTypeName, varClass.values )
                         self.enumeratedTypes[ etype.name ] = etype
                         ## fixme: short version only
+                if varClass.arrayInfo != None:
+                        if varClass.arrayInfo.indexType == 'ENUM':
+                                        etype = EnumeratedType(
+                                                self.name,
+                                                varClass.varname,
+                                                varClass.arrayInfo.adaIndexTypeName,
+                                                varClass.arrayInfo.enumValues )
+                                        print etype
+                                        self.enumeratedTypes[ etype.name ] = etype
                 self.variables.append( varClass );
                 if( isPrimary ):
                         self.primaryKey.append( varClass.varname )
@@ -478,11 +604,18 @@ class DecimalType:
         def __repr__( self ):
                 return "ada_name %(ada_name)s prec %(prec)d length %(length)d delta %(delta)f" %\
                         { 'ada_name': self.ada_name, 'prec':self.prec, 'length':self.length, 'delta': self.delta }   
-     
+
+
 class EnumeratedType:
         
+        def __repr__( self ):
+                return "name %(name)s adaTypeName %(adaTypeName)s " %\
+                        { 'name': self.name, 'adaTypeName':self.adaTypeName }
+                        
         def isExternallyDefined( self ):
-                return ( not self.adaTypeName is None ) and len( self.values ) == 0
+                extern = ( not self.adaTypeName is None ) and len( self.values ) == 0
+                print "extern %d" % ( extern )
+                return extern
         
         def __init__( self, table_name, name, adaTypeName, values = None ):
                 self.name = table_name +'_' + name
@@ -520,7 +653,6 @@ class Database:
                 self.adaTypePackages = []
                 self.adaDataPackage = None
                 self.adaTypePackagesCompleteSet = []
-                
                 self.tables = []
                 self.dataSource = dataSource;
                 self.decimalTypes = {}
@@ -529,6 +661,24 @@ class Database:
                 self.description = ''
                 self.name = ''
                 self.databaseAdapter = getDatabaseAdapter( self.dataSource )
+                
+        def getArrayDeclarations( self ):
+                arrays = []
+                for t in self.tables:
+                        for v in t.variables:
+                                if v.arrayInfo != None:
+                                        td = v.arrayInfo.typeDeclaration( v.getDefaultAdaValue() )
+                                        arrays.append( td[0] );
+                                        arrays.append( td[1] );
+                return arrays;
+                        
+        def getArrayPackages( self ):
+                pkgs = []
+                for t in self.tables:
+                        for v in t.variables:
+                                if v.arrayInfo != None:
+                                        pkgs.append( v.arrayInfo.packageDeclaration( v.isDiscreteTypeInAda() ))                        
+                return pkgs        
                 
         def adaDataPackageName( self ):
                 if( self.adaDataPackage == None ):
@@ -611,6 +761,7 @@ def tableToXML( table, document ):
                 if( var.autoIncrement ):
                         varElem.set( 'autoIncrement', 'true' )
                 varElem.set( 'description', var.description )
+                # add array elements here
                 if( var.scale != None ) and ( var.scale != 0 ) and ( var.scale != '' ):
                         setIntAttribute( varElem, 'scale', var.scale )
                 tableElem.append( varElem )
@@ -700,11 +851,33 @@ def parseTable( xtable, databaseAdapter ):
                         notNull,
                         isPrimary
                 )
+                var.isArray = column.get( 'isArray' ) == 'true'
                 if( stype == 'ENUM' ):
                         valuesStr = column.get( 'values' )
                         if( notNoneOrBlank( valuesStr )):
                                 var.values = valuesStr.split()
-                
+                if( var.isArray ):
+                        isExternallyDefined = column.get( 'arrayIsExternallyDefined' ) == 'true'
+                        arrayFirst = get( column, 'arrayFirst', 1 )
+                        arrayLast = get( column, 'arrayLast', 1 )
+                        arrayIndexType = column.get( 'arrayIndexType' )
+                        arrayAdaIndexTypeName = column.get( 'arrayAdaIndexTypeName' )
+                        arrayEnumValuesStr = column.get( 'arrayEnumValues' )
+                        arrayEnumValues = []
+                        if arrayEnumValuesStr != None:
+                                arrayEnumValues = arrayEnumValuesStr.split()
+                        arrayName = column.get( 'arrayName' )
+                        arrayInfo = ArrayInfo( 
+                                isExternallyDefined, 
+                                arrayFirst, 
+                                arrayLast, 
+                                arrayIndexType, 
+                                arrayAdaIndexTypeName, 
+                                arrayEnumValues, 
+                                arrayName,
+                                var.getAdaType( True )); 
+                        var.addArray( arrayInfo )  
+                        
                 stable.addVariable( var, isPrimary )
         for fk in xtable.iter( "foreign-key" ):
                 stable.addForeignKey( makeForeignKey( fk ))

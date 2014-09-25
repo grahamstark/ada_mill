@@ -34,8 +34,15 @@ $e
 #end for
    -- === CUSTOM TYPES END ===
 
+#for $adec in $arrayDeclarations:
+   $adec  
+#end for;
 
-#for $rec in $records:
+#for $apac in $arrayPackages
+   $apac
+#end for;
+
+#for $rec in $records
 $rec
 #end for;
         

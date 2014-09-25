@@ -65,7 +65,9 @@ def makeCastStatement( var ):
                 return var.getAdaType( True )
 
 def makeCriteriaDecl( var, isString, ending ):
-        if( isString ):
+        if var.arrayInfo != None:
+                adaType = var.arrayInfo.name
+        elif isString:
                 adaType = 'String'
         else:
                 adaType = var.getAdaType( True )
@@ -84,21 +86,26 @@ def makeCriteriaBody( var, isString = False ):
                 adaType = 'String'
         else:
                 adaType = var.getAdaType( True )
+        # adaType = str.capitalize( adaType );
         template = Template( file=WORKING_PATHS.templatesPath+"add_to_criterion.func.tmpl" )
-        if(( var.schemaType == 'BOOLEAN' ) or ( var.schemaType == 'ENUM' )):
+        if var.arrayInfo != None :
+                value = var.arrayInfo.stringFromArrayDeclaration( var.adaName )
+        if( var.schemaType == 'BOOLEAN' ) or ( var.schemaType == 'ENUM' ):
                 value = "Integer( " + adaType+"'Pos( "+var.adaName +" ))"
-        elif( adaType == 'Unbounded_String' ):
+        elif adaType == 'Unbounded_String':
                 value = "To_String( "+var.adaName +" )"
-        elif( var.hasUserDefinedAdaType() ):
+        elif var.hasUserDefinedAdaType():
                 value = makeCastStatement( var )
         else:
                 value = var.adaName
         # handle decimals from generic functions, one per decimal type; these are declared locally to the current package
         #
-        if var.isDecimalType():
-                function = "make_criterion_element_"+adaType
+        if var.arrayInfo != None:
+                function = var.arrayInfo.packageName() + ".Make_Criterion_Element"
+        elif var.isDecimalType():
+                function = "Make_Criterion_Element_"+adaType
         else:   # .. otherwise, use the default versions in the db_commons package, aliased as 'd' here
-                function = 'd.make_Criterion_Element';                
+                function = 'd.Make_Criterion_Element';                
         s = 'elem : d.Criterion := '+ function + '( "'+ var.varname +'", op, join, '+ value 
         if var.isStringType():
                 s += ", " + str( var.size ) ## the length of the sql variable, so we 
@@ -226,13 +233,14 @@ def make_io_ads( database, adaTypePackages, table ):
         template.incr_integer_pk_fields = []
         template.adaTypePackages = makeUniqueArray( adaTypePackages + table.adaTypePackages )
         for var in table.variables:
-                template.orderingStatements.append(makeAddOrderingColumnDecl( var, ';' ));
-                template.criteria.append( makeCriteriaDecl( var, False, ';' ))
-                if( var.isStringType() ):
-                        template.criteria.append( makeCriteriaDecl( var , True, ';' ))
-                if( var.isPrimaryKey ):
-                        if( var.isIntegerType() ):
-                                template.incr_integer_pk_fields.append( makeNextFreeHeader( var, asp.CONNECTION_STRING, ';' ));
+                if var.arrayInfo != None:
+                        template.orderingStatements.append(makeAddOrderingColumnDecl( var, ';' ));
+                        template.criteria.append( makeCriteriaDecl( var, False, ';' ))
+                        if( var.isStringType() ):
+                                template.criteria.append( makeCriteriaDecl( var , True, ';' ))
+                        if( var.isPrimaryKey ):
+                                if( var.isIntegerType() ):
+                                        template.incr_integer_pk_fields.append( makeNextFreeHeader( var, asp.CONNECTION_STRING, ';' ));
         
         if( table.hasPrimaryKey()):                                
                 template.pkFunc = makePKHeader( table, asp.CONNECTION_STRING, ';' )
@@ -347,7 +355,9 @@ def makeToStringBody( table ):
         for var in table.variables:
                 p += 1
                 s = INDENT*3 + '"'+var.adaName+' = " & ' 
-                if( var.isStringType() ):
+                if( var.arrayInfo != None ):
+                        s += var.arrayInfo.toStringDeclaration( var.adaName );
+                elif( var.isStringType() ):
                         s += 'To_String( rec.' + var.adaName +" )" 
                 elif( var.isDateType() ):                        
                         s += 'tio.Image( rec.' + var.adaName + ', tio.ISO_Date )';
@@ -364,7 +374,12 @@ def makeSingleAdaRecordElement( var ):
         var - Variable class from table_model.py         
         Declaration for a single element in a record
         """
-        return var.adaName + " : " + var.adaType + " := " + var.getDefaultAdaValue()
+        s = var.adaName + " : " 
+        if var.arrayInfo != None:
+                s = var.arrayInfo.arrayDeclaration( var.getDefaultAdaValue())
+        else:
+                s += var.adaType + " := " + var.getDefaultAdaValue()                
+        return s 
         
 def makeContainerPackage( table ):
         """
@@ -431,7 +446,10 @@ def makeDefaultRecordDecl( table ):
         s += INDENT*1 + table.adaNullName + " : constant " + table.adaTypeName + " := (\n";
         elems = []
         for var in table.variables:
-                elems.append( INDENT*3 + var.adaName + " => " + var.getDefaultAdaValue() );
+                if var.arrayInfo == None:
+                        elems.append( INDENT*3 + var.adaName + " => " + var.getDefaultAdaValue() );
+                else:
+                        elems.append( INDENT*3 + var.adaName + " => ( others => " + var.getDefaultAdaValue() + " )");
         # for name in table.childRelations:
                 # fk = table.childRelations[ name ]
                 # adaName = adafyName( name )                        
@@ -452,7 +470,8 @@ def makeDataADS( database ):
         """
         rtabs = database.tables[:]
         rtabs.reverse()
-        records = []        
+        records = []   
+        
         for table in rtabs:
                 if( table.adaExternalName == '' ):
                         record = makeRecord( table )
@@ -476,11 +495,14 @@ def makeDataADS( database ):
                 template.customProcs = customProcs;
                 template.adaTypePackages = database.adaTypePackages
                 template.name = database.adaDataPackageName
+                
+                template.arrayDeclarations = database.getArrayDeclarations();
+                template.arrayPackages = database.getArrayPackages();
                 template.date = datetime.datetime.now()
                 outfile.write( str(template) )
                 outfile.close
-                
-        
+
+
 def makeDataADB( database ):
         """
          Write a .adb file  
@@ -544,6 +566,7 @@ def makeBaseTypesADS( database ):
         enums = []
         for e in database.enumeratedTypes.values():
                 if( not e.isExternallyDefined()):
+                        print "appending " + e.name + " to enums"
                         enums.append( e.toAdaString )
         template.enum_reps = enums;
         template.date = datetime.datetime.now()
@@ -645,16 +668,19 @@ def makeCreateTest( databaseName, table ):
                                 key = varname+'.'+var.adaName+ ' := '+ table.adaTypeName +"'First"
                         template.createKeyStatements.append( key )
                 else:
-                        assign = "-- missing"+varname+" declaration "
-                        if( var.isStringType() ):
+                        assign = "-- missing declaration for "+varname+'.'+var.adaName
+                        if var.arrayInfo != None:
+                                data = "( others => " + var.getDefaultAdaValue() + " )"
+                                assign = varname+'.'+var.adaName+ ' := '+ data;
+                        elif var.isStringType():
                                 data = 'dat for'+var.adaName 
                                 assign = varname+'.'+var.adaName+ ' := To_Unbounded_String("'+data+'" & i\'Img )'
                                 template.modifyDataStatements.append( varname+'.'+var.adaName+ ' := To_Unbounded_String("Altered::'+data+'" & i\'Img)' )
-                        elif( var.isDateType() ):
+                        elif var.isDateType():
                                 assign = varname+'.'+var.adaName+ ' := Ada.Calendar.Clock'
-                        elif( var.isFloatingPointType() ):
-                                assign = varname+'.'+var.adaName+ ' := 1010100.012 + ' + var.adaType + "( i )'Img"
-                        elif( var.isDecimalType() ):
+                        elif var.isFloatingPointType():
+                                assign = varname+'.'+var.adaName+ ' := 1010100.012 + ' + var.adaType + "( i )"
+                        elif var.isDecimalType():
                                 # fixme breaks if this is a unique key
                                 v = '10201.'+( int(var.scale)*'1')
                                 assign = varname+'.'+var.adaName+ ' := '+v
