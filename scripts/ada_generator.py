@@ -90,7 +90,7 @@ def makeCriteriaBody( var, isString = False ):
         template = Template( file=WORKING_PATHS.templatesPath+"add_to_criterion.func.tmpl" )
         if var.arrayInfo != None :
                 value = var.arrayInfo.stringFromArrayDeclaration( var.adaName )
-        if( var.schemaType == 'BOOLEAN' ) or ( var.schemaType == 'ENUM' ):
+        elif( var.schemaType == 'BOOLEAN' ) or ( var.schemaType == 'ENUM' ):
                 value = "Integer( " + adaType+"'Pos( "+var.adaName +" ))"
         elif adaType == 'Unbounded_String':
                 value = "To_String( "+var.adaName +" )"
@@ -101,7 +101,7 @@ def makeCriteriaBody( var, isString = False ):
         # handle decimals from generic functions, one per decimal type; these are declared locally to the current package
         #
         if var.arrayInfo != None:
-                function = var.arrayInfo.packageName() + ".Make_Criterion_Element"
+                function = "d.Make_Criterion_Element"
         elif var.isDecimalType():
                 function = "Make_Criterion_Element_"+adaType
         else:   # .. otherwise, use the default versions in the db_commons package, aliased as 'd' here
@@ -233,14 +233,14 @@ def make_io_ads( database, adaTypePackages, table ):
         template.incr_integer_pk_fields = []
         template.adaTypePackages = makeUniqueArray( adaTypePackages + table.adaTypePackages )
         for var in table.variables:
-                if var.arrayInfo != None:
-                        template.orderingStatements.append(makeAddOrderingColumnDecl( var, ';' ));
-                        template.criteria.append( makeCriteriaDecl( var, False, ';' ))
-                        if( var.isStringType() ):
-                                template.criteria.append( makeCriteriaDecl( var , True, ';' ))
-                        if( var.isPrimaryKey ):
-                                if( var.isIntegerType() ):
-                                        template.incr_integer_pk_fields.append( makeNextFreeHeader( var, asp.CONNECTION_STRING, ';' ));
+                # if var.arrayInfo != None:
+                template.orderingStatements.append(makeAddOrderingColumnDecl( var, ';' ));
+                template.criteria.append( makeCriteriaDecl( var, False, ';' ))
+                if( var.isStringType() ):
+                        template.criteria.append( makeCriteriaDecl( var , True, ';' ))
+                if( var.isPrimaryKey ):
+                        if( var.isIntegerType() ):
+                                template.incr_integer_pk_fields.append( makeNextFreeHeader( var, asp.CONNECTION_STRING, ';' ));
         
         if( table.hasPrimaryKey()):                                
                 template.pkFunc = makePKHeader( table, asp.CONNECTION_STRING, ';' )
@@ -356,7 +356,7 @@ def makeToStringBody( table ):
                 p += 1
                 s = INDENT*3 + '"'+var.adaName+' = " & ' 
                 if( var.arrayInfo != None ):
-                        s += var.arrayInfo.toStringDeclaration( var.adaName );
+                        s += var.arrayInfo.toStringDeclaration( "rec." + var.adaName );
                 elif( var.isStringType() ):
                         s += 'To_String( rec.' + var.adaName +" )" 
                 elif( var.isDateType() ):                        
@@ -376,7 +376,7 @@ def makeSingleAdaRecordElement( var ):
         """
         s = var.adaName + " : " 
         if var.arrayInfo != None:
-                s = var.arrayInfo.arrayDeclaration( var.getDefaultAdaValue())
+                s += var.arrayInfo.arrayDeclaration( var.getDefaultAdaValue())
         else:
                 s += var.adaType + " := " + var.getDefaultAdaValue()                
         return s 

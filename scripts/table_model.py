@@ -132,6 +132,8 @@ class ArrayInfo:
                 self.last = arrayLast
                 self.indexType = arrayIndexType
                 self.adaIndexTypeName = arrayAdaIndexTypeName
+                if self.indexType == 'ENUM':
+                        self.adaIndexTypeName += "_Enum" # fixme should use getAdaType()??
                 self.enumValues = arrayEnumValues
                 print "got %d enums " % ( len(self.enumValues) )
                 if self.indexType == 'ENUM':
@@ -170,7 +172,7 @@ class ArrayInfo:
              
         def packageDeclaration( self, isDiscrete ):
                 floatOrDiscrete = 'Discrete' if isDiscrete else 'Float';
-                return "package %(packagename)s is new DB_Commons.%(floatOrDiscrete)s_Mapper( Index=> %(index)s, Data_Type=>%(datatype)s, Array_Type=>%(arraytype)s );" %\
+                return "package %(packagename)s is new %(floatOrDiscrete)s_Mapper( Index=> %(index)s, Data_Type=>%(datatype)s, Array_Type=>%(arraytype)s_U );" %\
                        { 'packagename': self.packageName(), 'adaname':self.name, \
                        'floatOrDiscrete':floatOrDiscrete, 'index':self.adaIndexTypeName, \
                        'datatype': self.dataType, 'arraytype':self.name }
@@ -192,8 +194,8 @@ class ArrayInfo:
                         return {'',''}
                 rangestr = self.rangeString()
                 initstr = " := ( others => " + default + ")" 
-                s1 = "type %s_U is array( %s<> ) of %s;"%( self.name, self.adaIndexTypeName, self.dataType )
-                s2 = "subtype %s is %s_U range %s;"%( self.name, self.name, rangestr )    
+                s1 = "type %s_U is array( %s range<> ) of %s;"%( self.name, self.adaIndexTypeName, self.dataType )
+                s2 = "subtype %s is %s_U( %s );"%( self.name, self.name, rangestr )    
                 return [s1,s2] 
                 
                 
@@ -213,10 +215,10 @@ class ArrayInfo:
                 return self.packageName() + ".SQL_Map_To_Array( s, " + varname+" )" 
 
         def stringFromArrayDeclaration( self, varname ):
-                return " := " + self.packageName() + ".Array_To_SQL_String( " + varname + " )"
+                return self.packageName() + ".Array_To_SQL_String( " + varname + " )"
          
         def toStringDeclaration( self, varname ):
-                return " := " + self.packageName() + ".To_String( " + varname + " )";
+                return self.packageName() + ".To_String( " + varname + " )";
         
 
 class Variable:
@@ -632,7 +634,10 @@ class EnumeratedType:
                 for v in self.values:
                         valueNames.append( v.value );
                 valStr = ", ".join( valueNames );
-                return "type "+self.name+"_Enum is ( " + valStr + " ) "; 
+                name = self.name
+                if name[-5:] != '_Enum':
+                        name += "_Enum"
+                return "type " + name + " is ( " + valStr + " ) "; 
            
         def addValue( self, value, number = None, string = None ):
                 if number == None:

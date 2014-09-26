@@ -6,7 +6,8 @@ with Ada.Containers.Vectors;
 with Ada.Strings.Bounded;
 with Ada.Strings.Wide_Fixed;
 with ada.strings.Unbounded; 
-with Base_Types; use Base_Types;
+with Base_Types; 
+
 -- === CUSTOM IMPORTS START ===
 #for $e in $customImports 
 $e 
@@ -15,6 +16,8 @@ $e
  
 package DB_Commons is
 
+   use Base_Types;
+   
    -- === CUSTOM TYPES START ===
 #for $e in $customTypes 
 $e 
@@ -104,12 +107,7 @@ $e
       op : operation_type;
       join : join_type; 
       t : Ada.Calendar.Time  ) return Criterion;
-
-   --
-   -- Array type handling; despite this being generic, we actually
-   -- need to near-identical copies, one for float data and one for
-   -- discrete (integers and enums).
-   --
+  
    generic
       type Dec is delta<> digits<>;
       function Make_Decimal_Criterion_Element( 
@@ -128,50 +126,11 @@ $e
    --
    function To_Crude_Array_Of_Values( c : Criteria ) return String;
    
-   procedure add_to_criteria( cr : in out Criteria; elem : Criterion );
-   procedure add_to_criteria( cr : in out Criteria; ob : Order_By_Element );
-   
+   procedure Add_To_Criteria( cr : in out Criteria; elem : Criterion );
+   procedure Add_To_Criteria( cr : in out Criteria; ob : Order_By_Element );
+
    DB_Exception : exception;
 
-   --
-   -- Packages for reading and writing arrays in the format used in Postgres. 
-   -- You need two near-dupicates here.
-   -- Odd that you can't have a generic *numeric*, but there you go..
-   --
-   generic
-      type Index is (<>);
-      type Data_Type is digits<>;
-      type Array_Type is array( Index range <> ) of Data_Type;   
-   package Float_Mapper is
-   
-     procedure SQL_Map_To_Array( s : String; a : out Array_Type );
-     function Array_To_SQL_String( a : Array_Type ) return String;
-     function To_String( a : Array_Type ) return String;
-     function Make_Criterion_Element( 
-         varname : String;
-         op : operation_type;
-         join : join_type; 
-         value : Array_Type  ) return Criterion;
-
-   end Float_Mapper;
-   
-   generic
-      type Index is (<>);
-      type Data_Type is (<>);
-      type Array_Type is array( Index range <> ) of Data_Type;   
-   package Discrete_Mapper is
-   
-     procedure SQL_Map_To_Array( s : String; a : out Array_Type );
-     function Array_To_SQL_String( a : Array_Type ) return String;
-     function To_String( a : Array_Type ) return String;
-     function Make_Criterion_Element( 
-         varname : String;
-         op : operation_type;
-         join : join_type; 
-         value : Array_Type  ) return Criterion;
-   
-   end Discrete_Mapper;
-   
 private 
  
    use Ada.Strings.Unbounded;
@@ -181,23 +140,23 @@ private
    use String80;
    
    type Criterion is record
-      s : Unbounded_String;
+      s     : Unbounded_String;
       value : Unbounded_String;
-      join : Join_Type;
+      join  : Join_Type;
    end record;
    
    type Order_By_Element is new Ada.Strings.Unbounded.Unbounded_String;
            
    package Criteria_P is new Ada.Containers.Vectors( 
       Element_Type => Criterion, 
-      Index_Type => Positive );
+      Index_Type   => Positive );
            
    package Order_By_P is new Ada.Containers.Vectors( 
       Element_Type => Order_By_Element, 
-      Index_Type => Positive );
+      Index_Type   => Positive );
    
    type Criteria is record
-      elements : Criteria_P.Vector;
+      elements  : Criteria_P.Vector;
       orderings : Order_By_P.Vector;
    end record;
    

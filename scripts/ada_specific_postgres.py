@@ -93,7 +93,7 @@ def makeConfiguredParamsHeader( templateName, variableList ):
                 p += 1
                 if var.arrayInfo != None:
                         typ = 'Parameter_Text'
-                        default = '"'+var.arrayInfo.sqlArrayDefaultDeclaration( var.getDefaultAdaValue() )+'"'
+                        default = 'null' #'"'+var.arrayInfo.sqlArrayDefaultDeclaration( var.getDefaultAdaValue() )+'"'
                 elif( isIntegerTypeInPostgres( var )):
                         typ = 'Parameter_Integer'
                         default = '0'
@@ -129,7 +129,7 @@ def makeConfiguredParamsBody( templateName, variableList ):
                 p += 1
                 if var.arrayInfo != None:
                         typ = 'Parameter_Text'
-                        default = '"'+var.arrayInfo.sqlArrayDefaultDeclaration( var.getDefaultAdaValue() )+'"'
+                        default = 'null' #'"'+var.arrayInfo.sqlArrayDefaultDeclaration( var.getDefaultAdaValue() )+'"'
                 elif isIntegerTypeInPostgres( var ):
                         typ = 'Parameter_Integer'
                         default = '0'
