@@ -25,7 +25,7 @@ def writeLoggingConfigFile( database ):
         template.dbPackages = []
         template.customLogs = readLinesBetween( outfileName, ".*CUSTOM.*LOGGING.*START", ".*CUSTOM.*LOGGING.*END" )
 
-        template.logFileName = WORKING_PATHS.logDir+database.dataSource.database+".log"
+        template.logFileName = database.dataSource.database+".log" # WORKING_PATHS.logDir+
         for table in database.tables:
                 template.dbPackages.append( (table.adaTypeName+"_IO").upper() );
         template.testCase = adafyName( database.dataSource.database +  '_test' ).upper();

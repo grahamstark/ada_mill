@@ -107,7 +107,7 @@ def makeCriteriaBody( var, isString = False ):
         else:   # .. otherwise, use the default versions in the db_commons package, aliased as 'd' here
                 function = 'd.Make_Criterion_Element';                
         s = 'elem : d.Criterion := '+ function + '( "'+ var.varname +'", op, join, '+ value 
-        if var.isStringType():
+        if var.isStringType() and var.size > 1:
                 s += ", " + str( var.size ) ## the length of the sql variable, so we 
         template.criterion = s +" )" 
         template.header = makeCriteriaDecl( var, isString, ' is' )

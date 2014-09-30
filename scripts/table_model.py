@@ -153,6 +153,7 @@ class ArrayInfo:
                         else:
                                 self.first = 1
                 if self.indexType == 'ENUM':
+                        # if( self.arrayEnumValues != None ):
                         p1 = arrayEnumValues.index( self.first )
                         p2 = arrayEnumValues.index( self.last )
                         # print "p2 = %d p2=%d " % (p1, p2)
@@ -671,7 +672,7 @@ class Database:
                 arrays = []
                 for t in self.tables:
                         for v in t.variables:
-                                if v.arrayInfo != None:
+                                if v.arrayInfo != None and not v.arrayInfo.isExternallyDefined :
                                         td = v.arrayInfo.typeDeclaration( v.getDefaultAdaValue() )
                                         arrays.append( td[0] );
                                         arrays.append( td[1] );
