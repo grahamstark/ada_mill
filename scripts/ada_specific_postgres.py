@@ -66,7 +66,7 @@ def makePreparedRetrieveStatementBody( table ):
         pk_queries = []
         data_queries = []        
         p = 0
-        template.tableName = table.name
+        template.tableName = table.qualifiedName()
         for var in table.getPrimaryKeyVariables():
                 p += 1
                 pk_queries.append( "${0:s} = ${1:d}".format( var.varname, p ))
@@ -320,7 +320,7 @@ def makeNextFreeFunc( table, var ):
         """
         template = Template( file=templatesPath()+"get_next_free.func.tmpl" )
         template.functionHeader = makeNextFreeHeader( var, CONNECTION_STRING, ' is' )
-        template.statement = "select coalesce( max( "+var.varname+" ) + 1, 1 ) from %{SCHEMA}"+table.name
+        template.statement = "select coalesce( max( "+var.varname+" ) + 1, 1 ) from %{SCHEMA}"+table.qualifiedName()
         template.functionName = "Next_Free_"+var.adaName
         template.adaName = var.adaName
         template.default = var.getDefaultAdaValue()

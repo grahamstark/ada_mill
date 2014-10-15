@@ -56,7 +56,7 @@ def makeUpdateStatement( table ):
         
 
 def makeInsertStatement( table ):
-        s = "insert into %{SCHEMA}"+table.name+" values( "
+        s = "insert into %{SCHEMA}"+table.qualifiedName()+" values( "
 
 def makeCastStatement( var ):
         if( var.hasUserDefinedAdaType() ):
@@ -302,25 +302,25 @@ def sqlVariablesList( table ):
         return s                
 
 def makeDeletePartString( table ):
-        s = 'DELETE_PART : constant String := "delete from %{SCHEMA}'+table.name+' "'
+        s = 'DELETE_PART : constant String := "delete from %{SCHEMA}'+table.qualifiedName()+' "'
         return s
 
 def makeSelectPartString( table ):
         s = 'SELECT_PART : constant String := "select " &'+"\n"
         s += sqlVariablesList( table )
         s += " &\n";
-        s += INDENT*3 + '" from %{SCHEMA}'+table.name+' " '
+        s += INDENT*3 + '" from %{SCHEMA}'+table.qualifiedName()+' " '
         return s
         
 def makeInsertPartString( table ):
-        s = 'INSERT_PART : constant String := "insert into %{SCHEMA}'+table.name+' (" &'+"\n"
+        s = 'INSERT_PART : constant String := "insert into %{SCHEMA}'+table.qualifiedName()+' (" &'+"\n"
         s += sqlVariablesList( table )
         s += " &\n";
         s += INDENT*3 + '" ) values " '
         return s
 
 def makeUpdatePartString( table ):
-        s = 'UPDATE_PART : constant String := "update %{SCHEMA}'+table.name+' set  "'
+        s = 'UPDATE_PART : constant String := "update %{SCHEMA}'+table.qualifiedName()+' set  "'
         return s
 
 def  makeEnvironmentADB( runtime ):
@@ -389,7 +389,7 @@ def makeContainerPackage( table ):
          (plus some comments)
         """
         s = INDENT + "--\n"
-        s += INDENT + "-- container for "+ table.name + " : " +table.description[:MAXLENGTH] +"\n"
+        s += INDENT + "-- container for "+ table.qualifiedName() + " : " +table.description[:MAXLENGTH] +"\n"
         s += INDENT + "--\n"
         s += INDENT + "package "+ table.adaContainerName+" is new Ada.Containers.Vectors\n"
         s += INDENT*2 + "(Element_Type => "+table.adaTypeName+",\n"
@@ -409,9 +409,9 @@ def makeRecord( table ):
         Make the Ada record declaration for the given table. See table_model.py for the (very limited)  b
         xml=>sql=>ada type mappings and defaults.
         """
-        print "making record for table " + table.name
+        print "making record for table " + table.qualifiedName()
         s = INDENT +"--\n"
-        s += INDENT +"-- record modelling "+ table.name + " : " + table.description[:MAXLENGTH]+"\n"
+        s += INDENT +"-- record modelling "+ table.qualifiedName() + " : " + table.description[:MAXLENGTH]+"\n"
         s += INDENT +"--\n"
         s += INDENT + 'type ' + table.adaTypeName + " is record\n";
         for var in table.variables:
@@ -430,7 +430,7 @@ def makeRecord( table ):
         
 def makeToStringDecl( table, ending ):
         s = INDENT*1 +"--\n"
-        s += INDENT*1 +"-- simple print routine for "+table.name + " : " +table.description[:MAXLENGTH]+"\n"
+        s += INDENT*1 +"-- simple print routine for "+table.qualifiedName() + " : " +table.description[:MAXLENGTH]+"\n"
         s += INDENT*1 +"--\n"
         s += INDENT*1 + "function To_String( rec : " + table.adaTypeName + ' ) return String'+ending +"\n"; 
         return s
@@ -441,7 +441,7 @@ def makeDefaultRecordDecl( table ):
         Make a record that signals, effectively, Null, with some unlikely values for the primary key fields
         """
         s = INDENT*1 +"--\n"
-        s += INDENT*1 +"-- default value for "+table.name + " : " +table.description[:MAXLENGTH]+"\n"
+        s += INDENT*1 +"-- default value for "+table.qualifiedName() + " : " +table.description[:MAXLENGTH]+"\n"
         s += INDENT*1 +"--\n"
         s += INDENT*1 + table.adaNullName + " : constant " + table.adaTypeName + " := (\n";
         elems = []
@@ -468,7 +468,7 @@ def makeDataADS( database ):
          Write a .ads file containing all the data records and container declarations 
          writes to a file  in the src output directory. 
         """
-        rtabs = database.tables[:]
+        rtabs = database.getAllTables() # FIXME: maybe one per schema??
         rtabs.reverse()
         records = []   
         
@@ -508,7 +508,7 @@ def makeDataADB( database ):
          Write a .adb file  
          writes to a file in the src output directory. 
         """
-        rtabs = database.tables[:]
+        rtabs = database.getAllTables()
         rtabs.reverse()
         template = Template( file=WORKING_PATHS.templatesPath+"data.adb.tmpl" )
         template.toStrings = []
@@ -709,7 +709,7 @@ def writeTestCaseADB( database ):
         template.childRegisters = []
         template.createTests = []
         template.childTests = []
-        for table in database.tables:
+        for table in database.getAllTables():
                 template.dbPackages.append( table.adaTypeName+"_IO" );
                 template.createRegisters.append( "Register_Routine (T, " + table.adaTypeName+ "_Create_Test'Access, " + '"Test of Creation and deletion of '+table.adaTypeName+'" );' );
                 template.createTests.append( makeCreateTest( database.dataSource.database, table ))
@@ -839,7 +839,7 @@ def makeIO( database ):
         these are fred_io.ads and fred_io.adb
          Write to src/
         """
-        for table in database.tables:
+        for table in database.getAllTables():
                 make_io_ads( database, database.adaTypePackages, table )
                 make_io_adb( database, table )
 

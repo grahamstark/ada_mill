@@ -25,6 +25,7 @@
 #
 from string import upper
 import re
+import copy
 from string import capwords
 
 # from xml.dom.minidom import parse
@@ -66,7 +67,7 @@ def getDatabaseAdapter( dataSource ):
         # FIXME we need to distinguish between a schema and database better (e.g. in Postgres)
         if( dataSource.databaseType == 'postgres' ):
                 adapter = DatabaseAdapter( 0, "TIMESTAMP '1901-01-01 00:00:00.000000'", '', 1 );
-                adapter.databasePreamble += 'drop schema if exists ' + dataSource.database+" cascade;\n"
+                adapter.databasePreamble += 'drop database if exists ' + dataSource.database+";\n"
                 adapter.databasePreamble += "create database "+ dataSource.database +" with encoding 'UTF-8';\n\n"
                 # adapter.databasePreamble += "SET search_path="+dataSource.database +";\n"
                 adapter.databasePreamble += "\c "+dataSource.database+";\n"
@@ -452,6 +453,7 @@ class Table:
                 self.uniqueIndexes = []
                 self.indexes = []
                 self.name = name
+                self.schemaName = ''
                 self.adaExternalName = adaExternalName
                 self.adaInstanceName = 'a_' + adafyName( name ).lower()
                 if( self.adaExternalName != '' ):
@@ -467,7 +469,11 @@ class Table:
                 self.enumeratedTypes = {}
                 self.description = description
                 self.childRelations = {}
-                
+              
+        def qualifiedName( self ):
+                if len( self.schemaName ) > 0:
+                        return self.schemaName + "." + self.name
+                return self.name
                 
         def getPrimaryKeyVariables( self ):
                 vs = []
@@ -654,23 +660,48 @@ class EnumeratedValue:
                 self.number = number
                 self.string = string
      
-class Database:
+class TableContainer:
+        def __init__( self ):
+                self.name = ''
+                self.tables = []
+                self.tableLocations = {}
+                
+        def addTable( self, table ):
+                self.tables.append( table )
+                self.tableLocations[ table.name ] = len( self.tables )-1 
+
+        def getTable( self, name ):
+                return self.tables[ self.tableLocations[ name ]]
+        
+     
+class Schema( TableContainer ):
+        def __init__( self, name ):
+                TableContainer.__init__( self )
+                self.name = name
+        
+     
+class Database( TableContainer ):
         def __init__( self, dataSource ):
+                TableContainer.__init__( self )
                 self.adaTypePackages = []
                 self.adaDataPackage = None
                 self.adaTypePackagesCompleteSet = []
-                self.tables = []
                 self.dataSource = dataSource;
                 self.decimalTypes = {}
                 self.enumeratedTypes = {}
-                self.tableLocations = {}
                 self.description = ''
-                self.name = ''
+                self.schemas = []
                 self.databaseAdapter = getDatabaseAdapter( self.dataSource )
+                
+        def getAllTables( self ):
+                tables = copy.deepcopy( self.tables );
+                for s in self.schemas:
+                        tables[ len( tables ):] = s.tables
+                return tables
                 
         def getArrayDeclarations( self ):
                 arrays = []
-                for t in self.tables:
+                for t in self.getAllTables():
                         for v in t.variables:
                                 if v.arrayInfo != None and not v.arrayInfo.isExternallyDefined :
                                         td = v.arrayInfo.typeDeclaration( v.getDefaultAdaValue() )
@@ -680,7 +711,7 @@ class Database:
                         
         def getArrayPackages( self ):
                 pkgs = []
-                for t in self.tables:
+                for t in self.getAllTables():
                         for v in t.variables:
                                 if v.arrayInfo != None:
                                         pkgs.append( v.arrayInfo.packageDeclaration( v.isDiscreteTypeInAda() ))                        
@@ -692,19 +723,11 @@ class Database:
                 else:
                         return self.adaDataPackage
                 
-        def addTable( self, table ):
-                self.tables.append( table )
-                self.tableLocations[ table.name ] = len( self.tables )-1 
-                self.decimalTypes.update( table.decimalTypes );
-                self.enumeratedTypes.update( table.enumeratedTypes );
-
-        def getTable( self, name ):
-                return self.tables[ self.tableLocations[ name ]]
                 
         def fixUpForeignKeys( self ):
-                for tab in self.tables:
+                for tab in self.getAllTables():
                         for fk in tab.foreignKeys:
-                                targetTable = self.tables[ self.tableLocations[ fk.referencingTable ] ]
+                                targetTable = self.getAllTables[ self.tableLocations[ fk.referencingTable ] ]
                                 targetTable.addChildRelation( fk, tab.name )
                 
         def __repr__( self ):
@@ -712,7 +735,7 @@ class Database:
                 s += "============ DATASOURCE ==============\n";
                 s += "%(ds)s " % { 'ds' : self.dataSource }
                 s += "============ TABLES ==============\n";
-                for t in self.tables:
+                for t in self.getAllTables():
                         s += "%(t)s\n" % { 't' : t }
                 s += "============ DECIMALS ==============\n";
                 for d in self.decimalTypes:
@@ -907,7 +930,22 @@ def makeIndex( xindex ):
         for col in xindex.iter( "index-column" ):
                 ind.columns.append( col.get( 'name' ))
         return ind;
-
+        
+def parseSchema( xschema, database ):
+        name = xschema.get( 'name' )
+        schema = Schema( name )
+        for xtable in xschema.xpath( "table" ):
+                table = parseTable( xtable, database.databaseAdapter )
+                print "on schema " + schema.name +"; on table " + table.name
+                database.adaTypePackagesCompleteSet += table.adaTypePackages
+                table.fixupNames( database.adaDataPackageName() )
+                table.schemaName = name
+                database.decimalTypes.update( table.decimalTypes );
+                database.enumeratedTypes.update( table.enumeratedTypes );
+                database.adaTypePackagesCompleteSet = makeUniqueArray( database.adaTypePackagesCompleteSet );
+                schema.addTable( table )
+        return schema
+                
 def parseXMLFiles():
         runtimeSchema = etree.parse( WORKING_PATHS.xmlDir+'runtime-conf.xml' ).getroot()
         runtime = parseRuntimeSchema( runtimeSchema )
@@ -925,12 +963,17 @@ def parseXMLFiles():
         for db in tablesSchema.iter("database"):
                 database.name = db.get( 'name' ) 
                 
-        for table in tablesSchema.iter( "table" ):
-                stable = parseTable( table, database.databaseAdapter )
-                stable.fixupNames( database.adaDataPackageName() )
-                database.addTable( stable )
-                database.adaTypePackagesCompleteSet += stable.adaTypePackages
-        database.adaTypePackagesCompleteSet = makeUniqueArray( database.adaTypePackagesCompleteSet );
+        for xtable in tablesSchema.xpath( "table" ):
+                table = parseTable( xtable, database.databaseAdapter )
+                table.fixupNames( database.adaDataPackageName() )
+                print "main list; on table " + table.name
+                database.addTable( table )
+                database.decimalTypes.update( table.decimalTypes );
+                database.enumeratedTypes.update( table.enumeratedTypes );
+                database.adaTypePackagesCompleteSet += table.adaTypePackages
+        for xschema in tablesSchema.xpath( "schema" ):
+                schema = parseSchema( xschema, database )
+                database.schemas.append( schema )
 
         database.fixUpForeignKeys()
         return database;

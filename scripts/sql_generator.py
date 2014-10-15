@@ -78,7 +78,7 @@ def writeTable( table, databaseAdapter ):
                                 varstring += " on update " +  fk.onUpdate                
                         clauses.append( varstring );
                         n += 1
-        tabstr = 'CREATE TABLE '+table.name+"( \n"
+        tabstr = 'CREATE TABLE '+table.qualifiedName()+"( \n"
         tabstr += ",\n". join( clauses );
         tabstr += "\n)"
         # append something like 'type=innodb' in the mysql case to the end of the table definitions
@@ -93,7 +93,7 @@ def writeTable( table, databaseAdapter ):
                                 indname = "c%(tc)d"%{'tc':constraintCount}  # db2 obhects to > 18 chars in names, so give it something simple..
                         else:
                                 indname =  "uniq_%(table)s_%(name)s" % { 'name': name, 'cols': cols, 'table':table.name }
-                        indexStr = "CREATE INDEX %(indname)s ON %(table)s( %(cols)s );\n" %{ 'indname': indname, 'cols': cols, 'table':table.name }
+                        indexStr = "CREATE INDEX %(indname)s ON %(table)s( %(cols)s );\n" %{ 'indname': indname, 'cols': cols, 'table':table.qualifiedName() }
                         tabstr += indexStr
         #
         #
@@ -108,7 +108,7 @@ def writeTable( table, databaseAdapter ):
                                 indname = "c%(tc)d"%{'tc':constraintCount}
                         else:
                                 indname =  "uniq_%(table)s_%(name)s" % { 'name': name, 'cols': cols, 'table':table.name }
-                        indexStr = "CREATE UNIQUE INDEX %(indname)s ON %(table)s( %(cols)s );\n" %{ 'indname': indname, 'cols': cols, 'table':table.name }
+                        indexStr = "CREATE UNIQUE INDEX %(indname)s ON %(table)s( %(cols)s );\n" %{ 'indname': indname, 'cols': cols, 'table':table.qualifiedName() }
                         tabstr += indexStr
         return tabstr
 
@@ -117,8 +117,16 @@ def makeDatabaseSQL( database ):
         outfile.write( "--\n-- created on "+datetime.datetime.now().strftime("%d-%m-%Y")+" by Mill\n--\n" );
         outfile.write( database.databaseAdapter.databasePreamble )
         outfile.write( "\n\n" )
+        for schema in database.schemas:
+                outfile.write( "drop schema if exists " + schema.name + ";\n" )
+                outfile.write( "create schema " + schema.name + ";\n\n" )
         for table in database.tables:
                 outfile.write( writeTable( table, database.databaseAdapter ) )
                 outfile.write( "\n" )
+        for schema in database.schemas:
+                outfile.write( "--\n--\n-- tables for schema " + schema.name + "  starts\n--\n--\n" )
+                for table in schema.tables:
+                        outfile.write( writeTable( table, database.databaseAdapter ) )
+                        outfile.write( "\n" )
         outfile.write( database.databaseAdapter.databasePostText )
         outfile.close()        

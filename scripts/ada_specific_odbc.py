@@ -236,7 +236,7 @@ def makeNextFreeFunc( table, var ):
         """
         template = Template( file=templatesPath()+"get_next_free.func.tmpl" )
         template.functionHeader = makeNextFreeHeader( var, CONNECTION_STRING, ' is' )
-        template.statement = "select max( "+var.varname+" ) from "+table.name
+        template.statement = "select max( "+var.varname+" ) from "+table.qualifiedName()
         template.functionName = "Next_Free_"+var.adaName
         template.adaName = var.adaName
         template.adaType = var.getAdaType( True )
