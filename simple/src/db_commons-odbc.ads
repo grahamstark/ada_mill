@@ -1,5 +1,5 @@
 --
--- Created by ada_generator.py on 2013-06-11 17:03:46.997658
+-- Created by ada_generator.py on 2014-02-01 16:13:07.685476
 -- 
 with GNU.DB.SQLCLI; use GNU.DB.SQLCLI;
 with Base_Types; use Base_Types;
@@ -19,9 +19,9 @@ package DB_Commons.ODBC is
       connection  : SQLHDBC;
    end record;
    
-   package L_Out_Binding is new GNU.DB.SQLCLI.IntegerBinding( Big_Integer );
+   package L_Out_Binding is new GNU.DB.SQLCLI.IntegerBinding( Big_Int );
    package I_Out_Binding is new GNU.DB.SQLCLI.IntegerBinding( Integer );
-   package R_Out_Binding is new GNU.DB.SQLCLI.FloatBinding( Real );
+   package R_Out_Binding is new GNU.DB.SQLCLI.FloatBinding( Long_Float );
    
    Null_Database_Connection : constant Database_Connection := 
       ( Environment => SQL_NULL_HANDLE, connection => SQL_NULL_HANDLE );

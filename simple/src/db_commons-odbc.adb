@@ -1,5 +1,5 @@
 --
--- Created by ada_generator.py on 2013-06-11 17:03:46.987658
+-- Created by ada_generator.py on 2014-02-01 16:13:07.674183
 -- 
 with GNU.DB.SQLCLI;
 with GNU.DB.SQLCLI.Environment_Attribute;
@@ -36,13 +36,13 @@ package body DB_Commons.ODBC is
    function Timestamp_To_Date_Time( sqlTime : SQL_TIMESTAMP_STRUCT ) return Date_Time_Rec is
       dt : DB_Commons.Date_Time_Rec;
    begin
-      dt.year := integer( sqlTime.year );
-      dt.month := integer( sqlTime.month );
-      dt.day := integer( sqlTime.day );
-      dt.hour := integer( sqlTime.hour );
-      dt.minute := integer( sqlTime.minute );
-      dt.second := integer( sqlTime.second );
-      dt.fraction := real( sqlTime.fraction );
+      dt.year := Integer( sqlTime.year );
+      dt.month := Integer( sqlTime.month );
+      dt.day := Integer( sqlTime.day );
+      dt.hour := Integer( sqlTime.hour );
+      dt.minute := Integer( sqlTime.minute );
+      dt.second := Integer( sqlTime.second );
+      dt.fraction := Long_Float( sqlTime.fraction );
       return dt;
    end Timestamp_To_Date_Time;
    

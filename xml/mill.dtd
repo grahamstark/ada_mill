@@ -21,9 +21,14 @@ PHP class or method name.
               to lowercase.
 -->
 
-<!ELEMENT database ( adaTypePackage*, adaDataPackage?, table+ )>
+<!ELEMENT database ( adaTypePackage*, adaDataPackage?, table+, schema* )>
 <!ATTLIST database
-  name           CDATA #IMPLIED
+  name           CDATA #REQUIRED
+>
+
+<!ELEMENT schema( table+ )>
+<!ATTLIST schema
+  name           CDATA #REQUIRED
 >
 
 <!ELEMENT adaTypePackage EMPTY>
@@ -45,7 +50,8 @@ PHP class or method name.
      note: the interface="true", requires that useManagers=true in the
      properties file.
 -->
-<!ELEMENT table( localAdaTypePackage*, column+, (foreign-key|index|unique)* )>
+<!ELEMENT table (localAdaTypePackage*, column+, (foreign-key|index|unique)* )>
+
 <!ATTLIST table
   name            CDATA #REQUIRED
   description     CDATA #IMPLIED
@@ -53,8 +59,8 @@ PHP class or method name.
   defaultInstanceName CDATA #IMPLIED
 >
 
-
 <!ELEMENT column ((inheritance|vendor)*)>
+
 <!ATTLIST column
   name CDATA #REQUIRED
   primaryKey (true|false) "false"
@@ -73,6 +79,15 @@ PHP class or method name.
   description CDATA #IMPLIED
   values CDATA #IMPLIED
   adaTypeName CDATA #IMPLIED
+  isArray (true|false) "false" 
+  arrayIsExternallyDefined (true|false) "false" 
+  arrayFirst CDATA #IMPLIED "1"
+  arrayLast CDATA #IMPLIED
+  arrayIndexType (ENUM|INTEGER) "INTEGER"
+  arrayAdaIndexTypeName CDATA "Positive"
+  arrayEnumValues CDATA #IMPLIED
+  arrayName CDATA #IMPLIED
+  
 >
 
 

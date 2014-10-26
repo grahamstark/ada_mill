@@ -1,5 +1,5 @@
 --
--- Created by ada_generator.py on 2013-06-11 18:39:29.836482
+-- Created by ada_generator.py on 2014-02-14 14:43:50.976270
 -- 
 with Ada.Calendar;
 with Ada.Containers.Vectors;
@@ -8,18 +8,18 @@ with Ada.Strings.Wide_Fixed;
 with ada.strings.Unbounded; 
 with Base_Types; use Base_Types;
 -- === CUSTOM IMPORTS START ===
-      
-with GNATCOLL.SQL.Exec;      
-      
+                      
+with GNATCOLL.SQL.Exec;                      
+                      
 -- === CUSTOM IMPORTS END ===
  
 package DB_Commons is
 
    -- === CUSTOM TYPES START ===
-      
-   subtype Connection is GNATCOLL.SQL.Exec.Database_Connection;      
-   NULL_Conn : constant Connection := null;      
-      
+                      
+   subtype Connection is GNATCOLL.SQL.Exec.Database_Connection;                      
+   NULL_Conn : constant Connection := null;                      
+                      
    -- === CUSTOM TYPES END ===
    
    --
@@ -30,8 +30,9 @@ package DB_Commons is
    -- subtype Connection is GNATCOLL.SQL.Exec.Database_Connection;
    -- NULL_Conn : constant Connection := null;
 
+   Mill_Exception : exception;
    
-   subtype Real is Base_Types.Real;
+   -- subtype Real is Base_Types.Real;
    subtype Decimal is Base_Types.Decimal;
    --
    --  Simple date time record to serve as an intermediate type
@@ -44,7 +45,7 @@ package DB_Commons is
       hour,
       minute,
       second : integer;
-      fraction : Real;
+      fraction : Long_Float;
    end record;
    
    function Date_Time_To_Ada_Time( dTime : Date_Time_Rec ) return Ada.Calendar.Time; 
@@ -84,13 +85,13 @@ package DB_Commons is
       varname : String;
       op : operation_type;
       join : join_type; 
-      value : Big_Integer  ) return Criterion;
+      value : Big_Int  ) return Criterion;
                                   
    function Make_Criterion_Element( 
       varname : String;
       op : operation_type;
       join : join_type; 
-      value : Real  ) return Criterion;
+      value : Long_Float  ) return Criterion;
                                   
    function Make_Criterion_Element( 
       varname : String;

@@ -38,14 +38,14 @@ $e
 
    default_schema : Unbounded_String := Null_Unbounded_String;
    
-   function Add_Trailing( s : String; to_add : Character := '.' ) is
+   function Add_Trailing( s : String; to_add : Character := '.' ) return String is
    begin
-      if( s( s'Last ) = to_add then
+      if s( s'Last ) = to_add then
          return s;
       end if;
       return s & to_add;
    end Add_Trailing;
-   
+
    function Get_Default_Schema return String is
       s : constant String := To_String( default_schema );
    begin
@@ -66,7 +66,7 @@ $e
    
    function Add_Schema_To_Query( query : String; default : String := "" ) return String is
       val : aliased String := 
-         if default /= "" then Add_Trailing( default ) else Get_Default_Schema;
+         ( if default /= "" then Add_Trailing( default ) else Get_Default_Schema );
       key : aliased String := "SCHEMA";
       subs : constant GNATColl.Templates.Substitution_Array( 1 .. 1 ) := 
          ( 1 => ( Name  => key'Unchecked_Access, 
@@ -76,7 +76,7 @@ $e
       return outs;      
    end Add_Schema_To_Query;
    
-   -- return a string like '2007-09-24 16:07:47'
+  -- return a string like '2007-09-24 16:07:47'
    function to_string( t : Date_Time_Rec ) return String is      
       
       YEAR_PICTURE : constant Ada.Text_IO.Editing.Picture :=

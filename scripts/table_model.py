@@ -445,7 +445,7 @@ class DataSource:
                        { 'id' : self.id, 'databaseType' : self.databaseType, 'hostname' : self.hostname, 'database' : self.database, 'username' : self.username, 'password': self.password }
 
 class Table:
-        def __init__( self, name, description, adaExternalName ):
+        def __init__( self, schemaName, name, description, adaExternalName ):
                 self.variables = []
                 self.adaTypePackages = []
                 self.primaryKey = []
@@ -453,26 +453,31 @@ class Table:
                 self.uniqueIndexes = []
                 self.indexes = []
                 self.name = name
-                self.schemaName = ''
+                self.schemaName = schemaName
                 self.adaExternalName = adaExternalName
                 self.adaInstanceName = 'a_' + adafyName( name ).lower()
-                if( self.adaExternalName != '' ):
-                        self.adaTypeName = adaExternalName
-                else:
-                        self.adaTypeName = adafyName( name ) 
-                        # + "_Type"
-                self.adaNullName = 'Null_' + self.adaTypeName 
-                self.adaIOPackageName = self.adaTypeName+"_IO";
-                self.adaContainerName = self.adaTypeName+"_List"
-                self.adaListName = self.adaTypeName+"_List.Vector"                
+                # if( self.adaExternalName != '' ):
+                        # self.adaTypeName = adaExternalName
+                # else:
+                        # self.adaTypeName = adafyName( name ) 
+                        # # + "_Type"
+                self.adaNullName = 'Null_' + self.adaTypeName()
+                self.adaIOPackageName = self.adaTypeName()+"_IO";
+                self.adaContainerName = self.adaTypeName()+"_List"
+                self.adaListName = self.adaTypeName()+"_List.Vector"                
                 self.decimalTypes = {}
                 self.enumeratedTypes = {}
                 self.description = description
                 self.childRelations = {}
+                
+        def adaTypeName( self ):
+                if( self.adaExternalName != '' ):
+                        return adaExternalName
+                return adafyName( self.qualifiedName( "_" ))
               
-        def qualifiedName( self ):
+        def qualifiedName( self, sep='.' ):
                 if len( self.schemaName ) > 0:
-                        return self.schemaName + "." + self.name
+                        return self.schemaName + sep + self.name
                 return self.name
                 
         def getPrimaryKeyVariables( self ):
@@ -491,12 +496,12 @@ class Table:
                 
         def fixupNames( self, dataPackageName ):
                 if( self.adaExternalName == '' ):
-                        self.adaQualifiedOutputRecord = dataPackageName + "." + self.adaTypeName
+                        self.adaQualifiedOutputRecord = dataPackageName + "." + self.adaTypeName()
                         self.adaQualifiedListName = dataPackageName + "." + self.adaListName
                         self.adaQualifiedNullName = dataPackageName + "." + self.adaNullName
                         self.adaQualifiedContainerName = dataPackageName + "." + self.adaContainerName
                 else:
-                        self.adaQualifiedOutputRecord = self.adaTypeName
+                        self.adaQualifiedOutputRecord = self.adaTypeName()
                         self.adaQualifiedListName = self.adaListName
                         self.adaQualifiedNullName = self.adaNullName
                         self.adaQualifiedContainerName = self.adaContainerName
@@ -672,6 +677,18 @@ class TableContainer:
 
         def getTable( self, name ):
                 return self.tables[ self.tableLocations[ name ]]
+                
+                
+        def fixUpForeignKeys( self ):
+                for tab in self.tables:
+                        for fk in tab.foreignKeys:
+                                print "on table " + tab.name
+                                print self.tableLocations
+                                print fk.referencingTable
+                                target = self.tableLocations[ fk.referencingTable ]
+                                targetTable = self.tables[ target ]
+                                targetTable.addChildRelation( fk, tab.name )
+                
         
      
 class Schema( TableContainer ):
@@ -692,7 +709,15 @@ class Database( TableContainer ):
                 self.description = ''
                 self.schemas = []
                 self.databaseAdapter = getDatabaseAdapter( self.dataSource )
-                
+             
+        def getOneTable( self, schemaName, name ):
+                if schemaName == '':
+                        return self.getTable( name )
+                # fix this: make schemas a hash
+                for schema in self.schemas:
+                        if schema.name == schemaName:
+                                return schema.getTable( name )
+             
         def getAllTables( self ):
                 tables = copy.deepcopy( self.tables );
                 for s in self.schemas:
@@ -723,12 +748,6 @@ class Database( TableContainer ):
                 else:
                         return self.adaDataPackage
                 
-                
-        def fixUpForeignKeys( self ):
-                for tab in self.getAllTables():
-                        for fk in tab.foreignKeys:
-                                targetTable = self.getAllTables[ self.tableLocations[ fk.referencingTable ] ]
-                                targetTable.addChildRelation( fk, tab.name )
                 
         def __repr__( self ):
                 s = "name %(name)s \n" % { 'name' : self.name } 
@@ -842,7 +861,7 @@ def get( elem, key, default ):
                 a = default;
         return a
   
-def parseTable( xtable, databaseAdapter ):
+def parseTable( xtable, databaseAdapter, schemaName='' ):
         """
         Parse a table from Propel XML
         """
@@ -851,7 +870,7 @@ def parseTable( xtable, databaseAdapter ):
         adaExternalName = get( xtable, 'adaExternalName', '' )
         if( description == None ):
                 description = ''
-        stable = Table( name, description, adaExternalName )
+        stable = Table( schemaName, name, description, adaExternalName )
         defaultInstanceName = get( xtable, 'defaultInstanceName', '' )
         if( defaultInstanceName != '' ):
                 stable.adaInstanceName = defaultInstanceName 
@@ -935,7 +954,7 @@ def parseSchema( xschema, database ):
         name = xschema.get( 'name' )
         schema = Schema( name )
         for xtable in xschema.xpath( "table" ):
-                table = parseTable( xtable, database.databaseAdapter )
+                table = parseTable( xtable, database.databaseAdapter, name )
                 print "on schema " + schema.name +"; on table " + table.name
                 database.adaTypePackagesCompleteSet += table.adaTypePackages
                 table.fixupNames( database.adaDataPackageName() )
@@ -976,4 +995,7 @@ def parseXMLFiles():
                 database.schemas.append( schema )
 
         database.fixUpForeignKeys()
+        for schema in database.schemas:
+                schema.fixUpForeignKeys()
+                
         return database;

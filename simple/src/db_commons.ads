@@ -1,5 +1,5 @@
 --
--- Created by ada_generator.py on 2013-06-11 17:03:46.964856
+-- Created by ada_generator.py on 2014-02-01 16:13:07.649566
 -- 
 with Ada.Calendar;
 with Ada.Containers.Vectors;
@@ -23,8 +23,9 @@ package DB_Commons is
    -- subtype Connection is GNATCOLL.SQL.Exec.Database_Connection;
    -- NULL_Conn : constant Connection := null;
 
+   Mill_Exception : exception;
    
-   subtype Real is Base_Types.Real;
+   -- subtype Real is Base_Types.Real;
    subtype Decimal is Base_Types.Decimal;
    --
    --  Simple date time record to serve as an intermediate type
@@ -37,7 +38,7 @@ package DB_Commons is
       hour,
       minute,
       second : integer;
-      fraction : Real;
+      fraction : Long_Float;
    end record;
    
    function Date_Time_To_Ada_Time( dTime : Date_Time_Rec ) return Ada.Calendar.Time; 
@@ -77,13 +78,13 @@ package DB_Commons is
       varname : String;
       op : operation_type;
       join : join_type; 
-      value : Big_Integer  ) return Criterion;
+      value : Big_Int  ) return Criterion;
                                   
    function Make_Criterion_Element( 
       varname : String;
       op : operation_type;
       join : join_type; 
-      value : Real  ) return Criterion;
+      value : Long_Float  ) return Criterion;
                                   
    function Make_Criterion_Element( 
       varname : String;

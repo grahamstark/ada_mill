@@ -1,5 +1,5 @@
 --
--- created on 11-06-2013 by Mill
+-- created on 01-02-2014 by Mill
 --
 drop database if exists simple_pg;
 create database simple_pg with encoding 'UTF-8';

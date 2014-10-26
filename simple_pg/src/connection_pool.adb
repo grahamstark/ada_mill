@@ -1,3 +1,4 @@
+with Ada.Assertions;
 with Ada.Strings.Unbounded;
 with Ada.Containers.Vectors;
 with GNATColl.Traces;
@@ -15,7 +16,8 @@ package body Connection_Pool is
    
    use Ada.Strings.Unbounded;
    use Ada.Containers;
-
+   use Ada.Assertions;
+   
    log_trace : GNATColl.Traces.Trace_Handle := GNATColl.Traces.Create( "CONNECTION_POOL" );
    
    procedure Log( s : String ) is
@@ -38,64 +40,126 @@ package body Connection_Pool is
       "=" => Equal_Connections );
    
    subtype Connection_List is Connection_List_Package.Vector;
+   use type Ada.Containers.Count_Type;
    
+   protected type Pool_Type is
+
+      entry Lease( c : out dexec.Database_Connection );
+      procedure Return_Connection( c : dexec.Database_Connection );
+      procedure Initialise( 
+         server_name  : String;
+         database     : String;
+         user_name    : String;
+         password     : String;
+         initial_size : Positive;
+         max_size     : Natural );
+      procedure Shutdown;
+         
+   private
+      maximum_size     : Count_Type;
+      used_connections : Connection_List;
+      free_connections : Connection_List;
+      db_descr         : dexec.Database_Description;
+   end Pool_Type;
    
+   protected body Pool_Type is
    
-   used_connections : Connection_List;
-   free_connections : Connection_List;
-   db_descr       : dexec.Database_Description;
+      procedure Initialise( 
+         server_name  : String;
+         database     : String;
+         user_name    : String;
+         password     : String;
+         initial_size : Positive;
+         max_size     : Natural ) is
+      begin
+         if( max_size = 0 ) then 
+            maximum_size := Count_Type( initial_size );
+         else 
+            maximum_size := Count_Type( max_size );
+         end if;
+         Assert( Natural( maximum_size ) >= initial_size, "maximum_size < initial_size " & maximum_size'Img & " : " & initial_size'Img );
+         db_descr :=  GNATCOLL.SQL.Postgres.Setup( database, user_name, server_name, password );
+         for i in 1 .. initial_size loop
+            free_connections.Append( db_descr.Build_Connection );
+         end loop;
+      end Initialise;
+      
+      entry Lease( c : out dexec.Database_Connection ) when
+           free_connections.Length > 0  or 
+           ( free_connections.Length + used_connections.Length ) < maximum_size is
+         nf : constant Natural := Natural( free_connections.Length ); 
+      begin
+         if nf = 0  then
+            c := db_descr.Build_Connection; 
+            used_connections.Append( c );
+         else
+            c := free_connections.Element( nf );
+            used_connections.Append( c );
+            free_connections.Delete( nf );
+         end if;
+      end Lease;
+      
+      procedure Return_Connection( c : dexec.Database_Connection ) is
+      use Connection_List_Package;
+         cur : Cursor:= used_connections.Find( c );
+      begin
+         used_connections.Delete( cur );
+         free_connections.Append( c );
+      end  Return_Connection;
+      
+      procedure Shutdown is
+      use Connection_List_Package;
+         
+         procedure Close( cur : Cursor ) is
+            c : dexec.Database_Connection := Element( cur );
+         begin
+            dexec.Free( c );
+          end Close;
+         
+      begin
+         used_connections.Iterate( Close'Access );
+         used_connections.Clear;
+         free_connections.Iterate( Close'Access );
+         free_connections.Clear;
+      end Shutdown;
+
+   end Pool_Type;
+   
+   pool : Pool_Type;
+   
+   function Lease return dexec.Database_Connection is
+      c : dexec.Database_Connection;
+   begin
+      pool.lease( c );
+      return c;
+   end Lease;
+   
+   procedure Shutdown is
+   begin
+      pool.Shutdown;
+   end Shutdown;
+   
+   procedure Return_Connection( c : dexec.Database_Connection ) is
+   begin
+      pool.Return_Connection( c );
+   end  Return_Connection;
    
    procedure Initialise( 
       server_name  : String;
       database     : String;
       user_name    : String;
       password     : String;
-      initial_size : Positive ) is
+      initial_size : Positive;
+      maximum_size : Natural := 0 ) is
    begin
-      db_descr :=  GNATCOLL.SQL.Postgres.Setup( database, user_name, server_name, password );
-      for i in 1 .. initial_size loop
-         free_connections.Append( db_descr.Build_Connection );
-      end loop;
+      pool.Initialise( 
+         server_name, 
+         database, 
+         user_name,   
+         password,    
+         initial_size,
+         maximum_size );
    end Initialise;
-   
-   function Lease return dexec.Database_Connection is
-      c : dexec.Database_Connection;
-      n : Natural := Natural( free_connections.Length );
-   begin
-      if n = 0 then
-         c := db_descr.Build_Connection; 
-         used_connections.Append( c );         
-       else
-          c := free_connections.Element( n );
-          used_connections.Append( c );
-          free_connections.Delete( n );
-      end if;
-      return c;
-   end Lease;
-   
-   procedure Return_Connection( c : dexec.Database_Connection ) is
-   use Connection_List_Package;
-      cur : Cursor:= used_connections.Find( c );
-   begin
-      used_connections.Delete( cur );
-      free_connections.Append( c );
-   end  Return_Connection;
-   
-   procedure Shutdown is
-   use Connection_List_Package;
-      
-      procedure Close( cur : Cursor ) is
-         c : dexec.Database_Connection := Element( cur );
-      begin
-         dexec.Free( c );
-       end Close;
-      
-   begin
-      used_connections.Iterate( Close'Access );
-      used_connections.Clear;
-      free_connections.Iterate( Close'Access );
-      free_connections.Clear;
-   end Shutdown;
 
    -- === CUSTOM PROCS START ===
    -- === CUSTOM PROCS END ===

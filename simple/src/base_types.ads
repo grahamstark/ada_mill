@@ -1,5 +1,5 @@
 --
--- Created by ada_generator.py on 2013-06-11 17:03:46.771258
+-- Created by ada_generator.py on 2014-02-01 16:13:07.437984
 -- 
 with Ada.Text_IO; 
 with Ada.Strings.Bounded; 
@@ -30,9 +30,9 @@ package Base_Types is
    package wconv renames Ada.Characters.Conversions;
    package stda renames Ada.Characters.Latin_1;
    
-   type Real is new Long_Float;
+   -- type Real is new Long_Float;
    type Decimal is delta 0.01 digits 10;
-   type Big_Integer is range -9223372036854775808 .. 9223372036854775807;
+   type Big_Int is range -9223372036854775808 .. 9223372036854775807;
    --
    --
    --
@@ -67,11 +67,10 @@ package Base_Types is
    -- 
    --  some standard io packages typed for the above
    --
-   package fix_io is new Ada.Text_IO.Decimal_IO (Decimal);
-   package real_io is new Ada.Text_IO.Float_IO (real);
-   package std_io is new Ada.Text_IO.Integer_IO (Integer);
-   package string_io renames Ada.Text_IO;
-   package Str80 is new Ada.Strings.Bounded.Generic_Bounded_Length(80);
+   package Fix_IO is new Ada.Text_IO.Decimal_IO (Decimal);
+   package Real_IO is new Ada.Text_IO.Float_IO (Long_Float);
+   package Std_IO is new Ada.Text_IO.Integer_IO (Integer);
+   package String_IO renames Ada.Text_IO;
    -- === CUSTOM PROCS START ===
    -- === CUSTOM PROCS END ===
 

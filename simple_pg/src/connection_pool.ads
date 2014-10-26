@@ -15,7 +15,8 @@ package Connection_Pool is
       database     : String;
       user_name    : String;
       password     : String;
-      initial_size : Positive );
+      initial_size : Positive;
+      maximum_size : Natural := 0 );
       
    function Lease return dexec.Database_Connection;
    procedure Return_Connection( c : dexec.Database_Connection );

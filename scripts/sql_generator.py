@@ -117,9 +117,14 @@ def makeDatabaseSQL( database ):
         outfile.write( "--\n-- created on "+datetime.datetime.now().strftime("%d-%m-%Y")+" by Mill\n--\n" );
         outfile.write( database.databaseAdapter.databasePreamble )
         outfile.write( "\n\n" )
+        schemaNames = []
         for schema in database.schemas:
-                outfile.write( "drop schema if exists " + schema.name + ";\n" )
+                outfile.write( "drop schema if exists " + schema.name + " cascade;\n" )
                 outfile.write( "create schema " + schema.name + ";\n\n" )
+                schemaNames.append( schema.name );
+        # FIXME postgres only
+        if( len( schemaNames ) > 0 ):
+                outfile.write( "set search_path=public," + ",".join( schemaNames )+";\n\n" )
         for table in database.tables:
                 outfile.write( writeTable( table, database.databaseAdapter ) )
                 outfile.write( "\n" )

@@ -140,7 +140,7 @@ def makePKBody( table, connection_string ):
 
 def makeIsNullFunc( table, adaDataPackageName ):
         template = Template( file=WORKING_PATHS.templatesPath+"is_null.func.tmpl" )       
-        template.adaName = table.adaTypeName
+        template.adaName = table.adaTypeName()
         template.functionHeader = makeIsNullFuncHeader( table, ' is' )
         template.returnStatement = 'return '+table.adaInstanceName + ' = ' + table.adaQualifiedNullName
         template.use = "use "+adaDataPackageName
@@ -171,9 +171,9 @@ def makeChildRetrieveBody( table, referencingTable, fk, connection_string ):
         referred to by the table primary key. 
         """
         template = Template( file=WORKING_PATHS.templatesPath+"retrieve_child.func.tmpl" )
-        template.functionHeader = makeChildRetrieveHeader( table, referencingTable.adaTypeName, referencingTable.adaQualifiedOutputRecord, connection_string, ' is' )
-        template.functionName = "Retrieve_Child_"+ referencingTable.adaTypeName
-        referencePackage = referencingTable.adaTypeName + "_IO"
+        template.functionHeader = makeChildRetrieveHeader( table, referencingTable.adaTypeName(), referencingTable.adaQualifiedOutputRecord, connection_string, ' is' )
+        template.functionName = "Retrieve_Child_"+ referencingTable.adaTypeName()
+        referencePackage = referencingTable.adaTypeName() + "_IO"
         localPK = []
         for p in range( len( fk.localCols ) ):
                 localName = table.adaInstanceName +"."+ adafyName(fk.localCols[p])
@@ -189,7 +189,7 @@ def makeAssociatedRetrieveHeader( table, referencingTableName, listAdaName, conn
 
 def makeAssociatedRetrieveBody( table, referencingTable, fk, connection_string ): # Name, listAdaName, fk ):
         template = Template( file=WORKING_PATHS.templatesPath+"retrieve_associated.func.tmpl" )
-        referencingTableName = referencingTable.adaTypeName
+        referencingTableName = referencingTable.adaTypeName()
         template.functionHeader = makeAssociatedRetrieveHeader( table, referencingTableName, referencingTable.adaQualifiedListName, connection_string, ' is' )
         template.allCriteria = []
         template.functionName = "Retrieve_Associated_"+ makePlural( referencingTableName )
@@ -218,15 +218,15 @@ def make_io_ads( database, adaTypePackages, table ):
                         import ada_specific_sqlite as asp
 
         dataPackageName = database.adaDataPackageName();
-        outfileName = (WORKING_PATHS.srcDir+table.adaTypeName+'_io.ads').lower()
+        outfileName = (WORKING_PATHS.srcDir+table.adaTypeName()+'_io.ads').lower()
         template = Template( file=WORKING_PATHS.templatesPath+"io.ads.tmpl" )
         template.connectionString = asp.CONNECTION_STRING        
         template.customImports = readLinesBetween( outfileName, ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
         template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
         template.customProcs = readLinesBetween( outfileName, ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
-        template.IOName = table.adaTypeName+"_IO"
+        template.IOName = table.adaTypeName()+"_IO"
         template.dbWiths = asp.getDBAdsWiths();
-        template.IOName_Upper_Case = (table.adaTypeName+"_IO").upper()
+        template.IOName_Upper_Case = (table.adaTypeName()+"_IO").upper()
         template.criteria = []
         template.nullName = table.adaQualifiedNullName;
         template.orderingStatements = []
@@ -252,14 +252,14 @@ def make_io_ads( database, adaTypePackages, table ):
         template.saveFunc = makeSaveProcHeader( table, asp.CONNECTION_STRING, ';' );
         template.deleteSpecificFunc = makeDeleteSpecificProcHeader( table, asp.CONNECTION_STRING, ';' );
         template.outputRecordType = table.adaQualifiedOutputRecord
-        template.outputRecordName = table.adaTypeName
+        template.outputRecordName = table.adaTypeName()
         template.associated = []
         template.date = datetime.datetime.now()
         for name in table.childRelations:
                 fk = table.childRelations[ name ]
-                referencedTable =  database.getTable( name );
+                referencedTable =  database.getOneTable( table.schemaName, name );
                 # referencingTableName = referencedTable.adaQualifiedOutputRecord
-                referencingTableName = referencedTable.adaTypeName
+                referencingTableName = referencedTable.adaTypeName()
                 if( fk.isOneToOne ):
                         packagedAdaName = dataPackageName+"."+referencingTableName;
                         childFunc = makeChildRetrieveHeader( table, referencingTableName, referencedTable.adaQualifiedOutputRecord, asp.CONNECTION_STRING, ';' )
@@ -349,8 +349,8 @@ def makeToStringBody( table ):
         template = Template( file=WORKING_PATHS.templatesPath+"to_string.proc.tmpl" )
         # stupidly, indents are not consistent between the ads decl and the body so I have to duplicate
         # this header. I wrote the data decl before I really (??) got the hang of this.
-        template.procedureHeader = "function To_String( rec : " + table.adaTypeName + " ) return String is"
-        template.returnStr = 'return  "'+table.adaTypeName+': " &'+"\n"
+        template.procedureHeader = "function To_String( rec : " + table.adaTypeName() + " ) return String is"
+        template.returnStr = 'return  "'+table.adaTypeName()+': " &'+"\n"
         p = 0
         for var in table.variables:
                 p += 1
@@ -392,7 +392,7 @@ def makeContainerPackage( table ):
         s += INDENT + "-- container for "+ table.qualifiedName() + " : " +table.description[:MAXLENGTH] +"\n"
         s += INDENT + "--\n"
         s += INDENT + "package "+ table.adaContainerName+" is new Ada.Containers.Vectors\n"
-        s += INDENT*2 + "(Element_Type => "+table.adaTypeName+",\n"
+        s += INDENT*2 + "(Element_Type => "+table.adaTypeName()+",\n"
         s += INDENT*2 + "Index_Type => Positive );\n"
         return s
         
@@ -413,7 +413,7 @@ def makeRecord( table ):
         s = INDENT +"--\n"
         s += INDENT +"-- record modelling "+ table.qualifiedName() + " : " + table.description[:MAXLENGTH]+"\n"
         s += INDENT +"--\n"
-        s += INDENT + 'type ' + table.adaTypeName + " is record\n";
+        s += INDENT + 'type ' + table.adaTypeName() + " is record\n";
         for var in table.variables:
                 s += INDENT*3 + makeSingleAdaRecordElement( var )+";\n";
                 
@@ -432,7 +432,7 @@ def makeToStringDecl( table, ending ):
         s = INDENT*1 +"--\n"
         s += INDENT*1 +"-- simple print routine for "+table.qualifiedName() + " : " +table.description[:MAXLENGTH]+"\n"
         s += INDENT*1 +"--\n"
-        s += INDENT*1 + "function To_String( rec : " + table.adaTypeName + ' ) return String'+ending +"\n"; 
+        s += INDENT*1 + "function To_String( rec : " + table.adaTypeName() + ' ) return String'+ending +"\n"; 
         return s
         
         
@@ -443,7 +443,7 @@ def makeDefaultRecordDecl( table ):
         s = INDENT*1 +"--\n"
         s += INDENT*1 +"-- default value for "+table.qualifiedName() + " : " +table.description[:MAXLENGTH]+"\n"
         s += INDENT*1 +"--\n"
-        s += INDENT*1 + table.adaNullName + " : constant " + table.adaTypeName + " := (\n";
+        s += INDENT*1 + table.adaNullName + " : constant " + table.adaTypeName() + " := (\n";
         elems = []
         for var in table.variables:
                 if var.arrayInfo == None:
@@ -633,7 +633,7 @@ def makeCreateTest( databaseName, table ):
          Write an create test 
         """
         template = Template( file=WORKING_PATHS.templatesPath+"create_test.proc.tmpl" )
-        procName = table.adaTypeName+ "_Create_Test"
+        procName = table.adaTypeName()+ "_Create_Test"
         varname = table.adaInstanceName+"_test_item";
         listname = table.adaInstanceName+"_test_list";
         cursor = table.adaContainerName+'.Cursor'
@@ -643,7 +643,7 @@ def makeCreateTest( databaseName, table ):
         template.variableDeclaration = varname + " : " + table.adaQualifiedOutputRecord; 
         template.listDeclaration = listname + " : " + table.adaQualifiedListName;
         template.printHeader = 'procedure Print( pos : ' + cursor + ' ) is '
-        template.clearTable = table.adaTypeName+"_IO.Delete( criteria )"
+        template.clearTable = table.adaTypeName()+"_IO.Delete( criteria )"
         template.retrieveUser = varname+' := '+table.adaContainerName+'.element( pos )'
         template.toString = 'Log( To_String( '+ varname + ' ))'
         template.completeListStatement = listname +' := '+ table.adaIOPackageName+'.Retrieve( criteria )'
@@ -651,9 +651,9 @@ def makeCreateTest( databaseName, table ):
         template.createKeyStatements = []
         template.createDataStatements = []
         template.modifyDataStatements = []
-        template.saveStatement = table.adaTypeName+"_IO.Save( "+varname+", False )"
-        template.updateStatement = table.adaTypeName+"_IO.Save( "+varname+" )"
-        template.deleteStatement = table.adaTypeName+"_IO.Delete( "+varname+" )"
+        template.saveStatement = table.adaTypeName()+"_IO.Save( "+varname+", False )"
+        template.updateStatement = table.adaTypeName()+"_IO.Save( "+varname+" )"
+        template.deleteStatement = table.adaTypeName()+"_IO.Delete( "+varname+" )"
         template.elementFromList = varname+ ' := ' + table.adaContainerName+'.element( '+listname+', i )' 
         for var in table.variables:
                 if( var.isPrimaryKey ):
@@ -663,9 +663,9 @@ def makeCreateTest( databaseName, table ):
                         if var.isStringType():
                                 key = varname+'.'+var.adaName+ ' := To_Unbounded_String( "k_" & i\'img )' 
                         elif var.isIntegerType():
-                                key = varname+'.'+var.adaName+ ' := '+ table.adaTypeName +'_IO.Next_Free_'+var.adaName  
+                                key = varname+'.'+var.adaName+ ' := '+ table.adaTypeName() +'_IO.Next_Free_'+var.adaName  
                         else:
-                                key = varname+'.'+var.adaName+ ' := '+ table.adaTypeName +"'First"
+                                key = varname+'.'+var.adaName+ ' := '+ table.adaTypeName() +"'First"
                         template.createKeyStatements.append( key )
                 else:
                         assign = "-- missing declaration for "+varname+'.'+var.adaName
@@ -710,11 +710,11 @@ def writeTestCaseADB( database ):
         template.createTests = []
         template.childTests = []
         for table in database.getAllTables():
-                template.dbPackages.append( table.adaTypeName+"_IO" );
-                template.createRegisters.append( "Register_Routine (T, " + table.adaTypeName+ "_Create_Test'Access, " + '"Test of Creation and deletion of '+table.adaTypeName+'" );' );
+                template.dbPackages.append( table.adaTypeName()+"_IO" );
+                template.createRegisters.append( "Register_Routine (T, " + table.adaTypeName()+ "_Create_Test'Access, " + '"Test of Creation and deletion of '+table.adaTypeName()+'" );' );
                 template.createTests.append( makeCreateTest( database.dataSource.database, table ))
                 if( len( table.childRelations ) > 0 ):
-                        template.childRegisters.append( "Register_Routine (T, " + table.adaTypeName+ "_Child_Retrieve_Test'Access, " + '"Test of Finding Children of '+table.adaTypeName+'" );' );
+                        template.childRegisters.append( "Register_Routine (T, " + table.adaTypeName()+ "_Child_Retrieve_Test'Access, " + '"Test of Finding Children of '+table.adaTypeName()+'" );' );
                         template.childTests.append( makeChildTests( database.dataSource.database, table ) ) 
         template.date = datetime.datetime.now()
         outfile = file( outfileName, 'w' );
@@ -756,7 +756,7 @@ def make_io_adb( database, table ):
                 elif TARGETS.databaseType == 'sqlite':
                         import ada_specific_sqlite as asp
 
-        outfileName = (WORKING_PATHS.srcDir+table.adaTypeName+'_io.adb').lower()
+        outfileName = (WORKING_PATHS.srcDir+table.adaTypeName()+'_io.adb').lower()
         template = Template( file=WORKING_PATHS.templatesPath+"io.adb.tmpl" )
         template.dbWiths = asp.getDBWiths();
         template.dbRenames = asp.getDBRenames();
@@ -769,8 +769,8 @@ def make_io_adb( database, table ):
         template.insertPart = makeInsertPartString( table )
         template.deletePart = makeDeletePartString( table )
         template.updatePart = makeUpdatePartString( table )
-        template.IOName = table.adaTypeName+"_IO"
-        template.IOName_Upper_Case = ( table.adaTypeName+"_IO").upper()
+        template.IOName = table.adaTypeName()+"_IO"
+        template.IOName_Upper_Case = ( table.adaTypeName()+"_IO").upper()
         template.criteria = []
         template.nullName = table.adaQualifiedNullName;
         template.orderingStatements = []
@@ -804,18 +804,18 @@ def make_io_adb( database, table ):
         template.deleteSpecificFunc = makeDeleteSpecificProcBody( table, asp.CONNECTION_STRING );
         template.deleteFunc = asp.makeDeleteProcBody( table );
         template.outputRecordType = table.adaQualifiedOutputRecord
-        template.outputRecordName = table.adaTypeName
+        template.outputRecordName = table.adaTypeName()
         template.associated = []
         template.date = datetime.datetime.now()
         for name in table.childRelations:
                 fk = table.childRelations[ name ]
-                referencingTable = database.getTable( name )
-                template.localWiths.append( referencingTable.adaTypeName +"_IO" ) 
+                referencingTable = database.getOneTable( table.schemaName, name )
+                template.localWiths.append( referencingTable.adaTypeName() +"_IO" ) 
                 if( fk.isOneToOne ):
                         childFunc = makeChildRetrieveBody( table, referencingTable, fk, asp.CONNECTION_STRING )
                         template.associated.append( childFunc );
                 else:
-                        listAdaName = database.adaDataPackageName() +"."+referencingTable.adaTypeName+"_List.Vector"
+                        listAdaName = database.adaDataPackageName() +"."+referencingTable.adaTypeName()+"_List.Vector"
                         assocFunc = makeAssociatedRetrieveBody( table, referencingTable, fk, asp.CONNECTION_STRING ); #, listAdaName, fk )
                         template.associated.append( assocFunc );
         template.dataPackageName = database.adaDataPackageName() 

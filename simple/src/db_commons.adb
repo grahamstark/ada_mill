@@ -1,5 +1,5 @@
 --
--- Created by ada_generator.py on 2013-06-11 17:03:46.947138
+-- Created by ada_generator.py on 2014-02-01 16:13:07.630894
 -- 
 with Ada.Calendar;
 with Ada.Containers.Vectors;
@@ -75,7 +75,7 @@ package body DB_Commons is
    
    function round_down( d : Ada.Calendar.Day_Duration ) return Integer is
    begin
-      return Integer(Real'Floor(Real( d )));
+      return Integer(Long_Float'Floor(Long_Float( d )));
    end round_down;
 
    function Ada_Time_To_Date_Time( adaTime : Ada.Calendar.Time ) return Date_Time_Rec is
@@ -95,7 +95,7 @@ package body DB_Commons is
       dTime.second := round_down(remaining);
       
       remaining := remaining - Day_Duration( dTime.second );
-      dTime.fraction := Real(remaining);
+      dTime.fraction := Long_Float(remaining);
       return dTime;
    end Ada_Time_To_Date_Time;
    
@@ -201,7 +201,7 @@ package body DB_Commons is
       varname : String;
       op : operation_type;
       join : join_type; 
-      value : Big_Integer  ) return Criterion is
+      value : Big_Int  ) return Criterion is
    begin
       return Make_Criterion_Element( varname, op, false, join, value'Img );
    end Make_Criterion_Element;
@@ -210,7 +210,7 @@ package body DB_Commons is
    function Make_Criterion_Element( varname : String;
                                   op : operation_type;
                                   join : join_type; 
-                                  value : Real  ) return Criterion is
+                                  value : Long_Float  ) return Criterion is
    begin
       return Make_Criterion_Element( varname, op, false, join, value'Img );
    end Make_Criterion_Element;

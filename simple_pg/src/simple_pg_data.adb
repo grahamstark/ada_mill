@@ -1,5 +1,5 @@
 --
--- Created by ada_generator.py on 2013-06-11 18:39:29.623759
+-- Created by ada_generator.py on 2014-02-14 14:43:50.729358
 -- 
 
 with GNAT.Calendar.Time_IO;
@@ -15,39 +15,39 @@ package body Simple_Pg_Data is
    -- === CUSTOM TYPES END ===
    
    
-   function To_String( rec : Group_Members_Type ) return String is
+   function To_String( rec : Group_Members ) return String is
    begin
-      return  "Group_Members_Type: " &
-         "Group_Name = " & To_String( rec.Group_Name ) &
-         "User_Id = " & rec.User_Id'Img;
+      return  "Group_Members: " &
+         "group_name = " & To_String( rec.group_name ) &
+         "user_id = " & rec.user_id'Img;
    end to_String;
 
 
 
-   function To_String( rec : Standard_Group_Type ) return String is
+   function To_String( rec : Standard_Group ) return String is
    begin
-      return  "Standard_Group_Type: " &
-         "Name = " & To_String( rec.Name ) &
-         "Description = " & To_String( rec.Description );
+      return  "Standard_Group: " &
+         "name = " & To_String( rec.name ) &
+         "description = " & To_String( rec.description );
    end to_String;
 
 
 
-   function To_String( rec : Standard_User_Type ) return String is
+   function To_String( rec : Standard_User ) return String is
    begin
-      return  "Standard_User_Type: " &
-         "User_Id = " & rec.User_Id'Img &
-         "Username = " & To_String( rec.Username ) &
-         "Password = " & To_String( rec.Password ) &
-         "Type1 = " & rec.Type1'Img &
-         "Type2 = " & rec.Type2'Img &
-         "A_Bigint = " & rec.A_Bigint'Img &
-         "A_Real = " & rec.A_Real'Img &
-         "A_Decimal = " & rec.A_Decimal'Img &
-         "A_Double = " & rec.A_Double'Img &
-         "A_Boolean = " & rec.A_Boolean'Img &
-         "A_Varchar = " & To_String( rec.A_Varchar ) &
-         "A_Date = " & tio.Image( rec.A_Date, tio.ISO_Date );
+      return  "Standard_User: " &
+         "user_id = " & rec.user_id'Img &
+         "username = " & To_String( rec.username ) &
+         "password = " & To_String( rec.password ) &
+         "type1 = " & rec.type1'Img &
+         "type2 = " & rec.type2'Img &
+         "a_bigint = " & rec.a_bigint'Img &
+         "a_real = " & rec.a_real'Img &
+         "a_decimal = " & rec.a_decimal'Img &
+         "a_double = " & rec.a_double'Img &
+         "a_boolean = " & rec.a_boolean'Img &
+         "a_varchar = " & To_String( rec.a_varchar ) &
+         "a_date = " & tio.Image( rec.a_date, tio.ISO_Date );
    end to_String;
 
 
