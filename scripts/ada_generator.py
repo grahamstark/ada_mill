@@ -175,11 +175,11 @@ def makeChildRetrieveBody( table, referencingTable, fk, connection_string ):
         template.functionName = "Retrieve_Child_"+ referencingTable.adaTypeName()
         referencePackage = referencingTable.adaTypeName() + "_IO"
         localPK = []
-        for p in range( len( fk.localCols ) ):
-                localName = table.adaInstanceName +"."+ adafyName(fk.localCols[p])
+        for p in range(len( fk.localCols ) ):
+                localName = str.capitalize( fk.foreignCols[p] ) + " => " + table.adaInstanceName +"."+ adafyName(fk.localCols[p])
                 localPK.append( localName )
-        localPKValues = ', '.join( localPK )
-        template.returnStatement = "return " + referencePackage + ".retrieve_By_PK( "+localPKValues + ", connection )"
+        localPKValues = (",\n"+INDENT*3).join( localPK )
+        template.returnStatement = "return " + referencePackage + ".retrieve_By_PK( \n"+INDENT*3+localPKValues + ",\n" + INDENT*3+"Connection => connection )"
         s = str(template) 
         return s
 
@@ -274,7 +274,7 @@ def make_io_ads( database, adaTypePackages, table ):
         template.preparedInsertStatementHeader = asp.makePreparedInsertStatementHeader()
         template.configuredInsertParamsHeader = asp.makeConfiguredInsertParamsHeader( table )
         
-        template.preparedRetrieveStatementHeader = asp.makePreparedRetrieveStatementHeader()
+        template.preparedRetrieveStatementHeaders = asp.makePreparedRetrieveStatementHeaders()
         template.configuredRetrieveParamsHeader = asp.makeConfiguredRetrieveParamsHeader( table )
         template.mapFromCursorHeader = asp.makeMapFromCursorHeader( table.adaQualifiedOutputRecord );
         outfile = file( outfileName, 'w' );        
@@ -823,7 +823,7 @@ def make_io_adb( database, table ):
         template.preparedInsertStatementBody = asp.makePreparedInsertStatementBody( table )
         template.configuredInsertParamsBody = asp.makeConfiguredInsertParamsBody( table )
         
-        template.preparedRetrieveStatementBody = asp.makePreparedRetrieveStatementBody( table )
+        template.preparedRetrieveStatementBodies = asp.makePreparedRetrieveStatementBodies( table )
         template.configuredRetrieveParamsBody = asp.makeConfiguredRetrieveParamsBody( table )
         
         outfile = file( outfileName, 'w' );

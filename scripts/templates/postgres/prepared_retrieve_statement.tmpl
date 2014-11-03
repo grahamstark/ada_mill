@@ -1,9 +1,19 @@
    function Get_Prepared_Retrieve_Statement return gse.Prepared_Statement is 
+      s : constant String := "$pkText"; 
+   begin 
+      return Get_Prepared_Retrieve_Statement( s ); 
+   end Get_Prepared_Retrieve_Statement; 
+
+   function Get_Prepared_Retrieve_Statement( crit : d.Criteria ) return gse.Prepared_Statement is 
+   begin 
+      return Get_Prepared_Retrieve_Statement( d.To_String( crit )); 
+   end Get_Prepared_Retrieve_Statement; 
+
+   function Get_Prepared_Retrieve_Statement( sqlstr : String ) return gse.Prepared_Statement is 
       ps : gse.Prepared_Statement; 
       query : constant String := DB_Commons.Add_Schema_To_Query( SELECT_PART ) 
-         & " from $tableName where $pkIndicators"; 
+         & ( if sqlstr'Length > 0 then " where " & sqlstr else "" );  
    begin 
       ps := gse.Prepare( query, On_Server => True ); 
       return ps; 
    end Get_Prepared_Retrieve_Statement; 
-

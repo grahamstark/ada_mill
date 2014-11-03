@@ -58,21 +58,26 @@ def makeMapFromCursorHeader( adaQualifiedOutputRecord ):
 def makePreparedInsertStatementHeader():
         return '   function Get_Prepared_Insert_Statement return GNATCOLL.SQL.Exec.Prepared_Statement;'        
 
-def makePreparedRetrieveStatementHeader():
-        return '   function Get_Prepared_Retrieve_Statement return GNATCOLL.SQL.Exec.Prepared_Statement;'        
+def makePreparedRetrieveStatementHeaders():
+        o = []
+        o.append( 'function Get_Prepared_Retrieve_Statement return GNATCOLL.SQL.Exec.Prepared_Statement;' )
+        o.append( 'function Get_Prepared_Retrieve_Statement( sqlstr : String ) return GNATCOLL.SQL.Exec.Prepared_Statement;' )
+        o.append( 'function Get_Prepared_Retrieve_Statement( crit : d.Criteria ) return GNATCOLL.SQL.Exec.Prepared_Statement;' )
+        return o        
 
-def makePreparedRetrieveStatementBody( table ):
+        
+def makePreparedRetrieveStatementBodies( table ):
+        statements = []
+        template = Template( file=templatesPath() + 'prepared_retrieve_statement.tmpl' )
         template = Template( file=templatesPath() + 'prepared_retrieve_statement.tmpl' )
         pk_queries = []
-        data_queries = []        
         p = 0
-        template.tableName = table.qualifiedName()
         for var in table.getPrimaryKeyVariables():
                 p += 1
                 pk_queries.append( "${0:s} = ${1:d}".format( var.varname, p ))
-        template.dataIndicators = ", ".join( data_queries )
-        template.pkIndicators = " and ".join( pk_queries )
-        return str(template)
+        template.pkText = " and ".join( pk_queries )
+        template.tableName = table.qualifiedName()
+        return str( template )
         
 
 def makePreparedInsertStatementBody( table ):
