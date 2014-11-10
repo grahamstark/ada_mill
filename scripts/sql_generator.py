@@ -73,7 +73,7 @@ def writeTable( table, databaseAdapter ):
                         keyName = makeFKName( table, databaseAdapter, n, constraintCount )                        
                         # print "fk.childSchemaName " + fk.childSchemaName
                         # print "fk.parentSchemaName " + fk.parentSchemaName
-                        if fk.inDifferentSchemas:
+                        if fk.inDifferentSchemas():
                                 parentTableName = fk.childSchemaName + "." + fk.parentTableName
                         else:
                                 parentTableName = fk.parentTableName

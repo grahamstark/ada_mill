@@ -46,7 +46,7 @@ from paths import WorkingPaths
 # http://stackoverflow.com/questions/36932/how-can-i-represent-an-enum-in-python
 Format = Enum( 'Format', 'unformatted ada ada_filename' )
 Qualification = Enum( 'Qualification', 'full schema unqualified' )
-ItemType = Enum( 'ItemType', 'table alist list_container, io_package null_constant instanceName' )
+ItemType = Enum( 'ItemType', 'table alist list_container, io_package null_constant instanceName schema_name, database_name, data_package_name' )
 
 #
 # this just tries to cover everything that's specific to 
@@ -464,7 +464,7 @@ class Table:
                 else:
                         itemName = self.name
                 if itemType == ItemType.instanceName:
-                        return 'a_' + str.downcase( itemName )   
+                        return 'a_' + str.lower( itemName )   
                 elif itemType == ItemType.null_constant:
                         itemName = "Null_"+itemName
                 elif itemType == ItemType.alist:
@@ -515,7 +515,7 @@ class Table:
                 self.childRelations = {}
                 print "at end of creation; self.adaIOPackageName |" + \
                       self.makeName( Format.ada, Qualification.unqualified, ItemType.io_package ) + \
-                      "| self.makeName( Format.ada, Qualification.qualified, ItemType.list_container ) |" + self.makeName( Format.ada, Qualification.qualified, ItemType.list_container )
+                      "| self.makeName( Format.ada, Qualification.full, ItemType.list_container ) |" + self.makeName( Format.ada, Qualification.full, ItemType.list_container )
         
         def unqualifiedName( self ):
                 if notNullOrBlank( self.adaExternalName ):
@@ -723,12 +723,31 @@ class EnumeratedValue:
                 self.string = string
      
 class TableContainer:
-        def __init__( self, name, parentName = None ):
-                self.name = name
-                self.parentName = parentName
+        def __init__( self, databaseName, schemaName = None ):
+                self.databaseName = databaseName
+                self.schemaName = schemaName
                 self.tables = []
                 self.tableLocations = {}
-                      
+                
+        def makeName( self, format, qualificationLevel, itemType ):
+                item = ''
+                if itemType == ItemType.schema_name:
+                        if qualification == Qualification.full:
+                                item = concat( 
+                                        str.capitalize( self.databaseName ), 
+                                        str.capitalize( self.schemaName ))
+                        else:
+                                item = str.capitalize( self.schemaName )
+                elif itemType == ItemType.database_name:
+                        item =  str.capitalize( self.databaseName )
+                elif itemType == ItemType.data_package_name:
+                        item =  str.capitalize( self.databaseName )+"_Data"
+                if format == Format.ada:
+                        item = adafyName( item )
+                elif format == Format.ada_filename:
+                        item = nameToAdaFileName( item )
+                return item
+                
         def addTable( self, table ):
                 self.tables.append( table )
                 self.tableLocations[ table.name ] = len( self.tables )-1 
@@ -747,14 +766,12 @@ class TableContainer:
      
 class Schema( TableContainer ):
         def __init__( self, name, databaseName ):
-                TableContainer.__init__( self )
-                self.name = name
-                self.databaseName = databaseName
+                TableContainer.__init__( self, databaseName, name )
      
 class Database( TableContainer ):
         
         def __init__( self, dataSource ):
-                TableContainer.__init__( self )
+                TableContainer.__init__( self, dataSource.database, None )
                 self.adaTypePackages = []
                 self.adaTypePackagesCompleteSet = []
                 self.dataSource = dataSource;
@@ -912,21 +929,21 @@ def get( elem, key, default ):
                 a = default;
         return a
   
-def parseTable( xtable, databaseAdapter, schemaName=None ):
+def parseTable( xtable, databaseAdapter, databaseName, schemaName, adaDataPackageName ):
         """
         Parse a table from Propel XML
         """
-        databaseName = "FIXME" #databaseAdapter.
         name = xtable.get( 'name' )
         description = xtable.get( 'description' )
         adaExternalName = get( xtable, 'adaExternalName', '' )
         if( isNullOrBlank( description )):
                 description = ''
-        stable = Table( databaseName = databaseName, 
-                        schemaName   = schemaName, 
-                        tableName    = name, 
-                        description  = description, 
-                        adaExternalName = adaExternalName )
+        stable = Table( databaseName       = databaseName, 
+                        schemaName         = schemaName, 
+                        tableName          = name, 
+                        description        = description, 
+                        adaExternalName    = adaExternalName,
+                        adaDataPackageName = adaDataPackageName )
         defaultInstanceName = get( xtable, 'defaultInstanceName', '' )
         if( defaultInstanceName != '' ):
                 stable.adaInstanceName = defaultInstanceName 
@@ -1012,17 +1029,14 @@ def parseSchema( xschema, database ):
         schema = Schema( name, database.databaseName )
         adaDataPackageName = ''
         for adp in xschema.xpath( "adaDataPackage" ):      
-                adaDataPackageName = adp.get( 'name' )
-        schema.fixupNames( adaDataPackageName ) 
-        # print "got adaDataPackage " + schema.adaDataPackageName                
+                adaDataPackageName = adp.get( 'name' )        
         for xtable in xschema.xpath( "table" ):
-                table = parseTable( xtable, database.databaseAdapter, name )
-                # print "on schema " + schema.name +"; on table " + table.name
+                table = parseTable( xtable = xtable, 
+                                    databaseAdapter    = database.databaseAdapter, 
+                                    databaseName       = database.name, 
+                                    schemaName         = name,
+                                    adaDataPackageName = adaDataPackageName )
                 database.adaTypePackagesCompleteSet += table.adaTypePackages
-                # print "before table.fixupNames; table.adaQualifiedOutputRecord = " + table.adaQualifiedOutputRecord
-                table.fixupNames( schema.adaDataPackageName )
-                # print "after table.fixupNames; table.adaQualifiedOutputRecord = " + table.adaQualifiedOutputRecord
-                table.schemaName = name
                 database.decimalTypes.update( table.decimalTypes );
                 database.enumeratedTypes.update( table.enumeratedTypes );
                 database.adaTypePackagesCompleteSet = makeUniqueArray( database.adaTypePackagesCompleteSet );
@@ -1036,24 +1050,23 @@ def parseXMLFiles():
         dataDoc = etree.parse( WorkingPaths.Instance().xmlDir+'database-schema.xml')
         dataDoc.xinclude()
         tablesSchema = dataDoc.getroot()
-        # print tostring( tablesSchema )
         for apackage in tablesSchema.iter( "adaTypePackage" ):
                 database.adaTypePackages.append( apackage.get( 'name' ))
         
         adaDataPackageName = ''
         for adp in tablesSchema.xpath( "adaDataPackage" ):      
                 adaDataPackageName = adp.get( 'name' )
-                # print "got adaDataPackage " + adaDataPackageName               
         database.adaTypePackages = makeUniqueArray( database.adaTypePackages )     
-        # print "database.adaTypePackages"
-        # print database.adaTypePackages
         database.adaTypePackagesCompleteSet = database.adaTypePackages;
         for db in tablesSchema.iter("database"):
                 database.name = db.get( 'name' ) 
         for xtable in tablesSchema.xpath( "table" ):
-                table = parseTable( xtable, database.databaseAdapter )
-                table.fixupNames( database.adaDataPackageName )
-                # print "main list; on table " + table.name
+                table = parseTable( 
+                                xtable = xtable, 
+                                databaseAdapter = database.databaseAdapter, 
+                                databaseName = database.name, 
+                                schemaName=None,
+                                adaDataPackageName = adaDataPackageName )
                 database.addTable( table )
                 database.decimalTypes.update( table.decimalTypes );
                 database.enumeratedTypes.update( table.enumeratedTypes );
@@ -1061,7 +1074,6 @@ def parseXMLFiles():
         for xschema in tablesSchema.xpath( "schema" ):
                 schema = parseSchema( xschema, database )
                 database.schemas.append( schema )
-        database.fixupNames( adaDataPackageName )
         database.fixUpForeignKeys()
         for schema in database.schemas:
                 schema.fixUpForeignKeys( database )
