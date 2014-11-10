@@ -24,9 +24,10 @@
 # $Date: 2013-04-04 18:46:31 +0100 (Thu, 04 Apr 2013) $
 #
 import sys, os
-from utils import makeDirIfDoesntExist
+from utils import makeDirIfDoesntExist, Singleton
 
-class Paths:
+@Singleton
+class WorkingPaths:
         def __repr__( self ):
                 s = ''
                 s += " sep = |"+self.sep+"|\n"
@@ -61,7 +62,5 @@ class Paths:
                 self.etcDir = self.outputRootDir+"etc"+self.sep
                 self.logDir = self.outputRootDir+"log"+self.sep
                 
-#                
-# global variable, sorry
-#
-WORKING_PATHS = Paths()
+def getPaths():
+        return WorkingPaths.Instance()

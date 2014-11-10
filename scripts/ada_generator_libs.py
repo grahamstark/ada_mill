@@ -25,12 +25,12 @@
 #
 
 from Cheetah.Template import Template
-from paths import WORKING_PATHS
+import paths
 """
 A bunch of stuff is (or may be) shared between the db-specific ada generation module and the general one
 """
 def templatesPath():
-        return WORKING_PATHS.templatesPath+WORKING_PATHS.sep+WORKING_PATHS.sep;
+        return paths.getPaths().templatesPath+paths.getPaths().sep+paths.getPaths().sep;
 
 def makePrimaryKeyCriterion( table, criterionName ):
         return makeCriterionList( table, criterionName, 'primaryKeyOnly', True )

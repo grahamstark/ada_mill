@@ -1,5 +1,5 @@
    function Get_Prepared_Retrieve_Statement return gse.Prepared_Statement is 
-      s : constant String := "$pkText"; 
+      s : constant String := " where $pkText"; 
    begin 
       return Get_Prepared_Retrieve_Statement( s ); 
    end Get_Prepared_Retrieve_Statement; 
@@ -11,8 +11,7 @@
 
    function Get_Prepared_Retrieve_Statement( sqlstr : String ) return gse.Prepared_Statement is 
       ps : gse.Prepared_Statement; 
-      query : constant String := DB_Commons.Add_Schema_To_Query( SELECT_PART ) 
-         & ( if sqlstr'Length > 0 then " where " & sqlstr else "" );  
+      query : constant String := DB_Commons.Add_Schema_To_Query( SELECT_PART ) & sqlstr; 
    begin 
       ps := gse.Prepare( query, On_Server => True ); 
       return ps; 

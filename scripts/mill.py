@@ -34,7 +34,7 @@ from ada_generator import makeDataADS, makeDataADB, makeCommons, makeBasicTypesA
         writeTestCaseADS, writeHarness, writeSuiteADB, writeTestCaseADB, \
         makeIO, writeConnectionPool
 
-from paths import WORKING_PATHS
+import paths
 from table_model import parseXMLFiles, databaseToXML
 from etc_files import writeMiscFiles;
 from sys_targets import TARGETS;
@@ -44,13 +44,16 @@ if( len( sys.argv ) < 3 ):
 
 binding = sys.argv[2]
 
+#                
+# global variable, sorry
+#
 
 
 print "***** using the following paths ********"
 
-print WORKING_PATHS ## a global variable, I'm afraid
+print paths.getPaths() ## a global variable, I'm afraid
 
-WORKING_PATHS.makeTargetDirs();
+paths.getPaths().makeTargetDirs();
 
 print "parsing schema"
 database = parseXMLFiles()
@@ -65,11 +68,11 @@ elif TARGETS.binding == 'native':
         elif sys_targets.TARGETS.databaseType == 'sqlite':
                 import ada_specific_sqlite as asp
 
-print database;
-print "writing sql database schema to " + WORKING_PATHS.dbDir
+# print database;
+print "writing sql database schema to " + paths.getPaths().dbDir
 makeDatabaseSQL( database )
 
-print "making ada source files to " + WORKING_PATHS.srcDir
+print "making ada source files to " + paths.getPaths().srcDir
 makeDataADS( database );
 makeDataADB( database );
 
@@ -84,7 +87,7 @@ asp.makeDriverCommons()
 writeConnectionPool();
 asp.writeProjectFile( database );
 
-print "writing sample configuration and project file to "+WORKING_PATHS.etcDir
+print "writing sample configuration and project file to "+paths.getPaths().etcDir
 writeMiscFiles( database )
 print "writing test cases"
 writeTestCaseADS( database )
@@ -93,6 +96,3 @@ writeHarness()
 writeTestCaseADB( database )
 
 print "done!"
-## test testcode
-# doc = databaseToXML( database )
-# print etree.tostring( doc, method='xml', encoding="UTF-8", pretty_print=True )

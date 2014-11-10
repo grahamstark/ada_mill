@@ -1,13 +1,63 @@
 import sys, os
 from string import capwords, strip, replace, lower
 import re
+import traceback
 
 INDENT = '   '
      
 MAXLENGTH = 120
 
+# FIXME DOESN'T WORK - get this to catch outside the try block?
+# 
+# def blowUp( label ):
+        # # a = []
+        # # p = a[1]
+        # raise Exception( label )
+        # 
+
+# def printTrace( label = '' ):
+        # traceback.format_list( traceback.extract_stack( limit = 100 ))
+        # try:
+                # blowUp( label )
+        # except Exception as ex:  #IndexError: #
+                # exc_type, exc_value, exc_traceback = sys.exc_info()
+                # # exc_traceback = sys.exc_info()
+                # traceback.format_list( traceback.extract_stack( limit = 100 ))
+                # formatted_lines = traceback.format_exc(limit=100).splitlines()
+                # traceback.print_exception( exc_type, exc_value, exc_traceback,
+                              # limit=200, file=sys.stdout )
+        # 
+
+
+def isNullOrBlank( s ):
+        return s == '' or s == None
+
+def notNullOrBlank( s ):
+        return not isNullOrBlank( s )
+
+def concatList( alist, delim = "." ):
+        l2 = [a for a in alist if a not in [None, '', ' ']]
+        return delim.join( l2 ) 
+
+def concatenate( s1, s2, delim='.'):
+        if notNullOrBlank( s1 ) and notNullOrBlank( s2 ):
+                return s1 + delim + s2
+        elif notNullOrBlank( s1 ):
+                return s1
+        elif notNullOrBlank( s2 ):
+                return s2
+        else:
+                return None
+
+def ioNameFromPackageName( name ):
+        return adafyName( name ).replace( '.', '_' )+"_IO";        
+
 def packageNameToFileName( packageName ):
         return replace( lower( packageName ), '.', '-' );
+        
+def nameToAdaFileName( name ):
+        return replace( lower( name ), '.', '-' );
+        
 
 def readLinesBetween( fileName, startRE, endRE ):
         """
@@ -37,14 +87,31 @@ def readLinesBetween( fileName, startRE, endRE ):
 
 # fred_joe => Fred_Joe 
 # and fredJoe => Fred_Joe
+
+# different from str.capwords since that lowercases existing upper case letters first
+# so you can't do 'fred_joe.xx into Fred_Joe.Xx in steps
+def cwords( name, delim = ' ' ):
+        l = name.split( delim )
+        for i in range( len(l)):
+                l[i] = str.upper( l[i][0] ) + l[i][1:]
+        return delim.join( l )
+                                
+
 def adafyName( name ):
         s = ''
+        # add
+        nlen = len( name )
+        if nlen <= 1:
+                return name
         for p in range( len(name) ):
                 if( p > 1 ):
                         if( name[p].isupper() and name[p-1].islower() ):
                                 s += '_'
-                s += name[p]                
-        return capwords( s, '_' ).replace( ' ', '_' )
+                s += name[p]     
+        s = cwords( s, '_' )
+        s = cwords( s, '.' )
+        s = s.replace( ' ', '_' )
+        return s
  
 def makePlural( w ):
         if( not w.endswith('s') ):
@@ -101,59 +168,43 @@ def makeUniqueArray( seq ):
         seen_add = seen.add
         return [ x for x in seq if x not in seen and not seen_add(x)]
 
-
-
-#
-# This is stolen from: http://norvig.com/python-iaq.html ?? Licence ??
-#
-class Enum:
-
-    """Create an enumerated type, then add var/value pairs to it.
-    The constructor and the method .ints(names) take a list of variable names,
-    and assign them consecutive integers as values.    The method .strs(names)
-    assigns each variable name to itself (that is variable 'v' has value 'v').
-    The method .vals(a=99, b=200) allows you to assign any value to variables.
-    A 'list of variable names' can also be a string, which will be .split().
-    The method .end() returns one more than the maximum int value.
-    Example: opcodes = Enum("add sub load store").vals(illegal=255)."""
-  
-    def __init__(self, names=[]): self.ints(names)
-    
-    def match( self, var ):
-        """ return the value matching the string var. or raise and AttributeError."""
-        if not var in vars(self).keys(): 
-            raise AttributeError("no such name '" + var + "' in enum")
-        return vars(self)[ var ]
         
-
-    def set(self, var, val):
-        """Set var to the value val in the enum."""
-        if var in vars(self).keys(): raise AttributeError("duplicate var in enum")
-        if val in vars(self).values(): raise ValueError("duplicate value in enum")
-        vars(self)[var] = val
-        return self
-  
-    def strs(self, names):
-        """Set each of the names to itself (as a string) in the enum."""
-        for var in self._parse(names): self.set(var, var)
-        return self
-
-    def ints(self, names):
-        """Set each of the names to the next highest int in the enum."""
-        for var in self._parse(names): self.set(var, self.end())
-        return self
-
-    def vals(self, **entries):
-        """Set each of var=val pairs in the enum."""
-        for (var, val) in entries.items(): self.set(var, val)
-        return self
-
-    def end(self):
-        """One more than the largest int value in the enum, or 0 if none."""
-        try: return max([x for x in vars(self).values() if type(x)==type(0)]) + 1
-        except ValueError: return 0
-    
-    def _parse(self, names):
-        ### If names is a string, parse it as a list of names.
-        if type(names) == type(""): return names.split()
-        else: return names
+class Singleton:
+        """
+        From: http://stackoverflow.com/questions/42558/python-and-the-singleton-pattern
+        A non-thread-safe helper class to ease implementing singletons.
+        This should be used as a decorator -- not a metaclass -- to the
+        class that should be a singleton.
+        
+        The decorated class can define one `__init__` function that
+        takes only the `self` argument. Other than that, there are
+        no restrictions that apply to the decorated class.
+        
+        To get the singleton instance, use the `Instance` method. Trying
+        to use `__call__` will result in a `TypeError` being raised.
+        
+        Limitations: The decorated class cannot be inherited from.
+        
+        """
+        
+        def __init__(self, decorated):
+                self._decorated = decorated
+        
+        def Instance(self):
+                """
+                Returns the singleton instance. Upon its first call, it creates a
+                new instance of the decorated class and calls its `__init__` method.
+                On all subsequent calls, the already created instance is returned.
+                
+                """
+                try:
+                        return self._instance
+                except AttributeError:
+                        self._instance = self._decorated()
+                        return self._instance
+        
+        def __call__(self):
+                raise TypeError('Singletons must be accessed through `Instance()`.')
+        
+        def __instancecheck__(self, inst):      
+                return isinstance(inst, self._decorated)        

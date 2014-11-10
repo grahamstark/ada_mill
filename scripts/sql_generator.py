@@ -30,7 +30,7 @@ Code to generate an SQL Schema
 """
 from table_model import Table, ForeignKey, Variable, DataSource
 import datetime
-from paths import WORKING_PATHS
+import paths
 
 INDENT = '       ';
 constraintCount = 0 ## global variable hack for db names, sorry
@@ -71,12 +71,18 @@ def writeTable( table, databaseAdapter ):
                 for fk in table.foreignKeys:
                         constraintCount += 1                        
                         keyName = makeFKName( table, databaseAdapter, n, constraintCount )                        
-                        varstring = INDENT+"CONSTRAINT "+ keyName +" FOREIGN KEY( "+ ', '.join( fk.localCols ) + ') references ' + fk.referencingTable + "( "+  ', '.join( fk.foreignCols ) + " )"
+                        # print "fk.childSchemaName " + fk.childSchemaName
+                        # print "fk.parentSchemaName " + fk.parentSchemaName
+                        if fk.inDifferentSchemas:
+                                parentTableName = fk.childSchemaName + "." + fk.parentTableName
+                        else:
+                                parentTableName = fk.parentTableName
+                        fkString = INDENT+"CONSTRAINT "+ keyName +" FOREIGN KEY( "+ ', '.join( fk.childCols ) + ') references ' + parentTableName + "( "+  ', '.join( fk.parentCols ) + " )"
                         if( (fk.onDelete != None) and (fk.onDelete != '' )):
-                                varstring += " on delete " +  fk.onDelete                
+                                fkString += " on delete " +  fk.onDelete                
                         if( (fk.onUpdate != None) and (fk.onUpdate != '' )):
-                                varstring += " on update " +  fk.onUpdate                
-                        clauses.append( varstring );
+                                fkString += " on update " +  fk.onUpdate                
+                        clauses.append( fkString );
                         n += 1
         tabstr = 'CREATE TABLE '+table.qualifiedName()+"( \n"
         tabstr += ",\n". join( clauses );
@@ -113,7 +119,7 @@ def writeTable( table, databaseAdapter ):
         return tabstr
 
 def makeDatabaseSQL( database ):
-        outfile = file( WORKING_PATHS.dbDir + database.dataSource.database+".sql" , 'w' );
+        outfile = file( paths.getPaths().dbDir + database.dataSource.database+".sql" , 'w' );
         outfile.write( "--\n-- created on "+datetime.datetime.now().strftime("%d-%m-%Y")+" by Mill\n--\n" );
         outfile.write( database.databaseAdapter.databasePreamble )
         outfile.write( "\n\n" )

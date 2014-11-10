@@ -30,7 +30,7 @@
 from Cheetah.Template import Template
 import datetime
 
-from paths import WORKING_PATHS
+import paths
 from table_model import DataSource
 from utils import makePlural, adafyName, makePaddedString, INDENT, MAXLENGTH, readLinesBetween
 from ada_generator_libs import makeRetrieveSHeader, makeSaveProcHeader, makeUpdateProcHeader, \
@@ -41,10 +41,10 @@ CONNECTION_STRING = "connection : Database_Connection := null"
 
 
 def templatesPath():
-        return WORKING_PATHS.templatesPath+WORKING_PATHS.sep+'postgres'+WORKING_PATHS.sep;
+        return paths.getPaths().templatesPath+paths.getPaths().sep+'postgres'+paths.getPaths().sep;
 
 def writeProjectFile( database ):
-        outfile = file( WORKING_PATHS.etcDir + database.dataSource.database+'.gpr' , 'w' );
+        outfile = file( paths.getPaths().etcDir + database.dataSource.database+'.gpr' , 'w' );
         template = Template( file=templatesPath() + 'project_file.tmpl' )
         template.date = datetime.datetime.now()
         template.projectName = adafyName(database.dataSource.database)
@@ -344,7 +344,7 @@ def makeDriverCommons():
         exts = [ 'adb', 'ads' ]
         for target in targets:
                 for ext in exts:
-                        outfileName = WORKING_PATHS.srcDir + target+"."+ext
+                        outfileName = paths.getPaths().srcDir + target+"."+ext
                         template = Template( file=templatesPath()+target+"."+ext+"."+"tmpl" )
                         template.customImports = readLinesBetween( outfileName, ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
                         template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
@@ -357,7 +357,7 @@ def makeDriverCommons():
         return
        
 def writeConnectionPoolADB():
-        outfileName = WORKING_PATHS.srcDir + 'connection_pool.adb'
+        outfileName = paths.getPaths().srcDir + 'connection_pool.adb'
         template = Template( file=templatesPath()+"connection_pool.adb.tmpl" )
         template.date = datetime.datetime.now()
         template.customImports = readLinesBetween( outfileName, ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
@@ -369,7 +369,7 @@ def writeConnectionPoolADB():
         outfile.close() 
 
 def writeConnectionPoolADS():
-        outfileName = WORKING_PATHS.srcDir+ 'connection_pool.ads'
+        outfileName = paths.getPaths().srcDir+ 'connection_pool.ads'
         template = Template( file=templatesPath()+"connection_pool.ads.tmpl" )
         template.date = datetime.datetime.now()
 

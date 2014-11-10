@@ -29,12 +29,13 @@
 """
 from Cheetah.Template import Template
 import datetime
+
 from sys_targets import TARGETS
-from paths import WORKING_PATHS
+import paths
 from table_model import DataSource
 from utils import makePlural, adafyName, makePaddedString, \
         INDENT, MAXLENGTH, readLinesBetween, makeUniqueArray, \
-        packageNameToFileName
+        packageNameToFileName, ioNameFromPackageName
 from ada_generator_libs import makeRetrieveSHeader, makeSaveProcHeader, \
         makeUpdateProcHeader, makeDeleteSpecificProcHeader, makeCriterionList, \
         makePrimaryKeyCriterion, makeNextFreeHeader, makeDeleteSpecificProcBody
@@ -44,7 +45,7 @@ def makeAddOrderingColumnDecl( var, ending ):
         return s
 
 def makeAddOrderingColumnBody( var ):
-        template = Template( file=WORKING_PATHS.templatesPath+"add_to_criterion_ordering.func.tmpl" )
+        template = Template( file=paths.getPaths().templatesPath+"add_to_criterion_ordering.func.tmpl" )
         template.header = makeAddOrderingColumnDecl( var, ' is' )
         template.criterion = 'elem : d.Order_By_Element := d.Make_Order_By_Element( "'+ var.varname + '", direction  )'
         template.functionName = "Add_"+var.adaName+"_To_Orderings"
@@ -87,7 +88,7 @@ def makeCriteriaBody( var, isString = False ):
         else:
                 adaType = var.getAdaType( True )
         # adaType = str.capitalize( adaType );
-        template = Template( file=WORKING_PATHS.templatesPath+"add_to_criterion.func.tmpl" )
+        template = Template( file=paths.getPaths().templatesPath+"add_to_criterion.func.tmpl" )
         if var.arrayInfo != None :
                 value = var.arrayInfo.stringFromArrayDeclaration( var.adaName )
         elif( var.schemaType == 'BOOLEAN' ) or ( var.schemaType == 'ENUM' ):
@@ -121,10 +122,12 @@ def makePKHeader( table, connection_string, ending ):
                 if( var.isPrimaryKey ):
                         pks.append( var.adaName + " : " + var.adaType )
         pkFields = '; '.join( pks )
+        # print( "makePKHeader table.adaQualifiedOutputRecord |" + table.adaQualifiedOutputRecord )
+        # printTrace()
         return "function Retrieve_By_PK( " + pkFields + "; " + connection_string + " ) return " + table.adaQualifiedOutputRecord + ending
         
 def makePKBody( table, connection_string ):
-        template = Template( file=WORKING_PATHS.templatesPath+"retrieve_pk.func.tmpl" )
+        template = Template( file=paths.getPaths().templatesPath+"retrieve_pk.func.tmpl" )
         if( table.hasPrimaryKey()):                                
                 template.functionHeader = makePKHeader( table, connection_string, ' is' )
         template.listType = table.adaQualifiedListName
@@ -139,11 +142,15 @@ def makePKBody( table, connection_string ):
 
 
 def makeIsNullFunc( table, adaDataPackageName ):
-        template = Template( file=WORKING_PATHS.templatesPath+"is_null.func.tmpl" )       
+        template = Template( file=paths.getPaths().templatesPath+"is_null.func.tmpl" )       
         template.adaName = table.adaTypeName()
         template.functionHeader = makeIsNullFuncHeader( table, ' is' )
         template.returnStatement = 'return '+table.adaInstanceName + ' = ' + table.adaQualifiedNullName
-        template.use = "use "+adaDataPackageName
+        if table.schemaName != '':
+                schemaBit = '.' + table.schemaName
+        else:
+                schemaBit = ''
+        template.use = "use " + adaDataPackageName + schemaBit
         template.nullName = table.adaQualifiedNullName
         s = str(template) 
         return s
@@ -155,28 +162,27 @@ def makeRetrieveCHeader( table, connection_string, ending ):
         return "function Retrieve( c : d.Criteria; " + connection_string + " ) return " + table.adaQualifiedListName +ending
 
 def makeRetrieveCFunc( table, connection_string ):
-        template = Template( file=WORKING_PATHS.templatesPath+"retrieve_by_c.func.tmpl" )
+        template = Template( file=paths.getPaths().templatesPath+"retrieve_by_c.func.tmpl" )
         template.functionHeader = makeRetrieveCHeader( table, connection_string, ' is' )
         s = str(template) 
         return s
         
+def makeChildRetrieveHeader( table, parentTable, packagedAdaName, connection_string, ending ):
+        return "function Retrieve_Child_"+parentTable.replace( ".", "_" ) +"( " + table.adaInstanceName + " : " + table.adaQualifiedOutputRecord +"; " + connection_string + ") return " + packagedAdaName+ending
 
-def makeChildRetrieveHeader( table, referencingTableName, packagedAdaName, connection_string, ending ):
-        return "function Retrieve_Child_"+referencingTableName+"( " + table.adaInstanceName + " : " + table.adaQualifiedOutputRecord +"; " + connection_string + ") return " + packagedAdaName+ending
-
-def makeChildRetrieveBody( table, referencingTable, fk, connection_string ):
+def makeChildRetrieveBody( table, parentTable, fk, connection_string ):
         """
         If the table has a foreign key with the same primary key,
         add a function that retrieves the single record in the referencing table
         referred to by the table primary key. 
         """
-        template = Template( file=WORKING_PATHS.templatesPath+"retrieve_child.func.tmpl" )
-        template.functionHeader = makeChildRetrieveHeader( table, referencingTable.adaTypeName(), referencingTable.adaQualifiedOutputRecord, connection_string, ' is' )
-        template.functionName = "Retrieve_Child_"+ referencingTable.adaTypeName()
-        referencePackage = referencingTable.adaTypeName() + "_IO"
+        template = Template( file=paths.getPaths().templatesPath+"retrieve_child.func.tmpl" )
+        template.functionHeader = makeChildRetrieveHeader( table, parentTable.adaTypeName(), parentTable.adaQualifiedOutputRecord, connection_string, ' is' )
+        template.functionName = "Retrieve_Child_"+ parentTable.adaTypeName().replace( ".", "_" )
+        referencePackage = ioNameFromPackageName( parentTable.adaTypeName())
         localPK = []
-        for p in range(len( fk.localCols ) ):
-                localName = str.capitalize( fk.foreignCols[p] ) + " => " + table.adaInstanceName +"."+ adafyName(fk.localCols[p])
+        for p in range(len( fk.childCols ) ):
+                localName = str.capitalize( fk.parentCols[p] ) + " => " + table.adaInstanceName +"."+ adafyName(fk.childCols[p])
                 localPK.append( localName )
         localPKValues = (",\n"+INDENT*3).join( localPK )
         template.returnStatement = "return " + referencePackage + ".retrieve_By_PK( \n"+INDENT*3+localPKValues + ",\n" + INDENT*3+"Connection => connection )"
@@ -184,23 +190,23 @@ def makeChildRetrieveBody( table, referencingTable, fk, connection_string ):
         return s
 
 
-def makeAssociatedRetrieveHeader( table, referencingTableName, listAdaName, connection_string, ending ):
-        return "function Retrieve_Associated_"+ makePlural( referencingTableName )+"( " +  table.adaInstanceName + " : " + table.adaQualifiedOutputRecord +"; " + connection_string + " ) return " + listAdaName+ending
+def makeAssociatedRetrieveHeader( table, parentTable, listAdaName, connection_string, ending ):
+        return "function Retrieve_Associated_"+ makePlural( parentTable.replace( '.', '_' ))+"( " +  table.adaInstanceName + " : " + table.adaQualifiedOutputRecord +"; " + connection_string + " ) return " + listAdaName+ending
 
-def makeAssociatedRetrieveBody( table, referencingTable, fk, connection_string ): # Name, listAdaName, fk ):
-        template = Template( file=WORKING_PATHS.templatesPath+"retrieve_associated.func.tmpl" )
-        referencingTableName = referencingTable.adaTypeName()
-        template.functionHeader = makeAssociatedRetrieveHeader( table, referencingTableName, referencingTable.adaQualifiedListName, connection_string, ' is' )
+def makeAssociatedRetrieveBody( table, parentTable, fk, connection_string ): # Name, listAdaName, fk ):
+        template = Template( file=paths.getPaths().templatesPath+"retrieve_associated.func.tmpl" )
+        parentTableName = parentTable.adaTypeName().replace( ".", "_" )
+        template.functionHeader = makeAssociatedRetrieveHeader( table, parentTableName, parentTable.adaQualifiedListName, connection_string, ' is' )
         template.allCriteria = []
-        template.functionName = "Retrieve_Associated_"+ makePlural( referencingTableName )
-        referencePackage = referencingTableName + "_IO"
+        template.functionName = "Retrieve_Associated_"+ makePlural( parentTableName )
+        referencePackage = ioNameFromPackageName( parentTableName )
         template.returnStatement = "return " + referencePackage + ".retrieve( c, connection )"
-        for p in range( len( fk.localCols ) ):
+        for p in range( len( fk.childCols ) ):
                 # note these are the other way around from how you'd think of it
                 # since the foriegn key is originally a property of the referencing table
                 # not the table we're on (if you see what I mean).
-                localName = adafyName( fk.localCols[p] )
-                foreignName = adafyName( fk.foreignCols[p] )
+                localName = adafyName( fk.childCols[p] )
+                foreignName = adafyName( fk.parentCols[p] )
                 crit = referencePackage+".Add_"+localName+"( c, " + table.adaInstanceName+"."+foreignName + " )"
                 template.allCriteria.append( crit )
         s = str(template) 
@@ -216,17 +222,17 @@ def make_io_ads( database, adaTypePackages, table ):
                         import ada_specific_postgres as asp
                 elif TARGETS.databaseType == 'sqlite':
                         import ada_specific_sqlite as asp
-
-        dataPackageName = database.adaDataPackageName();
-        outfileName = (WORKING_PATHS.srcDir+table.adaTypeName()+'_io.ads').lower()
-        template = Template( file=WORKING_PATHS.templatesPath+"io.ads.tmpl" )
+        packageName = ioNameFromPackageName( table.adaTypeName() )
+        dataPackageName = database.adaDataPackageName;
+        outfileName = (paths.getPaths().srcDir+packageNameToFileName( packageName )+'.ads')
+        template = Template( file=paths.getPaths().templatesPath+"io.ads.tmpl" )
         template.connectionString = asp.CONNECTION_STRING        
         template.customImports = readLinesBetween( outfileName, ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
         template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
         template.customProcs = readLinesBetween( outfileName, ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
-        template.IOName = table.adaTypeName()+"_IO"
+        template.IOName = packageName
         template.dbWiths = asp.getDBAdsWiths();
-        template.IOName_Upper_Case = (table.adaTypeName()+"_IO").upper()
+        template.IOName_Upper_Case = packageName.upper()
         template.criteria = []
         template.nullName = table.adaQualifiedNullName;
         template.orderingStatements = []
@@ -234,7 +240,7 @@ def make_io_ads( database, adaTypePackages, table ):
         template.adaTypePackages = makeUniqueArray( adaTypePackages + table.adaTypePackages )
         for var in table.variables:
                 # if var.arrayInfo != None:
-                template.orderingStatements.append(makeAddOrderingColumnDecl( var, ';' ));
+                template.orderingStatements.append( makeAddOrderingColumnDecl( var, ';' ));
                 template.criteria.append( makeCriteriaDecl( var, False, ';' ))
                 if( var.isStringType() ):
                         template.criteria.append( makeCriteriaDecl( var , True, ';' ))
@@ -257,17 +263,16 @@ def make_io_ads( database, adaTypePackages, table ):
         template.date = datetime.datetime.now()
         for name in table.childRelations:
                 fk = table.childRelations[ name ]
-                referencedTable =  database.getOneTable( table.schemaName, name );
-                # referencingTableName = referencedTable.adaQualifiedOutputRecord
-                referencingTableName = referencedTable.adaTypeName()
+                childTable =  database.getOneTable( fk.childSchemaName, fk.childTableName );
+                # parentTableName = childTable.adaQualifiedOutputRecord
+                adaChildRecordName = childTable.adaTypeName()
                 if( fk.isOneToOne ):
-                        packagedAdaName = dataPackageName+"."+referencingTableName;
-                        childFunc = makeChildRetrieveHeader( table, referencingTableName, referencedTable.adaQualifiedOutputRecord, asp.CONNECTION_STRING, ';' )
+                        # packagedAdaName = dataPackageName+"."+adaChildRecordName;
+                        childFunc = makeChildRetrieveHeader( table, adaChildRecordName, childTable.adaQualifiedOutputRecord, asp.CONNECTION_STRING, ';' )
                         template.associated.append( childFunc );
                 else:
-                        # listAdaName = dataPackageName+"."+referencingTableName+"_List.Vector"
-                        listAdaName = referencedTable.adaListName;
-                        assocFunc = makeAssociatedRetrieveHeader( table, referencingTableName, referencedTable.adaQualifiedListName, asp.CONNECTION_STRING, ';' )
+                        listAdaName = childTable.adaListName;
+                        assocFunc = makeAssociatedRetrieveHeader( table, adaChildRecordName, childTable.adaQualifiedListName, asp.CONNECTION_STRING, ';' )
                         template.associated.append( assocFunc );
         template.dataPackageName = dataPackageName 
         
@@ -328,8 +333,8 @@ def  makeEnvironmentADB( runtime ):
          Write an adb file with calls for getting passwords, usernames, database name
          writes to src/environment.adb.
         """
-        outfileName = WORKING_PATHS.srcDir+'environment.adb'
-        template = Template( file=WORKING_PATHS.templatesPath + "environment.adb.tmpl" )
+        outfileName = paths.getPaths().srcDir+'environment.adb'
+        template = Template( file=paths.getPaths().templatesPath + "environment.adb.tmpl" )
         template.customImports = readLinesBetween( outfileName, ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
         template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
         template.customProcs = readLinesBetween( outfileName, ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
@@ -345,16 +350,17 @@ def  makeEnvironmentADB( runtime ):
 
        
 
-def makeToStringBody( table ):
-        template = Template( file=WORKING_PATHS.templatesPath+"to_string.proc.tmpl" )
+def makeToStringBody( table, indent ):
+        template = Template( file=paths.getPaths().templatesPath+"to_string.proc.tmpl" )
         # stupidly, indents are not consistent between the ads decl and the body so I have to duplicate
         # this header. I wrote the data decl before I really (??) got the hang of this.
-        template.procedureHeader = "function To_String( rec : " + table.adaTypeName() + " ) return String is"
-        template.returnStr = 'return  "'+table.adaTypeName()+': " &'+"\n"
+        template.indent = INDENT*indent
+        template.procedureHeader = "function To_String( rec : " + table.unqualifiedName() + " ) return String is"
+        template.returnStr = 'return  "'+table.unqualifiedName()+': " &'+"\n"
         p = 0
         for var in table.variables:
                 p += 1
-                s = INDENT*3 + '"'+var.adaName+' = " & ' 
+                s = INDENT*(indent + 2) + '"'+var.adaName+' = " & ' 
                 if( var.arrayInfo != None ):
                         s += var.arrayInfo.toStringDeclaration( "rec." + var.adaName );
                 elif( var.isStringType() ):
@@ -381,19 +387,19 @@ def makeSingleAdaRecordElement( var ):
                 s += var.adaType + " := " + var.getDefaultAdaValue()                
         return s 
         
-def makeContainerPackage( table ):
+def makeContainerPackage( table, numIndents = 1 ):
         """
          table - Table class from table_model.py
          Ada containers package declaration for a table; if table name is 'fred' gives you: 
          'package fred_list is new Ada.Containers.Vectors( element_type=>fred, index_type=>Positive );
          (plus some comments)
         """
-        s = INDENT + "--\n"
-        s += INDENT + "-- container for "+ table.qualifiedName() + " : " +table.description[:MAXLENGTH] +"\n"
-        s += INDENT + "--\n"
-        s += INDENT + "package "+ table.adaContainerName+" is new Ada.Containers.Vectors\n"
-        s += INDENT*2 + "(Element_Type => "+table.adaTypeName()+",\n"
-        s += INDENT*2 + "Index_Type => Positive );\n"
+        s = INDENT*numIndents+ "--\n"
+        s += INDENT*numIndents+ "-- container for "+ table.unqualifiedName() + " : " +table.description[:MAXLENGTH] +"\n"
+        s += INDENT*numIndents+ "--\n"
+        s += INDENT*numIndents+ "package "+ table.unqualifiedAdaContainerName+" is new Ada.Containers.Vectors\n"
+        s += INDENT*(numIndents+1) + "(Element_Type => "+table.unqualifiedName()+",\n"
+        s += INDENT*(numIndents+1) + "Index_Type => Positive );\n"
         return s
         
 def makeChildCollection( adaName ):
@@ -403,92 +409,82 @@ def makeChildCollection( adaName ):
         """
         return makePlural( adaName ) + " : "+adaName+"_List.Vector"
 
-def makeRecord( table ):
+def makeRecord( table, numIndents = 1 ):
         """
          table - Table class from table_model.py
         Make the Ada record declaration for the given table. See table_model.py for the (very limited)  b
         xml=>sql=>ada type mappings and defaults.
         """
-        print "making record for table " + table.qualifiedName()
-        s = INDENT +"--\n"
-        s += INDENT +"-- record modelling "+ table.qualifiedName() + " : " + table.description[:MAXLENGTH]+"\n"
-        s += INDENT +"--\n"
-        s += INDENT + 'type ' + table.adaTypeName() + " is record\n";
+        print "making record for table " + table.unqualifiedName()
+        s = INDENT*numIndents +"--\n"
+        s += INDENT*numIndents +"-- record modelling "+ table.unqualifiedName() + " : " + table.description[:MAXLENGTH]+"\n"
+        s += INDENT*numIndents +"--\n"
+        s += INDENT*numIndents + 'type ' + table.unqualifiedName() + " is record\n";
         for var in table.variables:
-                s += INDENT*3 + makeSingleAdaRecordElement( var )+";\n";
-                
-        # for name in table.childRelations:
-                # fk = table.childRelations[ name ]
-                # adaName = adafyName( name )
-                # if( fk.isOneToOne ):
-                        # s += INDENT*3 + adaName + "_Child :" + adaName+' := Null_' + adaName+";\n";
-                # else:
-                        # s += INDENT*3 + makeChildCollection( adaName )+";\n";
-                # 
-        s += INDENT + "end record;\n"
+                s += INDENT*(numIndents+1) + makeSingleAdaRecordElement( var )+";\n";
+        s += INDENT*numIndents + "end record;\n"
         return s
         
-def makeToStringDecl( table, ending ):
-        s = INDENT*1 +"--\n"
-        s += INDENT*1 +"-- simple print routine for "+table.qualifiedName() + " : " +table.description[:MAXLENGTH]+"\n"
-        s += INDENT*1 +"--\n"
-        s += INDENT*1 + "function To_String( rec : " + table.adaTypeName() + ' ) return String'+ending +"\n"; 
+def makeToStringDecl( table, ending, numIndents = 1 ):
+        s = INDENT*numIndents +"--\n"
+        s += INDENT*numIndents +"-- simple print routine for "+table.unqualifiedName() + " : " +table.description[:MAXLENGTH]+"\n"
+        s += INDENT*numIndents +"--\n"
+        s += INDENT*numIndents + "function To_String( rec : " + table.unqualifiedName() + ' ) return String'+ending +"\n"; 
         return s
         
         
-def makeDefaultRecordDecl( table ):        
+def makeDefaultRecordDecl( table, numIndents = 1 ):        
         """
         Make a record that signals, effectively, Null, with some unlikely values for the primary key fields
         """
-        s = INDENT*1 +"--\n"
-        s += INDENT*1 +"-- default value for "+table.qualifiedName() + " : " +table.description[:MAXLENGTH]+"\n"
-        s += INDENT*1 +"--\n"
-        s += INDENT*1 + table.adaNullName + " : constant " + table.adaTypeName() + " := (\n";
+        s = INDENT*numIndents +"--\n"
+        s += INDENT*numIndents +"-- default value for "+table.unqualifiedName() + " : " +table.description[:MAXLENGTH]+"\n"
+        s += INDENT*numIndents +"--\n"
+        s += INDENT*numIndents + table.makeName( Format.ada, Qualification.unqualified, ItemType.null_constant ) + " : constant " + table.unqualifiedName() + " := (\n";
         elems = []
         for var in table.variables:
                 if var.arrayInfo == None:
-                        elems.append( INDENT*3 + var.adaName + " => " + var.getDefaultAdaValue() );
+                        elems.append( INDENT*(numIndents+2) + var.adaName + " => " + var.getDefaultAdaValue() );
                 else:
-                        elems.append( INDENT*3 + var.adaName + " => ( others => " + var.getDefaultAdaValue() + " )");
-        # for name in table.childRelations:
-                # fk = table.childRelations[ name ]
-                # adaName = adafyName( name )                        
-                # if( fk.isOneToOne ):
-                        # # 1:1 relationship
-                        # elems.append( INDENT*3 + adaName + '_Child => Null_' + adaName );
-                # else:
-                        # elems.append( INDENT*3 + makePlural(adaName) + ' => ' + adaName + "_List.Empty_Vector" );
+                        elems.append( INDENT*(numIndents+2) + var.adaName + " => ( others => " + var.getDefaultAdaValue() + " )");
         s += ",\n". join( elems );
                        
-        s += "\n"+INDENT*1 + ");\n"
+        s += "\n"+INDENT*numIndents + ");\n"
         return s
+
+#
+# will reverse order of tabList, so send a copy
+#
+def makeRecordList( tabList, numIndents = 1 ):
+        tabList.reverse()
+        records = []   
+        if len( tabList ) > 0:
+                records = []   
+                for table in tabList:
+                        if( table.adaExternalName == '' ):
+                                record = makeRecord( table, numIndents )
+                                record += makeContainerPackage( table, numIndents )
+                                record += makeDefaultRecordDecl( table, numIndents )
+                                record += makeToStringDecl( table, ';', numIndents );
+                                records.append( record );
+        return records
 
 def makeDataADS( database ):
         """
          Write a .ads file containing all the data records and container declarations 
          writes to a file  in the src output directory. 
         """
-        rtabs = database.getAllTables() # FIXME: maybe one per schema??
-        rtabs.reverse()
-        records = []   
-        
-        for table in rtabs:
-                if( table.adaExternalName == '' ):
-                        record = makeRecord( table )
-                        record += makeContainerPackage( table )
-                        record += makeDefaultRecordDecl( table )
-                        record += makeToStringDecl( table, ';' );
-                        records.append( record );
-        if( len( records ) > 0 ):
-                outfileName = WORKING_PATHS.srcDir+packageNameToFileName( database.adaDataPackageName() )+'.ads'
+        records = makeRecordList( database.getAllTables( False ), 1 )   
+        # rtabs = copy.deepcopy( schema.tables ) # FIXME: maybe one per schema??
+        totalRecords = len( database.getAllTables( True )) # fixme slow copy
+        if totalRecords > 0 :
+                outfileName = paths.getPaths().srcDir+packageNameToFileName( database.adaDataPackageName )+'.ads'
                 print "makeDataADS writing to " + outfileName
                 customImports = readLinesBetween( outfileName, ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
                 customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
                 customProcs = readLinesBetween( outfileName, ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
-                
                 outfile = file( outfileName, 'w' );
-                
-                template = Template( file=WORKING_PATHS.templatesPath+"data.ads.tmpl" )
+                template = Template( file=paths.getPaths().templatesPath+"data.ads.tmpl" )
                 template.records = records;
                 template.customImports = customImports;
                 template.customTypes = customTypes;
@@ -499,27 +495,49 @@ def makeDataADS( database ):
                 template.arrayDeclarations = database.getArrayDeclarations();
                 template.arrayPackages = database.getArrayPackages();
                 template.date = datetime.datetime.now()
+                
+                childPackages = []
+                for schema in database.schemas: 
+                        stemplate = Template( file=paths.getPaths().templatesPath+"child_package.ads.tmpl" )
+                        stemplate.name = str.capitalize( schema.name )
+                        stemplate.records = makeRecordList( schema.tables, 2 )
+                        childPackages.append( str( stemplate ))
+                template.childPackages = childPackages;        
                 outfile.write( str(template) )
                 outfile.close
 
+def makeToStringBodies( rtabs, indent ):
+        rtabs.reverse()
+        to_strings = []
+        for table in rtabs:
+                if( table.adaExternalName == '' ):
+                        to_strings.append( makeToStringBody( table, indent ))
+        return to_strings;
 
 def makeDataADB( database ):
         """
          Write a .adb file  
          writes to a file in the src output directory. 
         """
-        rtabs = database.getAllTables()
-        rtabs.reverse()
-        template = Template( file=WORKING_PATHS.templatesPath+"data.adb.tmpl" )
+        template = Template( file=paths.getPaths().templatesPath+"data.adb.tmpl" )
         template.toStrings = []
-        template.name = database.adaDataPackageName()
+        template.name = database.adaDataPackageName
         template.date = datetime.datetime.now()
-        n_tables = 0
-        outfileName = WORKING_PATHS.srcDir+packageNameToFileName( database.adaDataPackageName())+'.adb'
-        for table in rtabs:
-                if( table.adaExternalName == '' ):
-                        n_tables += 1
-                        template.toStrings.append( makeToStringBody( table ) )
+        to_strings = []
+        outfileName = paths.getPaths().srcDir+packageNameToFileName( database.adaDataPackageName)+'.adb'
+        tabs = database.getAllTables( False )
+        n_tables = len( tabs )
+        template.toStrings = makeToStringBodies( tabs, 1 );
+        template.childPackages = []
+        for schema in database.schemas:
+                stemplate = Template( file=paths.getPaths().templatesPath+"child_package.adb.tmpl" )
+                stemplate.name = str.capitalize( schema.name )
+                tostrs = makeToStringBodies( schema.tables, 2 )
+                stemplate.toStrings = tostrs
+                n_tables += len( tostrs )
+                if len( tostrs ) > 0: 
+                        template.childPackages.append( str( stemplate ))
+                        
         if( n_tables > 0 ) or ( os.path.exists( outfileName )):                
                 template.customImports = readLinesBetween( outfileName, ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
                 template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
@@ -533,8 +551,8 @@ def makeEnvironmentADS( runtime ):
          Write an ads file with calls for getting passwords, usernames, database name
          writes to src/environment.ads.
         """
-        outfileName = WORKING_PATHS.srcDir+'environment.ads'
-        template = Template( file=WORKING_PATHS.templatesPath+"environment.ads.tmpl" )
+        outfileName = paths.getPaths().srcDir+'environment.ads'
+        template = Template( file=paths.getPaths().templatesPath+"environment.ads.tmpl" )
 
         template.customImports = readLinesBetween( outfileName, ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
         template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
@@ -554,8 +572,8 @@ def makeBaseTypesADS( database ):
          and string types used throughout the output.
          writes to src/base_types.ads
         """
-        outfileName = WORKING_PATHS.srcDir+'base_types.ads'
-        template = Template( file=WORKING_PATHS.templatesPath+"base_types.ads.tmpl" )
+        outfileName = paths.getPaths().srcDir+'base_types.ads'
+        template = Template( file=paths.getPaths().templatesPath+"base_types.ads.tmpl" )
         template.customImports = readLinesBetween( outfileName, ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
         template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
         template.customProcs = readLinesBetween( outfileName, ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
@@ -566,7 +584,7 @@ def makeBaseTypesADS( database ):
         enums = []
         for e in database.enumeratedTypes.values():
                 if( not e.isExternallyDefined()):
-                        print "appending " + e.name + " to enums"
+                        # print "appending " + e.name + " to enums"
                         enums.append( e.toAdaString )
         template.enum_reps = enums;
         template.date = datetime.datetime.now()
@@ -579,8 +597,8 @@ def makeBasicTypesADB():
         """
         Write a body for the common types declarations to src/base_types.adb
         """
-        outfileName = WORKING_PATHS.srcDir+'base_types.adb'
-        template = Template( file=WORKING_PATHS.templatesPath+"base_types.adb.tmpl" )
+        outfileName = paths.getPaths().srcDir+'base_types.adb'
+        template = Template( file=paths.getPaths().templatesPath+"base_types.adb.tmpl" )
         template.customImports = readLinesBetween( outfileName, ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
         template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
         template.customProcs = readLinesBetween( outfileName, ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
@@ -598,8 +616,8 @@ def makeCommons():
         exts = [ 'adb', 'ads' ]
         for target in targets:
                 for ext in exts:
-                        outfileName = WORKING_PATHS.srcDir + target+"."+ext
-                        template = Template( file=WORKING_PATHS.templatesPath+""+target+"."+ext+"."+"tmpl" )
+                        outfileName = paths.getPaths().srcDir + target+"."+ext
+                        template = Template( file=paths.getPaths().templatesPath+""+target+"."+ext+"."+"tmpl" )
                         template.customImports = readLinesBetween( outfileName, ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
                         template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
                         template.customProcs = readLinesBetween( outfileName, ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
@@ -613,8 +631,8 @@ def writeTestCaseADS( database ):
         """
          Write an  test case ads file 
         """
-        outfileName = WORKING_PATHS.testsDir+ database.dataSource.database +  '_test.ads'
-        template = Template( file=WORKING_PATHS.templatesPath+"test_case.ads.tmpl" )
+        outfileName = paths.getPaths().testsDir+ database.dataSource.database +  '_test.ads'
+        template = Template( file=paths.getPaths().templatesPath+"test_case.ads.tmpl" )
         template.testName = adafyName( database.dataSource.database +  '_test' );
         template.date = datetime.datetime.now()
         template.customImports = readLinesBetween( outfileName, ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
@@ -625,36 +643,39 @@ def writeTestCaseADS( database ):
         outfile.write( str(template) )
         outfile.close()
         
-def makeChildTests( databaseName, table ):
+def makeChildTests( databaseName, testName, table ):
         return ''        
 
-def makeCreateTest( databaseName, table ):
+def makeCreateTest( databaseName, procName, table ):
         """
          Write an create test 
         """
-        template = Template( file=WORKING_PATHS.templatesPath+"create_test.proc.tmpl" )
-        procName = table.adaTypeName()+ "_Create_Test"
+        template = Template( file=paths.getPaths().templatesPath+"create_test.proc.tmpl" )
+        # procName = table.adaTypeName()+ "_Create_Test"
         varname = table.adaInstanceName+"_test_item";
         listname = table.adaInstanceName+"_test_list";
-        cursor = table.adaContainerName+'.Cursor'
-        template.procedureHeader = "procedure "+procName + "(  T : in out AUnit.Test_Cases.Test_Case'Class ) is"
+        cursor = table.makeName( Format.ada, Qualification.qualified, ItemType.list_container )+'.Cursor'
+        template.childPackageUse = ''
+        if table.schemaName != '':
+                template.childPackageUse = 'use ' + str.capitalize( table.schemaName )+';'
         template.procName = procName;        
+        template.procedureHeader = "procedure "+procName + "(  T : in out AUnit.Test_Cases.Test_Case'Class ) is"
         ## qualified names here can solve some name clashes, even though the data package is withed
         template.variableDeclaration = varname + " : " + table.adaQualifiedOutputRecord; 
         template.listDeclaration = listname + " : " + table.adaQualifiedListName;
         template.printHeader = 'procedure Print( pos : ' + cursor + ' ) is '
-        template.clearTable = table.adaTypeName()+"_IO.Delete( criteria )"
-        template.retrieveUser = varname+' := '+table.adaContainerName+'.element( pos )'
+        template.clearTable = ioNameFromPackageName( table.adaTypeName() )+".Delete( criteria )"
+        template.retrieveUser = varname+' := '+table.makeName( Format.ada, Qualification.qualified, ItemType.list_container )+'.element( pos )'
         template.toString = 'Log( To_String( '+ varname + ' ))'
-        template.completeListStatement = listname +' := '+ table.adaIOPackageName+'.Retrieve( criteria )'
-        template.iterate = table.adaContainerName+'.iterate( ' + listname +", print'Access )"
+        template.completeListStatement = listname +' := '+ ioNameFromPackageName( table.adaTypeName() )+'.Retrieve( criteria )'
+        template.iterate = table.makeName( Format.ada, Qualification.qualified, ItemType.list_container )+'.iterate( ' + listname +", print'Access )"
         template.createKeyStatements = []
         template.createDataStatements = []
         template.modifyDataStatements = []
-        template.saveStatement = table.adaTypeName()+"_IO.Save( "+varname+", False )"
-        template.updateStatement = table.adaTypeName()+"_IO.Save( "+varname+" )"
-        template.deleteStatement = table.adaTypeName()+"_IO.Delete( "+varname+" )"
-        template.elementFromList = varname+ ' := ' + table.adaContainerName+'.element( '+listname+', i )' 
+        template.saveStatement = ioNameFromPackageName( table.adaTypeName() )+".Save( "+varname+", False )"
+        template.updateStatement = ioNameFromPackageName( table.adaTypeName() )+".Save( "+varname+" )"
+        template.deleteStatement = ioNameFromPackageName( table.adaTypeName() )+".Delete( "+varname+" )"
+        template.elementFromList = varname+ ' := ' + table.makeName( Format.ada, Qualification.qualified, ItemType.list_container )+'.element( '+listname+', i )' 
         for var in table.variables:
                 if( var.isPrimaryKey ):
                         #
@@ -663,7 +684,7 @@ def makeCreateTest( databaseName, table ):
                         if var.isStringType():
                                 key = varname+'.'+var.adaName+ ' := To_Unbounded_String( "k_" & i\'img )' 
                         elif var.isIntegerType():
-                                key = varname+'.'+var.adaName+ ' := '+ table.adaTypeName() +'_IO.Next_Free_'+var.adaName  
+                                key = varname+'.'+var.adaName+ ' := '+ ioNameFromPackageName( table.adaTypeName() ) +'.Next_Free_'+var.adaName  
                         else:
                                 key = varname+'.'+var.adaName+ ' := '+ table.adaTypeName() +"'First"
                         template.createKeyStatements.append( key )
@@ -693,16 +714,16 @@ def writeTestCaseADB( database ):
         """
          Write a  test case adb file 
         """
-        outfileName = WORKING_PATHS.testsDir+ database.dataSource.database +  '_test.adb'
-        template = Template( file=WORKING_PATHS.templatesPath+"test_case.adb.tmpl" )
-        template.testName = adafyName( database.dataSource.database +  '_test' );
-        template.testName_Upper_Case = adafyName( database.dataSource.database +  '_test' ).upper();
+        outfileName = paths.getPaths().testsDir+ database.dataSource.database +  '_test.adb'
+        template = Template( file=paths.getPaths().templatesPath+"test_case.adb.tmpl" )
+        template.testName = adafyName( database.dataSource.database +  '_Test' );
+        template.testName_Upper_Case = adafyName( database.dataSource.database +  '_Test' ).upper();
         template.customImports = readLinesBetween( outfileName, ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
         template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
         template.customProcs = readLinesBetween( outfileName, ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
-        template.logFileName = WORKING_PATHS.etcDir+ 'logging_config_file.txt'
+        template.logFileName = paths.getPaths().etcDir+ 'logging_config_file.txt'
         
-        template.datapackage = adafyName( database.adaDataPackageName() );
+        template.datapackage = adafyName( database.adaDataPackageName );
         template.dbPackages = []
         template.otherPackages = database.adaTypePackagesCompleteSet
         template.createRegisters = []
@@ -710,12 +731,14 @@ def writeTestCaseADB( database ):
         template.createTests = []
         template.childTests = []
         for table in database.getAllTables():
-                template.dbPackages.append( table.adaTypeName()+"_IO" );
-                template.createRegisters.append( "Register_Routine (T, " + table.adaTypeName()+ "_Create_Test'Access, " + '"Test of Creation and deletion of '+table.adaTypeName()+'" );' );
-                template.createTests.append( makeCreateTest( database.dataSource.database, table ))
+                testName = ( table.adaTypeName()+ "_Create_Test" ).replace( '.', '_' )
+                childTestName = ( table.adaTypeName()+ "_Child_Retrieve_Test" ).replace( '.', '_' )
+                template.dbPackages.append( ioNameFromPackageName( table.adaTypeName() ));
+                template.createRegisters.append( "Register_Routine (T, " + testName + "'Access, " + '"Test of Creation and deletion of '+table.adaTypeName()+'" );' );
+                template.createTests.append( makeCreateTest( database.dataSource.database, testName, table ))
                 if( len( table.childRelations ) > 0 ):
-                        template.childRegisters.append( "Register_Routine (T, " + table.adaTypeName()+ "_Child_Retrieve_Test'Access, " + '"Test of Finding Children of '+table.adaTypeName()+'" );' );
-                        template.childTests.append( makeChildTests( database.dataSource.database, table ) ) 
+                        template.childRegisters.append( "Register_Routine (T, " + childTestName + "'Access, " + '"Test of Finding Children of '+table.adaTypeName()+'" );' );
+                        template.childTests.append( makeChildTests( database.dataSource.database, childTestName, table ) ) 
         template.date = datetime.datetime.now()
         outfile = file( outfileName, 'w' );
         outfile.write( str(template) )
@@ -725,8 +748,8 @@ def writeSuiteADB( database ):
         """
          Write the exe file bit (adb) for the test case 
         """
-        outfile = file( WORKING_PATHS.testsDir+ 'suite.adb', 'w' );
-        template = Template( file=WORKING_PATHS.templatesPath+"suite.adb.tmpl" )
+        outfile = file( paths.getPaths().testsDir+ 'suite.adb', 'w' );
+        template = Template( file=paths.getPaths().templatesPath+"suite.adb.tmpl" )
         template.testFile = adafyName( database.dataSource.database +"_Test" )
         template.testCase = adafyName( database.dataSource.database +  '_test.Test_Case' );
         template.date = datetime.datetime.now()
@@ -734,8 +757,8 @@ def writeSuiteADB( database ):
         outfile.close()
         
 def writeHarness():
-        outfile = file( WORKING_PATHS.testsDir+ 'harness.adb', 'w' );
-        template = Template( file=WORKING_PATHS.templatesPath+"harness.adb.tmpl" )
+        outfile = file( paths.getPaths().testsDir+ 'harness.adb', 'w' );
+        template = Template( file=paths.getPaths().templatesPath+"harness.adb.tmpl" )
         template.date = datetime.datetime.now()
         outfile.write( str(template) )
         outfile.close() 
@@ -755,9 +778,9 @@ def make_io_adb( database, table ):
                         import ada_specific_postgres as asp
                 elif TARGETS.databaseType == 'sqlite':
                         import ada_specific_sqlite as asp
-
-        outfileName = (WORKING_PATHS.srcDir+table.adaTypeName()+'_io.adb').lower()
-        template = Template( file=WORKING_PATHS.templatesPath+"io.adb.tmpl" )
+        packageName = ioNameFromPackageName( table.adaTypeName() )
+        outfileName = (paths.getPaths().srcDir+ packageNameToFileName( packageName ) +'.adb').lower()
+        template = Template( file=paths.getPaths().templatesPath+"io.adb.tmpl" )
         template.dbWiths = asp.getDBWiths();
         template.dbRenames = asp.getDBRenames();
         template.dbUses = asp.getDBUses();
@@ -769,8 +792,8 @@ def make_io_adb( database, table ):
         template.insertPart = makeInsertPartString( table )
         template.deletePart = makeDeletePartString( table )
         template.updatePart = makeUpdatePartString( table )
-        template.IOName = table.adaTypeName()+"_IO"
-        template.IOName_Upper_Case = ( table.adaTypeName()+"_IO").upper()
+        template.IOName = packageName
+        template.IOName_Upper_Case = packageName.upper()
         template.criteria = []
         template.nullName = table.adaQualifiedNullName;
         template.orderingStatements = []
@@ -794,7 +817,7 @@ def make_io_adb( database, table ):
         else:
                 template.pkFunc = ''
         template.has_primary_key = table.hasPrimaryKey();
-        template.isNullFunc = makeIsNullFunc( table, database.adaDataPackageName() )
+        template.isNullFunc = makeIsNullFunc( table, database.adaDataPackageName )
 
         template.retrieveByCFunc = makeRetrieveCFunc( table, asp.CONNECTION_STRING );
         
@@ -809,16 +832,16 @@ def make_io_adb( database, table ):
         template.date = datetime.datetime.now()
         for name in table.childRelations:
                 fk = table.childRelations[ name ]
-                referencingTable = database.getOneTable( table.schemaName, name )
-                template.localWiths.append( referencingTable.adaTypeName() +"_IO" ) 
+                parentTable = database.getOneTable( fk.parentSchemaName, fk.parentTableName ) #table.schemaName
+                template.localWiths.append( ioNameFromPackageName( parentTable.adaTypeName())) 
                 if( fk.isOneToOne ):
-                        childFunc = makeChildRetrieveBody( table, referencingTable, fk, asp.CONNECTION_STRING )
+                        childFunc = makeChildRetrieveBody( table, parentTable, fk, asp.CONNECTION_STRING )
                         template.associated.append( childFunc );
                 else:
-                        listAdaName = database.adaDataPackageName() +"."+referencingTable.adaTypeName()+"_List.Vector"
-                        assocFunc = makeAssociatedRetrieveBody( table, referencingTable, fk, asp.CONNECTION_STRING ); #, listAdaName, fk )
+                        listAdaName = database.adaDataPackageName +"."+parentTable.adaTypeName()+"_List.Vector"
+                        assocFunc = makeAssociatedRetrieveBody( table, parentTable, fk, asp.CONNECTION_STRING ); #, listAdaName, fk )
                         template.associated.append( assocFunc );
-        template.dataPackageName = database.adaDataPackageName() 
+        template.dataPackageName = database.adaDataPackageName 
         
         template.preparedInsertStatementBody = asp.makePreparedInsertStatementBody( table )
         template.configuredInsertParamsBody = asp.makeConfiguredInsertParamsBody( table )
@@ -840,6 +863,7 @@ def makeIO( database ):
          Write to src/
         """
         for table in database.getAllTables():
+                # print " makeIO; calling make_io_ads table.adaQualifiedOutputRecord = |" + table.adaQualifiedOutputRecord
                 make_io_ads( database, database.adaTypePackages, table )
                 make_io_adb( database, table )
 

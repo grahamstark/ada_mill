@@ -18,15 +18,15 @@
 # Boston, MA 02110-1301, USA.
 # 
 # /////////////////////////////
-# 
-# $Revision: 16115 $
-# $Author: graham_s $
-# $Date: 2013-05-23 17:08:53 +0100 (Thu, 23 May 2013) $
 #
 from string import upper
 import re
 import copy
 from string import capwords
+
+## NOTE: this requires the Enum34 backport; see: 
+# http://stackoverflow.com/questions/36932/how-can-i-represent-an-enum-in-python
+from enum import Enum
 
 # from xml.dom.minidom import parse
 # import xml
@@ -34,10 +34,19 @@ from string import capwords
 from XMLUtils import setIntAttribute
 
 from lxml import etree
+from lxml.etree import tostring
 
-from utils import adafyName, makePlural, makeUniqueArray
+from utils import adafyName, makePlural, makeUniqueArray, \
+     notNullOrBlank, isNullOrBlank, concatenate,concatList, nameToAdaFileName
+from paths import WorkingPaths
 
-from paths import WORKING_PATHS
+# paths = WorkingPaths.Instance()
+
+# NOTE: these require the Enum34 backport; see: 
+# http://stackoverflow.com/questions/36932/how-can-i-represent-an-enum-in-python
+Format = Enum( 'Format', 'unformatted ada ada_filename' )
+Qualification = Enum( 'Qualification', 'full schema unqualified' )
+ItemType = Enum( 'ItemType', 'table alist list_container, io_package null_constant instanceName' )
 
 #
 # this just tries to cover everything that's specific to 
@@ -136,7 +145,7 @@ class ArrayInfo:
                 if self.indexType == 'ENUM':
                         self.adaIndexTypeName += "_Enum" # fixme should use getAdaType()??
                 self.enumValues = arrayEnumValues
-                print "got %d enums " % ( len(self.enumValues) )
+                # print "got %d enums " % ( len(self.enumValues) )
                 if self.indexType == 'ENUM':
                         self.enumName = arrayAdaIndexTypeName
                 self.name = arrayName
@@ -445,40 +454,81 @@ class DataSource:
                        { 'id' : self.id, 'databaseType' : self.databaseType, 'hostname' : self.hostname, 'database' : self.database, 'username' : self.username, 'password': self.password }
 
 class Table:
-        def __init__( self, schemaName, name, description, adaExternalName ):
+ 
+        # @param lang Format
+        # @param qualificationLevel  'full schema unqualified' 
+        # @param itemType table alist null_constant instanceName
+        def makeName( self, format, qualificationLevel, itemType ):
+                if format != Format.unformatted and not isNullOrBlank( self.adaExternalName ):
+                        itemName = self.adaExternalName
+                else:
+                        itemName = self.name
+                if itemType == ItemType.instanceName:
+                        return 'a_' + str.downcase( itemName )   
+                elif itemType == ItemType.null_constant:
+                        itemName = "Null_"+itemName
+                elif itemType == ItemType.alist:
+                        itemName += '_List.Vector'
+                elif itemType == ItemType.list_container:
+                        itemName += '_List'
+                elif itemType == ItemType.io_package:
+                        itemName += '_IO'
+                qualification = ''
+                if qualificationLevel != Qualification.unqualified:
+                        if notNullOrBlank( self.adaDataPackageName ) and format != Format.unformatted:
+                                qualification = self.adaDataPackageName
+                        else:
+                                items = []   
+                                if qualificationLevel == Qualification.full:
+                                        items.append( self.databaseName )
+                                if qualificationLevel == Qualification.schema or qualificationLevel == Qualification.full:
+                                        items.append( self.schemaName )
+                                if len( items ) > 0:
+                                        qualification = concatList( items, '.' )
+                        if format != Format.unformatted:
+                                qualification = adafyName( qualification )
+                fullName = concatenate( qualification, itemName, '.' )        
+                if format == Format.ada_filename:
+                        fullName = nameToAdaFileName( fullName )
+                return fullName
+        
+        def __init__( self, databaseName, schemaName, tableName, description, adaExternalName, adaDataPackageName ):
+                print "creating table with name |"+tableName + "| adaExternalName |" +  adaExternalName;
+
+                self.databaseName = databaseName
+                self.schemaName = schemaName
+                self.name = tableName
+                self.description = description
+                self.adaExternalName = adaExternalName
+                self.adaDataPackageName = adaDataPackageName
+                
                 self.variables = []
                 self.adaTypePackages = []
                 self.primaryKey = []
                 self.foreignKeys = []
                 self.uniqueIndexes = []
                 self.indexes = []
-                self.name = name
-                self.schemaName = schemaName
-                self.adaExternalName = adaExternalName
-                self.adaInstanceName = 'a_' + adafyName( name ).lower()
-                # if( self.adaExternalName != '' ):
-                        # self.adaTypeName = adaExternalName
-                # else:
-                        # self.adaTypeName = adafyName( name ) 
-                        # # + "_Type"
-                self.adaNullName = 'Null_' + self.adaTypeName()
-                self.adaIOPackageName = self.adaTypeName()+"_IO";
-                self.adaContainerName = self.adaTypeName()+"_List"
-                self.adaListName = self.adaTypeName()+"_List.Vector"                
+                
                 self.decimalTypes = {}
                 self.enumeratedTypes = {}
                 self.description = description
                 self.childRelations = {}
+                print "at end of creation; self.adaIOPackageName |" + \
+                      self.makeName( Format.ada, Qualification.unqualified, ItemType.io_package ) + \
+                      "| self.makeName( Format.ada, Qualification.qualified, ItemType.list_container ) |" + self.makeName( Format.ada, Qualification.qualified, ItemType.list_container )
+        
+        def unqualifiedName( self ):
+                if notNullOrBlank( self.adaExternalName ):
+                        return self.adaExternalName
+                return adafyName( self.name )
                 
         def adaTypeName( self ):
-                if( self.adaExternalName != '' ):
-                        return adaExternalName
-                return adafyName( self.qualifiedName( "_" ))
+                if notNullOrBlank( self.adaExternalName ):
+                        return self.adaExternalName
+                return adafyName( self.qualifiedName( "." ))
               
         def qualifiedName( self, sep='.' ):
-                if len( self.schemaName ) > 0:
-                        return self.schemaName + sep + self.name
-                return self.name
+                return concatenate( self.schemaName, self.name, sep )
                 
         def getPrimaryKeyVariables( self ):
                 vs = []
@@ -494,21 +544,10 @@ class Table:
                                 vs.append( v )
                 return vs
                 
-        def fixupNames( self, dataPackageName ):
-                if( self.adaExternalName == '' ):
-                        self.adaQualifiedOutputRecord = dataPackageName + "." + self.adaTypeName()
-                        self.adaQualifiedListName = dataPackageName + "." + self.adaListName
-                        self.adaQualifiedNullName = dataPackageName + "." + self.adaNullName
-                        self.adaQualifiedContainerName = dataPackageName + "." + self.adaContainerName
-                else:
-                        self.adaQualifiedOutputRecord = self.adaTypeName()
-                        self.adaQualifiedListName = self.adaListName
-                        self.adaQualifiedNullName = self.adaNullName
-                        self.adaQualifiedContainerName = self.adaContainerName
-                        
 
-        def addChildRelation( self, fk, name ):
-                self.childRelations[ name ] = fk
+        def addChildRelation( self, fk ):
+                # fk.parentSchemaName = schemaName
+                self.childRelations[ fk.childTableName ] = fk
                 
         def __repr__( self ):
                 s = "table name %(name)s\n" % { 'name' : self.name }
@@ -556,7 +595,7 @@ class Table:
                                                 varClass.varname,
                                                 varClass.arrayInfo.adaIndexTypeName,
                                                 varClass.arrayInfo.enumValues )
-                                        print etype
+                                        # print etype
                                         self.enumeratedTypes[ etype.name ] = etype
                 self.variables.append( varClass );
                 if( isPrimary ):
@@ -578,22 +617,41 @@ class ForeignKey:
         def hasSameElementsAs( self, pk ):
                 if( pk == None ):
                         return False
-                return set(self.localCols) == set( pk )
+                return set(self.childCols) == set( pk )
                 
-        def __init__( self, referencingTable, onDelete, onUpdate ):
-                self.referencingTable = referencingTable
+        def inDifferentSchemas( self ):
+                return self.parentSchemaName != self.childSchemaName
+                
+        def __init__( self, parentTableKey, childTable, onDelete, onUpdate ):
+                self.childSchemaName = childTable.schemaName
+                self.childTableName = childTable.name
+                # if parentTableKey is xxx.yyy xxx is the schema yyy is tablename, else they are in the same schema
+                matches = re.match( '(.*?)\.(.*)', parentTableKey ) 
+                if matches != None:       
+                        self.parentSchemaName = matches.group(1)
+                        self.parentTableName = matches.group(2)
+                else: 
+                        self.parentTableName = parentTableKey
+                        self.parentSchemaName = self.childSchemaName
                 self.onDelete = onDelete
                 self.onUpdate = onUpdate
-                self.localCols = []
-                self.foreignCols = []
+                self.childCols = []
+                self.parentCols = []
                 self.isOneToOne = False
         
         def addReference( self, localName, foreignName ):
-                self.localCols.append(localName)
-                self.foreignCols.append(foreignName)
+                self.childCols.append( localName)
+                self.parentCols.append( foreignName )
                 
         def __repr__( self ):
-                s = "foreign key referencing table %(reftable)s onDelete %(onDelete)s " % { 'reftable' : self.referencingTable, 'onDelete' : self.onDelete, 'onUpdate' : self.onUpdate }
+                s = "foreign key \nchildSchema: |%(childSchema)s| childTable: |%(childTable)s|\n"\
+                    "parentSchema: |%(parentSchema)s| parentTable: |%(parentTable)s|\n"\
+                    "onDelete %(onDelete)s " % \
+                    { 'childSchema' : self.childSchemaName,
+                      'childTable' : self.childTableName,
+                      'parentSchema' : self.parentSchemaName,
+                      'parentTable' : self.parentTableName,
+                      'onDelete' : self.onDelete, 'onUpdate' : self.onUpdate }
                 return s;
                 
 class Index:
@@ -628,7 +686,6 @@ class EnumeratedType:
                         
         def isExternallyDefined( self ):
                 extern = ( not self.adaTypeName is None ) and len( self.values ) == 0
-                print "extern %d" % ( extern )
                 return extern
         
         def __init__( self, table_name, name, adaTypeName, values = None ):
@@ -654,7 +711,7 @@ class EnumeratedType:
         def addValue( self, value, number = None, string = None ):
                 if number == None:
                         number = len( self.values )
-                if( string == None ):
+                if(isNullOrBlank( string ) ):
                         string = value
                 self.values.append( EnumeratedValue( value, number, string ))
                 
@@ -666,11 +723,12 @@ class EnumeratedValue:
                 self.string = string
      
 class TableContainer:
-        def __init__( self ):
-                self.name = ''
+        def __init__( self, name, parentName = None ):
+                self.name = name
+                self.parentName = parentName
                 self.tables = []
                 self.tableLocations = {}
-                
+                      
         def addTable( self, table ):
                 self.tables.append( table )
                 self.tableLocations[ table.name ] = len( self.tables )-1 
@@ -678,30 +736,26 @@ class TableContainer:
         def getTable( self, name ):
                 return self.tables[ self.tableLocations[ name ]]
                 
-                
-        def fixUpForeignKeys( self ):
+        def fixUpForeignKeys( self, parentContainer = None ):
                 for tab in self.tables:
                         for fk in tab.foreignKeys:
-                                print "on table " + tab.name
-                                print self.tableLocations
-                                print fk.referencingTable
-                                target = self.tableLocations[ fk.referencingTable ]
-                                targetTable = self.tables[ target ]
-                                targetTable.addChildRelation( fk, tab.name )
-                
-        
+                                if fk.inDifferentSchemas():
+                                        parentTable = parentContainer.getOneTable( fk.parentSchemaName, fk.parentTableName )
+                                else:
+                                        parentTable = self.getTable( fk.parentTableName )
+                                parentTable.addChildRelation( fk )
      
 class Schema( TableContainer ):
-        def __init__( self, name ):
+        def __init__( self, name, databaseName ):
                 TableContainer.__init__( self )
                 self.name = name
-        
+                self.databaseName = databaseName
      
 class Database( TableContainer ):
+        
         def __init__( self, dataSource ):
                 TableContainer.__init__( self )
                 self.adaTypePackages = []
-                self.adaDataPackage = None
                 self.adaTypePackagesCompleteSet = []
                 self.dataSource = dataSource;
                 self.decimalTypes = {}
@@ -709,6 +763,8 @@ class Database( TableContainer ):
                 self.description = ''
                 self.schemas = []
                 self.databaseAdapter = getDatabaseAdapter( self.dataSource )
+                self.databaseName = self.dataSource.database
+                
              
         def getOneTable( self, schemaName, name ):
                 if schemaName == '':
@@ -718,10 +774,11 @@ class Database( TableContainer ):
                         if schema.name == schemaName:
                                 return schema.getTable( name )
              
-        def getAllTables( self ):
+        def getAllTables( self, includeSchemas = True ):
                 tables = copy.deepcopy( self.tables );
-                for s in self.schemas:
-                        tables[ len( tables ):] = s.tables
+                if includeSchemas:
+                        for s in self.schemas:
+                                tables[ len( tables ):] = copy.deepcopy( s.tables )
                 return tables
                 
         def getArrayDeclarations( self ):
@@ -741,12 +798,6 @@ class Database( TableContainer ):
                                 if v.arrayInfo != None:
                                         pkgs.append( v.arrayInfo.packageDeclaration( v.isDiscreteTypeInAda() ))                        
                 return pkgs        
-                
-        def adaDataPackageName( self ):
-                if( self.adaDataPackage == None ):
-                        return adafyName( self.dataSource.database )+"_Data";
-                else:
-                        return self.adaDataPackage
                 
                 
         def __repr__( self ):
@@ -774,15 +825,15 @@ def parseRuntimeSchema( xRuntime ):
                 did = datasource.get( "id" )        
                 return DataSource( did, databaseType, hostname, database, username, password )
 
-def makeForeignKey( xfk ):
-        referencingTable = xfk.get( 'foreignTable' )
+def makeForeignKey( xfk, childTable ):
+        parentTableKey = xfk.get( 'foreignTable' )
         onDelete = xfk.get( 'onDelete' )
         onUpdate = xfk.get( 'onUpdate' )
-        if( onDelete == None ):
+        if( isNullOrBlank( onDelete )):
                 onDelete = 'cascade'
-        if( onUpdate == None ):
+        if( isNullOrBlank( onUpdate )):
                 onUpdate = 'cascade'
-        fk = ForeignKey( referencingTable, onDelete, onUpdate )
+        fk = ForeignKey( parentTableKey, childTable, onDelete, onUpdate )
         for reference in xfk.iter( "reference" ):
                 fk.addReference( reference.get( 'local' ),
                                  reference.get( 'foreign' ) );
@@ -816,15 +867,15 @@ def tableToXML( table, document ):
         if( table.hasForeignKeys() ):
                 for fk in table.foreignKeys:
                         fkElem = etree.Element( "foreign-key" )
-                        fkElem.set( "foreignTable", fk.referencingTable )
+                        fkElem.set( "foreignTable", fk.parentTableName )
                         if( (fk.onDelete != None) and (fk.onDelete != '' )):
                                 fkElem.set( "onDelete", fk.onDelete )
                         if( (fk.onUpdate != None) and (fk.onUpdate != '' )):
                                 fkElem.set( "onUpdate", fk.onUpdate )
-                        for p in range( len( fk.localCols ) ):
+                        for p in range( len( fk.childCols ) ):
                                 refElem = etree.Element( "reference" )
-                                refElem.set( "local", fk.localCols[p] );
-                                refElem.set( "foreign", fk.foreignCols[p] );                                
+                                refElem.set( "local", fk.childCols[p] );
+                                refElem.set( "foreign", fk.parentCols[p] );                                
                                 fkElem.append( refElem )
                         tableElem.append( fkElem )
         if table.hasIndexes():
@@ -857,20 +908,25 @@ def databaseToXML( database ):
         
 def get( elem, key, default ):
         a = elem.get( key )
-        if( a == None ):
+        if(isNullOrBlank( a ) ):
                 a = default;
         return a
   
-def parseTable( xtable, databaseAdapter, schemaName='' ):
+def parseTable( xtable, databaseAdapter, schemaName=None ):
         """
         Parse a table from Propel XML
         """
+        databaseName = "FIXME" #databaseAdapter.
         name = xtable.get( 'name' )
         description = xtable.get( 'description' )
         adaExternalName = get( xtable, 'adaExternalName', '' )
-        if( description == None ):
+        if( isNullOrBlank( description )):
                 description = ''
-        stable = Table( schemaName, name, description, adaExternalName )
+        stable = Table( databaseName = databaseName, 
+                        schemaName   = schemaName, 
+                        tableName    = name, 
+                        description  = description, 
+                        adaExternalName = adaExternalName )
         defaultInstanceName = get( xtable, 'defaultInstanceName', '' )
         if( defaultInstanceName != '' ):
                 stable.adaInstanceName = defaultInstanceName 
@@ -927,8 +983,6 @@ def parseTable( xtable, databaseAdapter, schemaName='' ):
                         var.addArray( arrayInfo )  
                         
                 stable.addVariable( var, isPrimary )
-        for fk in xtable.iter( "foreign-key" ):
-                stable.addForeignKey( makeForeignKey( fk ))
         for ui in xtable.iter( "unique" ):
                 stable.addUniqueIndex( makeUniqueIndex( ui ))
         for i in xtable.iter( "index" ):
@@ -936,6 +990,9 @@ def parseTable( xtable, databaseAdapter, schemaName='' ):
         for apackage in xtable.iter( "localAdaTypePackage" ):
                 stable.adaTypePackages.append( apackage.get( 'name' ))
         stable.adaTypePackages = makeUniqueArray( stable.adaTypePackages )     
+        for xfk in xtable.iter( "foreign-key" ):
+                fk = makeForeignKey( xfk, stable )
+                stable.addForeignKey( fk )
         return stable;
 
 def makeUniqueIndex( xindex ):
@@ -952,12 +1009,19 @@ def makeIndex( xindex ):
         
 def parseSchema( xschema, database ):
         name = xschema.get( 'name' )
-        schema = Schema( name )
+        schema = Schema( name, database.databaseName )
+        adaDataPackageName = ''
+        for adp in xschema.xpath( "adaDataPackage" ):      
+                adaDataPackageName = adp.get( 'name' )
+        schema.fixupNames( adaDataPackageName ) 
+        # print "got adaDataPackage " + schema.adaDataPackageName                
         for xtable in xschema.xpath( "table" ):
                 table = parseTable( xtable, database.databaseAdapter, name )
-                print "on schema " + schema.name +"; on table " + table.name
+                # print "on schema " + schema.name +"; on table " + table.name
                 database.adaTypePackagesCompleteSet += table.adaTypePackages
-                table.fixupNames( database.adaDataPackageName() )
+                # print "before table.fixupNames; table.adaQualifiedOutputRecord = " + table.adaQualifiedOutputRecord
+                table.fixupNames( schema.adaDataPackageName )
+                # print "after table.fixupNames; table.adaQualifiedOutputRecord = " + table.adaQualifiedOutputRecord
                 table.schemaName = name
                 database.decimalTypes.update( table.decimalTypes );
                 database.enumeratedTypes.update( table.enumeratedTypes );
@@ -966,26 +1030,30 @@ def parseSchema( xschema, database ):
         return schema
                 
 def parseXMLFiles():
-        runtimeSchema = etree.parse( WORKING_PATHS.xmlDir+'runtime-conf.xml' ).getroot()
+        runtimeSchema = etree.parse( WorkingPaths.Instance().xmlDir+'runtime-conf.xml' ).getroot()
         runtime = parseRuntimeSchema( runtimeSchema )
         database = Database( runtime );
-        tablesSchema = etree.parse( WORKING_PATHS.xmlDir+'database-schema.xml').getroot()
+        dataDoc = etree.parse( WorkingPaths.Instance().xmlDir+'database-schema.xml')
+        dataDoc.xinclude()
+        tablesSchema = dataDoc.getroot()
+        # print tostring( tablesSchema )
         for apackage in tablesSchema.iter( "adaTypePackage" ):
                 database.adaTypePackages.append( apackage.get( 'name' ))
-        for adp in tablesSchema.iter( "adaDataPackage" ):
-                database.adaDataPackage = adp.get( 'name' )
-                print "got adaDataPackage " + database.adaDataPackage                
+        
+        adaDataPackageName = ''
+        for adp in tablesSchema.xpath( "adaDataPackage" ):      
+                adaDataPackageName = adp.get( 'name' )
+                # print "got adaDataPackage " + adaDataPackageName               
         database.adaTypePackages = makeUniqueArray( database.adaTypePackages )     
-        print "database.adaTypePackages"
-        print database.adaTypePackages
+        # print "database.adaTypePackages"
+        # print database.adaTypePackages
         database.adaTypePackagesCompleteSet = database.adaTypePackages;
         for db in tablesSchema.iter("database"):
                 database.name = db.get( 'name' ) 
-                
         for xtable in tablesSchema.xpath( "table" ):
                 table = parseTable( xtable, database.databaseAdapter )
-                table.fixupNames( database.adaDataPackageName() )
-                print "main list; on table " + table.name
+                table.fixupNames( database.adaDataPackageName )
+                # print "main list; on table " + table.name
                 database.addTable( table )
                 database.decimalTypes.update( table.decimalTypes );
                 database.enumeratedTypes.update( table.enumeratedTypes );
@@ -993,9 +1061,8 @@ def parseXMLFiles():
         for xschema in tablesSchema.xpath( "schema" ):
                 schema = parseSchema( xschema, database )
                 database.schemas.append( schema )
-
+        database.fixupNames( adaDataPackageName )
         database.fixUpForeignKeys()
         for schema in database.schemas:
-                schema.fixUpForeignKeys()
-                
+                schema.fixUpForeignKeys( database )
         return database;
