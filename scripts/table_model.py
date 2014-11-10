@@ -784,7 +784,7 @@ class Database( TableContainer ):
                 
              
         def getOneTable( self, schemaName, name ):
-                if schemaName == '':
+                if isNullOrBlank( schemaName ):
                         return self.getTable( name )
                 # fix this: make schemas a hash
                 for schema in self.schemas:
@@ -945,8 +945,6 @@ def parseTable( xtable, databaseAdapter, databaseName, schemaName, adaDataPackag
                         adaExternalName    = adaExternalName,
                         adaDataPackageName = adaDataPackageName )
         defaultInstanceName = get( xtable, 'defaultInstanceName', '' )
-        if( defaultInstanceName != '' ):
-                stable.adaInstanceName = defaultInstanceName 
         for column in xtable.iter( "column" ):
                 varname = column.get( 'name' )
                 stype = column.get( 'type' )

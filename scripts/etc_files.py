@@ -2,7 +2,7 @@ import paths
 from Cheetah.Template import Template
 import datetime
 from utils import adafyName, readLinesBetween
-
+from table_model import Format, ItemType, Qualification
 
 def writeODBCIni( database ):
         dbname = database.dataSource.database
@@ -27,12 +27,12 @@ def writeLoggingConfigFile( database ):
 
         template.logFileName = database.dataSource.database+".log" # paths.getPaths().logDir+
         for table in database.tables:
-                template.dbPackages.append( (table.adaTypeName+"_IO").upper() );
+                instanceName = table.makeName( Format.ada, Qualification.full, ItemType.io_package ).upper()
+                template.dbPackages.append( instanceName );
         template.testCase = adafyName( database.dataSource.database +  '_test' ).upper();
         outfile = file( outfileName, 'w' );
         outfile.write( str(template) )
         outfile.close()
-        
         
 #
 # write a sample odbc file and project file into etc/ in the output dir

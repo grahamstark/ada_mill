@@ -26,6 +26,7 @@
 
 from Cheetah.Template import Template
 import paths
+from table_model import DataSource, Format, Qualification, ItemType
 """
 A bunch of stuff is (or may be) shared between the db-specific ada generation module and the general one
 """
@@ -36,16 +37,44 @@ def makePrimaryKeyCriterion( table, criterionName ):
         return makeCriterionList( table, criterionName, 'primaryKeyOnly', True )
         
 def makeRetrieveSHeader( table, connection_string, ending ):
-        return "function Retrieve( sqlstr : String; " + connection_string + " ) return " + table.adaQualifiedListName +ending;
+        qualifiedListName = table.makeName(
+                Format.ada,
+                Qualification.full,
+                ItemType.alist )
+        return "function Retrieve( sqlstr : String; " + connection_string + " ) return " + qualifiedListName +ending;
 
 def makeSaveProcHeader( table, connection_string, ending ): 
-        return "procedure Save( "+  table.adaInstanceName + " : " + table.adaQualifiedOutputRecord+ "; overwrite : Boolean := True; " + connection_string + " )"+ ending
+        instanceName = table.makeName( 
+                Format.ada, 
+                Qualification.unqualified, 
+                ItemType.instanceName )
+        qualifiedOutputRecord = table.makeName(
+                Format.ada,
+                Qualification.full,
+                ItemType.table )        
+        return "procedure Save( "+ instanceName + " : " + qualifiedOutputRecord+ "; overwrite : Boolean := True; " + connection_string + " )"+ ending
 
-def makeUpdateProcHeader( table, connection_string, ending ): 
-        return "procedure Update( "+  table.adaInstanceName + " : " + table.adaQualifiedOutputRecord+ "; " + connection_string + " )"+ ending
+def makeUpdateProcHeader( table, connection_string, ending ):
+        instanceName = table.makeName( 
+                Format.ada, 
+                Qualification.unqualified, 
+                ItemType.instanceName )
+        qualifiedOutputRecord = table.makeName(
+                Format.ada,
+                Qualification.full,
+                ItemType.table )                
+        return "procedure Update( "+  instanceName + " : " + qualifiedOutputRecord+ "; " + connection_string + " )"+ ending
 
 def makeDeleteSpecificProcHeader( table, connection_string, ending ):
-        return "procedure Delete( " + table.adaInstanceName + " : in out " + table.adaQualifiedOutputRecord +"; "+ connection_string + " )" + ending
+        instanceName = table.makeName( 
+                Format.ada, 
+                Qualification.unqualified, 
+                ItemType.instanceName )
+        qualifiedOutputRecord = table.makeName(
+                Format.ada,
+                Qualification.full,
+                ItemType.table )                
+        return "procedure Delete( " + instanceName + " : in out " + qualifiedOutputRecord +"; "+ connection_string + " )" + ending
 
 def makeNextFreeHeader( var, connection_string, ending ):
         return "function Next_Free_"+var.adaName+"( " + connection_string + ") return " + var.getAdaType( True ) + ending
@@ -58,6 +87,10 @@ def makeCriterionList( table, criterionName, includeAll, qualifyVarname ):
          includeAll, 
          qualifyVarname - add the ada table name to each entry 
         """
+        instanceName = table.makeName( 
+                Format.ada, 
+                Qualification.unqualified, 
+                ItemType.instanceName )
         l = [];
         for var in table.variables:
                 if( (includeAll == 'all' ) or 
@@ -65,24 +98,34 @@ def makeCriterionList( table, criterionName, includeAll, qualifyVarname ):
                     ( (includeAll=='allButPrimaryKey') and ( not var.isPrimaryKey ))):
                         varname = var.adaName
                         if( qualifyVarname ):
-                                varname = table.adaInstanceName+"."+varname
-                        critElement = "Add_"+var.adaName+"( "+criterionName +", "+ varname +" )"
+                                varname = instanceName + "."+varname
+                        critElement = "Add_"+var.adaName + "( "+criterionName +", "+ varname +" )"
                         l.append( critElement );
         return l               
 
 def makePrimaryKeySubmitFields( table ):
         pks = []
+        instanceName = table.makeName( 
+                Format.ada, 
+                Qualification.unqualified, 
+                ItemType.instanceName )
         for var in table.variables:
                 if( var.isPrimaryKey ):
-                        pks.append( table.adaInstanceName + '.' + var.adaName  )
+                        pks.append( instanceName + '.' + var.adaName  )
         return ', '.join( pks )
         
 def makeDeleteSpecificProcBody( table, connection_string ):
+        instanceName = table.makeName( 
+                Format.ada, 
+                Qualification.unqualified, 
+                ItemType.instanceName )
+        qualifiedNullName = table.makeName( 
+                Format.ada, 
+                Qualification.full, 
+                ItemType.null_constant )
         template = Template( file=templatesPath()+"delete_specific.func.tmpl" )
         template.procedureHeader = makeDeleteSpecificProcHeader( table, connection_string, ' is' )
         template.primaryKeyCriteria = makePrimaryKeyCriterion( table, 'c' )
-        template.assignToNullRecord = table.adaInstanceName + " := " + table.adaQualifiedNullName
+        template.assignToNullRecord = instanceName + " := " + qualifiedNullName
         s = str(template) 
         return s
-        
-

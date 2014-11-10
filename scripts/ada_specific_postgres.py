@@ -31,7 +31,7 @@ from Cheetah.Template import Template
 import datetime
 
 import paths
-from table_model import DataSource
+from table_model import DataSource, Format, Qualification, ItemType
 from utils import makePlural, adafyName, makePaddedString, INDENT, MAXLENGTH, readLinesBetween
 from ada_generator_libs import makeRetrieveSHeader, makeSaveProcHeader, makeUpdateProcHeader, \
      makeDeleteSpecificProcHeader, makeCriterionList, makePrimaryKeySubmitFields, \
@@ -273,18 +273,20 @@ def makeRetrieveSFunc( table, database ):
         
          There's a certain amount of trial an error in this..
         """
+        instanceName = table.makeName( Format.ada, Qualification.unqualified, ItemType.instanceName )
+        outputRecord = table.makeName( Format.ada, Qualification.full, ItemType.table )
         template = Template( file=templatesPath()+"retrieve_wstr.func.tmpl" )       
         template.functionHeader = makeRetrieveSHeader( table, CONNECTION_STRING, ' is' )
-        template.listType = table.adaQualifiedListName
-        template.addToMap = "l.append( "+ table.adaInstanceName +" )"
+        template.listType = table.makeName( Format.ada, Qualification.full, ItemType.alist )
+        template.addToMap = "l.append( "+ instanceName +" )"
         template.bindings = []
-        template.adaInstanceName = table.adaInstanceName
-        template.variableDecl = table.adaInstanceName + " : " + table.adaQualifiedOutputRecord
-        template.adaQualifiedOutputRecord = table.adaQualifiedOutputRecord
+        template.adaInstanceName = instanceName
+        template.variableDecl = instanceName + " : " + outputRecord
+        template.adaQualifiedOutputRecord = outputRecord
         
         pos = 0
         for var in table.variables:
-                binding = makeBinding( database.databaseAdapter, table.adaInstanceName, var, pos ) 
+                binding = makeBinding( database.databaseAdapter, instanceName, var, pos ) 
                 pos += 1
                 template.bindings.append( binding )                                        
         s = str(template) 
@@ -390,15 +392,17 @@ def makeUpdateProcBody( table ):
         return str(template) 
 
 def makeSaveProcBody( table ):
+        instanceName = table.makeName( Format.ada, Qualification.unqualified, ItemType.instanceName )
+        outputRecord = table.makeName( Format.ada, Qualification.full, ItemType.table )
         template = Template( file=templatesPath()+"save.func.tmpl" )
         template.procedureHeader = makeSaveProcHeader( table, CONNECTION_STRING, ' is' )
         template.allCriteria = makeCriterionList( table, 'c', 'all', True )
         primaryKey = makePrimaryKeySubmitFields( table )
-        template.tmpVariable = table.adaInstanceName + "_tmp"
-        template.existsCheck = 'if( not is_Null( '+table.adaInstanceName + '_tmp )) then'
-        template.updateCall = 'Update( '+ table.adaInstanceName + ', local_connection )'
-        template.tmpVariableWithAssignment = table.adaInstanceName + "_tmp : " + table.adaQualifiedOutputRecord;
+        template.tmpVariable = instanceName + "_tmp"
+        template.existsCheck = 'if( not is_Null( ' + instanceName + '_tmp )) then'
+        template.updateCall = 'Update( '+ instanceName + ', local_connection )'
+        template.tmpVariableWithAssignment = instanceName + "_tmp : " + outputRecord;
         template.has_pk = table.hasPrimaryKey()
-        template.retrieveByPK = table.adaInstanceName + '_tmp := retrieve_By_PK( ' + primaryKey + ' )'
+        template.retrieveByPK = instanceName + '_tmp := retrieve_By_PK( ' + primaryKey + ' )'
         s = str(template) 
         return s        
