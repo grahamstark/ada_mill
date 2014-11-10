@@ -59,7 +59,7 @@ print "parsing schema"
 database = parseXMLFiles()
 TARGETS.binding = binding
 TARGETS.databaseType = database.dataSource.databaseType
-
+# TODO Blow up if a datasource in runtime conf doesn't match the database name
 if TARGETS.binding == 'odbc':
         import ada_specific_odbc as asp
 elif TARGETS.binding == 'native':

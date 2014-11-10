@@ -9,7 +9,7 @@
 # any later version.
 # 
 # It is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# but WITHOUT ANY WARRANTY; without even the implied warranty of                       
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 # 
@@ -37,6 +37,7 @@ from utils import makePlural, adafyName, makePaddedString, \
         INDENT, MAXLENGTH, readLinesBetween, makeUniqueArray, \
         packageNameToFileName, ioNameFromPackageName, notNullOrBlank, isNullOrBlank
 from ada_generator_libs import makeRetrieveSHeader, makeSaveProcHeader, \
+        makeRetrieveCHeader, \
         makeUpdateProcHeader, makeDeleteSpecificProcHeader, makeCriterionList, \
         makePrimaryKeyCriterion, makeNextFreeHeader, makeDeleteSpecificProcBody
 
@@ -172,16 +173,12 @@ def makeIsNullFuncHeader( table, ending ):
                 ItemType.table )
         return "function Is_Null( "+ instanceName + " : " + qualifiedOutputRecord + " ) return Boolean"+ending;
 
-def makeRetrieveCHeader( table, connection_string, ending ):
-        qualifiedListName = table.makeName( Format.ada, Qualification.full, ItemType.list_container )
-        return "function Retrieve( c : d.Criteria; " + connection_string + " ) return " + qualifiedListName +ending
-
 def makeRetrieveCFunc( table, connection_string ):
         template = Template( file=paths.getPaths().templatesPath+"retrieve_by_c.func.tmpl" )
         template.functionHeader = makeRetrieveCHeader( table, connection_string, ' is' )
         s = str(template) 
         return s
-        
+
 def makeChildRetrieveHeader( table, parentTable, packagedAdaName, connection_string, ending ):
         instanceName = table.makeName( 
                 Format.ada, 
@@ -256,20 +253,22 @@ def makeAssociatedRetrieveBody( table, parentTable, fk, connection_string ):
                 Qualification.unqualified, 
                 ItemType.instanceName )
         template = Template( file=paths.getPaths().templatesPath+"retrieve_associated.func.tmpl" )
-        parentTableInstance = parentTable.makeName( 
+        parentTableName = parentTable.makeName( 
                 Format.ada, 
-                Qualification.unqualified, 
-                ItemType.instanceName )
+                Qualification.full, 
+                ItemType.table )
         parentQualifiedListName = parentTable.makeName( 
                 Format.ada, 
                 Qualification.full, 
-                ItemType.list_container )
+                ItemType.alist )
         template.functionHeader = makeAssociatedRetrieveHeader( 
                 table, 
-                parentTableInstance, 
+                parentTableName, 
                 parentQualifiedListName, connection_string, ' is' )
         template.allCriteria = []
-        template.functionName = "Retrieve_Associated_"+ makePlural( parentTable.name )
+        template.functionName = "Retrieve_Associated_"+ \
+               makePlural( parentTableName.replace( '.', '_' ))
+               
         referencePackage = parentTable.makeName( Format.ada, Qualification.full, ItemType.io_package ) # ioNameFromPackageName( parentTableame )
         template.returnStatement = "return " + referencePackage + ".retrieve( c, connection )"
         for p in range( len( fk.childCols ) ):
@@ -585,7 +584,7 @@ def makeDataADS( database ):
         packageName = database.makeName( 
                 Format.ada, 
                 Qualification.unqualified, 
-                ItemType.database_name )+'_Data'
+                ItemType.database_name ) #+'_Data'
         records = makeRecordList( database.getAllTables( False ), 1 )   
         # rtabs = copy.deepcopy( schema.tables ) # FIXME: maybe one per schema??
         totalRecords = len( database.getAllTables( True )) # fixme slow copy
@@ -594,7 +593,7 @@ def makeDataADS( database ):
                 outfileName = paths.getPaths().srcDir+database.makeName( 
                         Format.ada_filename, 
                         Qualification.unqualified, 
-                        ItemType.database_name )+'_data.ads'
+                        ItemType.database_name )+'.ads' # _data
                 print "makeDataADS writing to " + outfileName
                 customImports = readLinesBetween( outfileName, 
                         ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
@@ -645,7 +644,7 @@ def makeDataADB( database ):
         packageName = database.makeName( 
                 Format.ada, 
                 Qualification.unqualified, 
-                ItemType.database_name )+'_Data'
+                ItemType.database_name )  #+'_Data'
         template = Template( file=paths.getPaths().templatesPath+"data.adb.tmpl" )
         template.toStrings = []
         template.name = packageName
@@ -655,7 +654,7 @@ def makeDataADB( database ):
         outfileName = paths.getPaths().srcDir+database.makeName( 
                 Format.ada_filename, 
                 Qualification.unqualified, 
-                ItemType.database_name )+'_data.adb'
+                ItemType.database_name ) +'.adb' # _data
         
         tabs = database.getAllTables( False )
         n_tables = len( tabs )
@@ -761,9 +760,9 @@ def writeTestCaseADS( database ):
         """
          Write an  test case ads file 
         """
-        outfileName = paths.getPaths().testsDir+ database.dataSource.database +  '_test.ads'
+        outfileName = paths.getPaths().testsDir+ database.databaseName +  '_test.ads'
         template = Template( file=paths.getPaths().templatesPath+"test_case.ads.tmpl" )
-        template.testName = adafyName( database.dataSource.database +  '_test' );
+        template.testName = adafyName( database.databaseName +  '_test' );
         template.date = datetime.datetime.now()
         template.customImports = readLinesBetween( outfileName, ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
         template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
@@ -798,7 +797,7 @@ def makeCreateTest( databaseName, procName, table ):
         if notNullOrBlank( table.schemaName ):
                 template.childPackageUse = 'use ' + str.capitalize( table.schemaName )+';'
         template.procName = procName;        
-        template.procedureHeader = "procedure "+procName + "(  T : in out AUnit.Test_Cases.Test_Case'Class ) is"
+        template.procedureHeader = "procedure "+procName + "( T : in out AUnit.Test_Cases.Test_Case'Class ) is"
         ## qualified names here can solve some name clashes, even though the data package is withed
         template.variableDeclaration = varname + " : " + adaTypeName; 
         template.listDeclaration = listname + " : " + table.makeName( 
@@ -810,7 +809,7 @@ def makeCreateTest( databaseName, procName, table ):
         template.retrieveUser = varname+' := '+table.makeName( 
                 Format.ada, 
                 Qualification.full, 
-                ItemType.alist )+'.Element( pos )'
+                ItemType.list_container )+'.Element( pos )'
         template.toString = 'Log( To_String( '+ varname + ' ))'
         template.completeListStatement = listname +' := '+ ioPackageName +'.Retrieve( criteria )'
         template.iterate = table.makeName( 
@@ -865,10 +864,10 @@ def writeTestCaseADB( database ):
         """
          Write a  test case adb file 
         """
-        outfileName = paths.getPaths().testsDir+ database.dataSource.database +  '_test.adb'
+        outfileName = paths.getPaths().testsDir+ database.databaseName +  '_test.adb'
         template = Template( file=paths.getPaths().templatesPath+"test_case.adb.tmpl" )
-        template.testName = adafyName( database.dataSource.database +  '_Test' );
-        template.testName_Upper_Case = adafyName( database.dataSource.database +  '_Test' ).upper();
+        template.testName = adafyName( database.databaseName +  '_Test' );
+        template.testName_Upper_Case = adafyName( database.databaseName +  '_Test' ).upper();
         template.customImports = readLinesBetween( outfileName, ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
         template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
         template.customProcs = readLinesBetween( outfileName, ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
@@ -897,10 +896,10 @@ def writeTestCaseADB( database ):
                 childTestName = ( adaTypeName+ "_Child_Retrieve_Test" ).replace( '.', '_' )
                 template.dbPackages.append( ioPackageName );
                 template.createRegisters.append( "Register_Routine (T, " + testName + "'Access, " + '"Test of Creation and deletion of '+adaTypeName+'" );' );
-                template.createTests.append( makeCreateTest( database.dataSource.database, testName, table ))
+                template.createTests.append( makeCreateTest( database.databaseName, testName, table ))
                 if( len( table.childRelations ) > 0 ):
                         template.childRegisters.append( "Register_Routine (T, " + childTestName + "'Access, " + '"Test of Finding Children of '+adaTypeName+'" );' );
-                        template.childTests.append( makeChildTests( database.dataSource.database, childTestName, table ) ) 
+                        template.childTests.append( makeChildTests( database.databaseName, childTestName, table ) ) 
         template.date = datetime.datetime.now()
         outfile = file( outfileName, 'w' );
         outfile.write( str(template) )
@@ -912,8 +911,8 @@ def writeSuiteADB( database ):
         """
         outfile = file( paths.getPaths().testsDir+ 'suite.adb', 'w' );
         template = Template( file=paths.getPaths().templatesPath+"suite.adb.tmpl" )
-        template.testFile = adafyName( database.dataSource.database +"_Test" )
-        template.testCase = adafyName( database.dataSource.database +  '_test.Test_Case' );
+        template.testFile = adafyName( database.databaseName +"_Test" )
+        template.testCase = adafyName( database.databaseName +  '_test.Test_Case' );
         template.date = datetime.datetime.now()
         outfile.write( str(template) )
         outfile.close()
@@ -1017,8 +1016,8 @@ def make_io_adb( database, table ):
         template.date = datetime.datetime.now()
         for name in table.childRelations:
                 fk = table.childRelations[ name ]
-                parentTable = database.getOneTable( fk.parentSchemaName, fk.parentTableName ) #table.schemaName
-                template.localWiths.append( parentTable.makeName( Format.ada, Qualification.full, ItemType.table )) 
+                parentTable = database.getOneTable( fk.childSchemaName, fk.childTableName ) #table.schemaName
+                template.localWiths.append( parentTable.makeName( Format.ada, Qualification.full, ItemType.table )+"_IO") 
                 if( fk.isOneToOne ):
                         childFunc = makeChildRetrieveBody( table, parentTable, fk, asp.CONNECTION_STRING )
                         template.associated.append( childFunc );

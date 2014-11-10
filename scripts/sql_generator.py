@@ -119,7 +119,7 @@ def writeTable( table, databaseAdapter ):
         return tabstr
 
 def makeDatabaseSQL( database ):
-        outfile = file( paths.getPaths().dbDir + database.dataSource.database+".sql" , 'w' );
+        outfile = file( paths.getPaths().dbDir + database.databaseName+".sql" , 'w' );
         outfile.write( "--\n-- created on "+datetime.datetime.now().strftime("%d-%m-%Y")+" by Mill\n--\n" );
         outfile.write( database.databaseAdapter.databasePreamble )
         outfile.write( "\n\n" )

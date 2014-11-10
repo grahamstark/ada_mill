@@ -74,10 +74,10 @@ def templatesPath():
         return paths.getPaths().templatesPath+paths.getPaths().sep+'odbc'+paths.getPaths().sep;
 
 def writeProjectFile( database ):
-        outfile = file( paths.getPaths().etcDir + database.dataSource.database+'.gpr' , 'w' );
+        outfile = file( paths.getPaths().etcDir + database.databaseName+'.gpr' , 'w' );
         template = Template( file=templatesPath() + 'project_file.tmpl' )
         template.date = datetime.datetime.now()
-        template.projectName = adafyName(database.dataSource.database)
+        template.projectName = adafyName(database.databaseName)
         outfile.write( str(template) )
         outfile.close()
 

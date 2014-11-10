@@ -36,6 +36,13 @@ def templatesPath():
 def makePrimaryKeyCriterion( table, criterionName ):
         return makeCriterionList( table, criterionName, 'primaryKeyOnly', True )
         
+def makeRetrieveCHeader( table, connection_string, ending ):
+        qualifiedListName = table.makeName(
+                Format.ada,
+                Qualification.full,
+                ItemType.alist )
+        return "function Retrieve( c : d.Criteria; " + connection_string + " ) return " + qualifiedListName +ending
+
 def makeRetrieveSHeader( table, connection_string, ending ):
         qualifiedListName = table.makeName(
                 Format.ada,

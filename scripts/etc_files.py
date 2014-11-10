@@ -5,7 +5,7 @@ from utils import adafyName, readLinesBetween
 from table_model import Format, ItemType, Qualification
 
 def writeODBCIni( database ):
-        dbname = database.dataSource.database
+        dbname = database.databaseName
         outfile = file( paths.getPaths().etcDir + 'odbc.ini' , 'w' );
         ## stop cheeta dying because of unicode characters; no idea what's going on here.
         dbtype = database.dataSource.databaseType.encode('ascii', 'replace') 
@@ -25,11 +25,11 @@ def writeLoggingConfigFile( database ):
         template.dbPackages = []
         template.customLogs = readLinesBetween( outfileName, ".*CUSTOM.*LOGGING.*START", ".*CUSTOM.*LOGGING.*END" )
 
-        template.logFileName = database.dataSource.database+".log" # paths.getPaths().logDir+
+        template.logFileName = database.databaseName+".log" # paths.getPaths().logDir+
         for table in database.tables:
                 instanceName = table.makeName( Format.ada, Qualification.full, ItemType.io_package ).upper()
                 template.dbPackages.append( instanceName );
-        template.testCase = adafyName( database.dataSource.database +  '_test' ).upper();
+        template.testCase = adafyName( database.databaseName +  '_test' ).upper();
         outfile = file( outfileName, 'w' );
         outfile.write( str(template) )
         outfile.close()

@@ -723,6 +723,7 @@ class EnumeratedValue:
                 self.string = string
      
 class TableContainer:
+        
         def __init__( self, databaseName, schemaName = None ):
                 self.databaseName = databaseName
                 self.schemaName = schemaName
@@ -741,7 +742,7 @@ class TableContainer:
                 elif itemType == ItemType.database_name:
                         item =  str.capitalize( self.databaseName )
                 elif itemType == ItemType.data_package_name:
-                        item =  str.capitalize( self.databaseName )+"_Data"
+                        item =  str.capitalize( self.databaseName ) #+"_Data"
                 if format == Format.ada:
                         item = adafyName( item )
                 elif format == Format.ada_filename:
@@ -770,8 +771,8 @@ class Schema( TableContainer ):
      
 class Database( TableContainer ):
         
-        def __init__( self, dataSource ):
-                TableContainer.__init__( self, dataSource.database, None )
+        def __init__( self, name, dataSource ):
+                TableContainer.__init__( self, name, None )
                 self.adaTypePackages = []
                 self.adaTypePackagesCompleteSet = []
                 self.dataSource = dataSource;
@@ -780,7 +781,8 @@ class Database( TableContainer ):
                 self.description = ''
                 self.schemas = []
                 self.databaseAdapter = getDatabaseAdapter( self.dataSource )
-                self.databaseName = self.dataSource.database
+                self.name = name,
+                # self.databaseName = self.dataSource.database
                 
              
         def getOneTable( self, schemaName, name ):
@@ -914,7 +916,7 @@ def tableToXML( table, document ):
         return tableElem;
   
 def databaseToXML( database ):
-        dbElem = etree.Element( "database", name=database.name )
+        dbElem = etree.Element( "database", name=database.databaseName )
         if( tab.adaDataPackage != None ):
                  packageElem = etree.Element( "adaDataPackage" )
                  packageElem.set( 'name', tab.adaDataPackage ) 
@@ -1031,7 +1033,7 @@ def parseSchema( xschema, database ):
         for xtable in xschema.xpath( "table" ):
                 table = parseTable( xtable = xtable, 
                                     databaseAdapter    = database.databaseAdapter, 
-                                    databaseName       = database.name, 
+                                    databaseName       = database.databaseName, 
                                     schemaName         = name,
                                     adaDataPackageName = adaDataPackageName )
                 database.adaTypePackagesCompleteSet += table.adaTypePackages
@@ -1044,25 +1046,24 @@ def parseSchema( xschema, database ):
 def parseXMLFiles():
         runtimeSchema = etree.parse( WorkingPaths.Instance().xmlDir+'runtime-conf.xml' ).getroot()
         runtime = parseRuntimeSchema( runtimeSchema )
-        database = Database( runtime );
         dataDoc = etree.parse( WorkingPaths.Instance().xmlDir+'database-schema.xml')
-        dataDoc.xinclude()
         tablesSchema = dataDoc.getroot()
+        databaseName = tablesSchema.xpath("/database/@name")[0]
+        print "creating database " + databaseName
+        database = Database( databaseName, runtime );
+        
         for apackage in tablesSchema.iter( "adaTypePackage" ):
                 database.adaTypePackages.append( apackage.get( 'name' ))
-        
         adaDataPackageName = ''
         for adp in tablesSchema.xpath( "adaDataPackage" ):      
                 adaDataPackageName = adp.get( 'name' )
         database.adaTypePackages = makeUniqueArray( database.adaTypePackages )     
         database.adaTypePackagesCompleteSet = database.adaTypePackages;
-        for db in tablesSchema.iter("database"):
-                database.name = db.get( 'name' ) 
         for xtable in tablesSchema.xpath( "table" ):
                 table = parseTable( 
                                 xtable = xtable, 
                                 databaseAdapter = database.databaseAdapter, 
-                                databaseName = database.name, 
+                                databaseName = database.databaseName, 
                                 schemaName=None,
                                 adaDataPackageName = adaDataPackageName )
                 database.addTable( table )
