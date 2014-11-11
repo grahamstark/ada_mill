@@ -576,24 +576,26 @@ def makeRecordList( tabList, numIndents = 1 ):
                                 records.append( record );
         return records
 
-def makeDataADS( database ):
+def makeOneDataADS( database, parent ):
         """
          Write a .ads file containing all the data records and container declarations 
          writes to a file  in the src output directory. 
         """
         packageName = database.makeName( 
                 Format.ada, 
-                Qualification.unqualified, 
-                ItemType.database_name ) #+'_Data'
+                Qualification.full, 
+                ItemType.schema_name ) #+'_Data'
         records = makeRecordList( database.getAllTables( False ), 1 )   
         # rtabs = copy.deepcopy( schema.tables ) # FIXME: maybe one per schema??
         totalRecords = len( database.getAllTables( True )) # fixme slow copy
-        if totalRecords > 0 :
-                
-                outfileName = paths.getPaths().srcDir+database.makeName( 
-                        Format.ada_filename, 
-                        Qualification.unqualified, 
-                        ItemType.database_name )+'.ads' # _data
+        childPackages = []
+        print "makeOneDataADS entered "
+        if totalRecords > 0 :                
+                outfileName = paths.getPaths().srcDir + \
+                        database.makeName( 
+                                Format.ada_filename, 
+                                Qualification.full, 
+                                ItemType.schema_name ) + '.ads'
                 print "makeDataADS writing to " + outfileName
                 customImports = readLinesBetween( outfileName, 
                         ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
@@ -607,26 +609,31 @@ def makeDataADS( database ):
                 template.customImports = customImports;
                 template.customTypes = customTypes;
                 template.customProcs = customProcs;
-                template.adaTypePackages = database.adaTypePackages
+                template.adaTypePackages = parent.adaTypePackages
                 template.name = packageName
-                
-                template.arrayDeclarations = database.getArrayDeclarations();
-                template.arrayPackages = database.getArrayPackages();
+                template.arrayDeclarations = parent.getArrayDeclarations();
+                template.arrayPackages = parent.getArrayPackages();
                 template.date = datetime.datetime.now()
-                
-                childPackages = []
-                for schema in database.schemas: 
-                        stemplate = Template( 
-                                file=paths.getPaths().templatesPath+"child_package.ads.tmpl" )
-                        stemplate.name = schema.makeName( 
-                                Format.ada_filename, 
-                                Qualification.unqualified, 
-                                ItemType.schema_name )
-                        stemplate.records = makeRecordList( schema.tables, 2 )
-                        childPackages.append( str( stemplate ))
                 template.childPackages = childPackages;        
                 outfile.write( str(template) )
                 outfile.close
+
+
+def makeDataADS( database ):
+        makeOneDataADS( database, database )
+        for schema in database.schemas:
+                makeOneDataADS( schema, database )
+                
+        # childPackages = []
+                # stemplate = Template( 
+                        # file=paths.getPaths().templatesPath+"child_package.ads.tmpl" )
+                # stemplate.name = schema.makeName( 
+                        # Format.ada_filename, 
+                        # Qualification.unqualified, 
+                        # ItemType.schema_name )
+                # stemplate.records = makeRecordList( schema.tables, 2 )
+                # childPackages.append( str( stemplate ))
+
 
 def makeToStringBodies( rtabs, indent ):
         rtabs.reverse()
@@ -636,46 +643,49 @@ def makeToStringBodies( rtabs, indent ):
                         to_strings.append( makeToStringBody( table, indent ))
         return to_strings;
 
-def makeDataADB( database ):
+def makeOneDataADB( database, parent ):
         """
          Write a .adb file  
          writes to a file in the src output directory. 
         """
         packageName = database.makeName( 
                 Format.ada, 
-                Qualification.unqualified, 
-                ItemType.database_name )  #+'_Data'
+                Qualification.full, 
+                ItemType.schema_name )  #+'_Data'
         template = Template( file=paths.getPaths().templatesPath+"data.adb.tmpl" )
         template.toStrings = []
         template.name = packageName
         template.date = datetime.datetime.now()
         to_strings = []
-        
         outfileName = paths.getPaths().srcDir+database.makeName( 
                 Format.ada_filename, 
-                Qualification.unqualified, 
-                ItemType.database_name ) +'.adb' # _data
-        
+                Qualification.full, 
+                ItemType.schema_name ) +'.adb' # _data
+        print "makeOneDataADB; writing to " + outfileName
         tabs = database.getAllTables( False )
         n_tables = len( tabs )
         template.toStrings = makeToStringBodies( tabs, 1 );
         template.childPackages = []
-        for schema in database.schemas:
-                stemplate = Template( file=paths.getPaths().templatesPath+"child_package.adb.tmpl" )
-                stemplate.name = str.capitalize( schema.name )
-                tostrs = makeToStringBodies( schema.tables, 2 )
-                stemplate.toStrings = tostrs
-                n_tables += len( tostrs )
-                if len( tostrs ) > 0: 
-                        template.childPackages.append( str( stemplate ))
-                        
         if( n_tables > 0 ) or ( os.path.exists( outfileName )):                
                 template.customImports = readLinesBetween( outfileName, ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
                 template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
                 template.customProcs = readLinesBetween( outfileName, ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
-                outfile = file( outfileName, 'w' );
-                outfile.write( str(template) )
-                outfile.close
+        outfile = file( outfileName, 'w' );
+        outfile.write( str(template) )
+        outfile.close
+
+def makeDataADB( database ):
+        makeOneDataADB( database, database )
+        for schema in database.schemas:
+                makeOneDataADB( schema, database )
+# 
+                # stemplate = Template( file=paths.getPaths().templatesPath+"child_package.adb.tmpl" )
+                # stemplate.name = str.capitalize( schema.schemaName )
+                # tostrs = makeToStringBodies( schema.tables, 2 )
+                # stemplate.toStrings = tostrs
+                # n_tables += len( tostrs )
+                # if len( tostrs ) > 0: 
+                        # template.childPackages.append( str( stemplate ))
 
 def makeEnvironmentADS( runtime ):
         """

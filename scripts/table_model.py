@@ -463,6 +463,8 @@ class Table:
                         itemName = self.adaExternalName
                 else:
                         itemName = self.name
+                if format == Format.ada:
+                        itemName = adafyName( itemName )
                 if itemType == ItemType.instanceName:
                         return 'a_' + str.lower( itemName )   
                 elif itemType == ItemType.null_constant:
@@ -473,6 +475,7 @@ class Table:
                         itemName += '_List'
                 elif itemType == ItemType.io_package:
                         itemName += '_IO'
+                
                 qualification = ''
                 if qualificationLevel != Qualification.unqualified:
                         if notNullOrBlank( self.adaDataPackageName ) and format != Format.unformatted:
@@ -733,10 +736,8 @@ class TableContainer:
         def makeName( self, format, qualificationLevel, itemType ):
                 item = ''
                 if itemType == ItemType.schema_name:
-                        if qualification == Qualification.full:
-                                item = concat( 
-                                        str.capitalize( self.databaseName ), 
-                                        str.capitalize( self.schemaName ))
+                        if qualificationLevel == Qualification.full:
+                                item = str.capitalize( concatenate( self.databaseName, self.schemaName ))
                         else:
                                 item = str.capitalize( self.schemaName )
                 elif itemType == ItemType.database_name:
@@ -768,6 +769,9 @@ class TableContainer:
 class Schema( TableContainer ):
         def __init__( self, name, databaseName ):
                 TableContainer.__init__( self, databaseName, name )
+                
+        def getAllTables( self, ignoreThis = True ):
+                return copy.deepcopy( self.tables );
      
 class Database( TableContainer ):
         
@@ -790,7 +794,7 @@ class Database( TableContainer ):
                         return self.getTable( name )
                 # fix this: make schemas a hash
                 for schema in self.schemas:
-                        if schema.name == schemaName:
+                        if schema.schemaName == schemaName:
                                 return schema.getTable( name )
              
         def getAllTables( self, includeSchemas = True ):

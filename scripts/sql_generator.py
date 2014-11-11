@@ -125,9 +125,9 @@ def makeDatabaseSQL( database ):
         outfile.write( "\n\n" )
         schemaNames = []
         for schema in database.schemas:
-                outfile.write( "drop schema if exists " + schema.name + " cascade;\n" )
-                outfile.write( "create schema " + schema.name + ";\n\n" )
-                schemaNames.append( schema.name );
+                outfile.write( "drop schema if exists " + schema.schemaName + " cascade;\n" )
+                outfile.write( "create schema " + schema.schemaName + ";\n\n" )
+                schemaNames.append( schema.schemaName );
         # FIXME postgres only
         if( len( schemaNames ) > 0 ):
                 outfile.write( "set search_path=public," + ",".join( schemaNames )+";\n\n" )
@@ -135,7 +135,7 @@ def makeDatabaseSQL( database ):
                 outfile.write( writeTable( table, database.databaseAdapter ) )
                 outfile.write( "\n" )
         for schema in database.schemas:
-                outfile.write( "--\n--\n-- tables for schema " + schema.name + "  starts\n--\n--\n" )
+                outfile.write( "--\n--\n-- tables for schema " + schema.schemaName + "  starts\n--\n--\n" )
                 for table in schema.tables:
                         outfile.write( writeTable( table, database.databaseAdapter ) )
                         outfile.write( "\n" )
