@@ -49,11 +49,11 @@ def concatenate( s1, s2, delim='.'):
         else:
                 return None
 
-def ioNameFromPackageName( name ):
-        return adafyName( name ).replace( '.', '_' )+"_IO";        
-
-def packageNameToFileName( packageName ):
-        return replace( lower( packageName ), '.', '-' );
+# def ioNameFromPackageName( name ):
+        # return adafyName( name ).replace( '.', '_' )+"_IO";        
+# 
+# def packageNameToFileName( packageName ):
+        # return replace( lower( packageName ), '.', '-' );
         
 def nameToAdaFileName( name ):
         return replace( lower( name ), '.', '-' );
@@ -97,17 +97,20 @@ def cwords( name, delim = ' ' ):
         return delim.join( l )
                                 
 
-def adafyName( name ):
+def adafyName( name, spaceBetweenWords = True ):
         s = ''
         # add
         nlen = len( name )
         if nlen <= 1:
                 return name
-        for p in range( len(name) ):
-                if( p > 1 ):
-                        if( name[p].isupper() and name[p-1].islower() ):
-                                s += '_'
-                s += name[p]     
+        if spaceBetweenWords:
+                for p in range( len(name) ):
+                        if( p > 1 ):
+                                if( name[p].isupper() and name[p-1].islower() ):
+                                        s += '_'
+                        s += name[p]
+        else:
+                s = name
         s = cwords( s, '_' )
         s = cwords( s, '.' )
         s = s.replace( ' ', '_' )

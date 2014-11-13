@@ -463,19 +463,27 @@ class Table:
                         itemName = self.adaExternalName
                 else:
                         itemName = self.name
+                dotPos = itemName.rfind( '.' )
                 if format == Format.ada:
                         itemName = adafyName( itemName )
                 if itemType == ItemType.instanceName:
+                        # itemName = itemName.replace( '.', '_' )
+                        # hack - if we use name for some package stuff
+                        if dotPos > 0:
+                                itemName = itemName[ dotPos+1: ]
                         return 'a_' + str.lower( itemName )   
                 elif itemType == ItemType.null_constant:
-                        itemName = "Null_"+itemName
+                        prefix = ''
+                        if dotPos > 0: # handle some schema stuff in the name
+                                prefix = itemName[ :dotPos+1 ]
+                                itemName = itemName[ dotPos+1: ]
+                        itemName = prefix+"Null_"+itemName
                 elif itemType == ItemType.alist:
-                        itemName += '_List.Vector'
-                elif itemType == ItemType.list_container:
                         itemName += '_List'
+                elif itemType == ItemType.list_container:
+                        itemName += '_List_Package'
                 elif itemType == ItemType.io_package:
                         itemName += '_IO'
-                
                 qualification = ''
                 if qualificationLevel != Qualification.unqualified:
                         if notNullOrBlank( self.adaDataPackageName ) and format != Format.unformatted:
@@ -489,7 +497,7 @@ class Table:
                                 if len( items ) > 0:
                                         qualification = concatList( items, '.' )
                         if format != Format.unformatted:
-                                qualification = adafyName( qualification )
+                                qualification = adafyName( qualification, spaceBetweenWords = False )
                 fullName = concatenate( qualification, itemName, '.' )        
                 if format == Format.ada_filename:
                         fullName = nameToAdaFileName( fullName )
@@ -745,7 +753,7 @@ class TableContainer:
                 elif itemType == ItemType.data_package_name:
                         item =  str.capitalize( self.databaseName ) #+"_Data"
                 if format == Format.ada:
-                        item = adafyName( item )
+                        item = str.capitalize( item )
                 elif format == Format.ada_filename:
                         item = nameToAdaFileName( item )
                 return item
