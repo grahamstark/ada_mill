@@ -325,6 +325,12 @@ def makeIOAds( database, adaTypePackages, table ):
         template.nullName = table.makeName( Format.ada, Qualification.full, ItemType.null_constant );
         template.orderingStatements = []
         template.incr_integer_pk_fields = []
+        for name in table.childRelations:
+                fk = table.childRelations[ name ]
+                parentTable = database.getOneTable( fk.childSchemaName, fk.childTableName ) #table.schemaName
+                if parentTable.schemaName != table.schemaName:
+                        adaTypePackages.append( parentTable.makeName( Format.ada, Qualification.full, ItemType.schema_name )) 
+
         template.adaTypePackages = makeUniqueArray( adaTypePackages + table.adaTypePackages )
         for var in table.variables:
                 # if var.arrayInfo != None:

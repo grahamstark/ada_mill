@@ -498,7 +498,11 @@ class Table:
                                         qualification = concatList( items, '.' )
                         if format != Format.unformatted:
                                 qualification = adafyName( qualification, spaceBetweenWords = False )
-                fullName = concatenate( qualification, itemName, '.' )        
+                if itemType != ItemType.schema_name and itemType != ItemType.database_name:
+                        fullName = concatenate( qualification, itemName, '.' )
+                else:
+                        fullName = qualification
+                                
                 if format == Format.ada_filename:
                         fullName = nameToAdaFileName( fullName )
                 return fullName

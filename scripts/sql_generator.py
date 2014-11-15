@@ -74,7 +74,7 @@ def writeTable( table, databaseAdapter ):
                         # print "fk.childSchemaName " + fk.childSchemaName
                         # print "fk.parentSchemaName " + fk.parentSchemaName
                         if fk.inDifferentSchemas():
-                                parentTableName = fk.childSchemaName + "." + fk.parentTableName
+                                parentTableName = fk.parentSchemaName + "." + fk.parentTableName
                         else:
                                 parentTableName = fk.parentTableName
                         fkString = INDENT+"CONSTRAINT "+ keyName +" FOREIGN KEY( "+ ', '.join( fk.childCols ) + ') references ' + parentTableName + "( "+  ', '.join( fk.parentCols ) + " )"
