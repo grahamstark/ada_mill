@@ -6,6 +6,7 @@ with Ada.Containers.Vectors;
 with Ada.Exceptions;  
 with Ada.Strings.Unbounded; 
 with Ada.Text_IO.Editing;
+with Ada.Strings.Fixed;
 with GNATColl.Traces;
 with GNATCOLL.Templates;
 
@@ -253,6 +254,13 @@ $e
       return Make_Criterion_Element( varname, op, false, join, value'Img );
    end Make_Criterion_Element;
 
+   function Make_Criterion_Element( varname : String;
+                                  op : operation_type;
+                                  join : join_type; 
+                                  value : Boolean  ) return Criterion is
+   begin
+      return Make_Criterion_Element( varname, op, false, join, value'Img );
+   end Make_Criterion_Element;
    
    function Make_Criterion_Element( varname : String;
                                   op : operation_type;
@@ -268,7 +276,24 @@ $e
       return s;      
    end Make_Order_By_Element;
 
-   
+   procedure Remove_From_Criteria( cr : in out Criteria; varname : String ) is
+      i : Natural := 1;
+   begin
+      loop
+         declare
+            s1 : constant String  := To_String( cr.elements.Element( i ).s );
+            p  : constant Natural := Ada.Strings.Fixed.Index( s1, " " );
+            s  : constant String  := s1( 1 .. p-1 );
+         begin
+            if s = varname then
+               cr.Elements.Delete( i );
+            end if;
+         end;
+         exit when i > Natural( cr.elements.Length );
+         i := i + 1;
+      end loop;
+   end Remove_From_Criteria;
+
    procedure Add_To_Criteria( cr : in out Criteria; elem : Criterion ) is
    begin
       Criteria_P.append( cr.elements, elem );

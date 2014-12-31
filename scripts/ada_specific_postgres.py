@@ -188,7 +188,7 @@ def makeValueFunction( variable, posStr, default_value=None ):
         elif( variable.schemaType == 'BIGINT' ):
                 v = "Big_Int'Value( gse.Value( cursor, " + posStr + " ));\n"
         elif( variable.schemaType == 'BOOLEAN' ):
-                v = "gse.Boolean_Value( cursor, " + posStr + " ));\n"
+                v = "gse.Boolean_Value( cursor, " + posStr + " );\n"
                 needsCasting = 0
         elif( variable.schemaType == 'INTEGER' ) or ( variable.schemaType == 'ENUM' ): 
                 v = "gse.Integer_Value( cursor, " + posStr + " );\n"
@@ -218,14 +218,12 @@ def makeBinding( databaseAdapter, instanceName, var, pos ):
                 binding += INDENT*2 + "end if;"
         elif isIntegerTypeInPostgres( var ):
                 binding = INDENT*2 + "if not gse.Is_Null( cursor, " + posStr + " )then\n"
-                if( var.schemaType == 'ENUM' ) or ( var.schemaType == 'BOOLEAN' ):
+                if( var.schemaType == 'ENUM' ):
                         binding += INDENT*3 + "declare\n"
                         binding += INDENT*4 + "i : constant Integer := gse.Integer_Value( cursor, " + posStr + " );\n"
                         binding += INDENT*2 + "begin\n"
                         if( var.schemaType == 'ENUM' ):
                                 binding += INDENT*4 + instanceName+'.'+var.adaName + " := " + var.adaType+"'Val( i );\n";
-                        else:                                
-                                binding += INDENT*4 + instanceName+'.'+var.adaName + " := Boolean'Val( i );\n";
                         binding += INDENT*4 + "end;\n"
                 else:
                         binding += INDENT*3 + instanceName+'.'+var.adaName + " := " + makeValueFunction( var, posStr ); # var.adaType + "( gse.Integer_Value( cursor, " + posStr + " ));\n"

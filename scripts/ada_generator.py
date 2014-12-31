@@ -92,7 +92,9 @@ def makeCriteriaBody( var, isString = False ):
         template = Template( file=paths.getPaths().templatesPath+"add_to_criterion.func.tmpl" )
         if var.arrayInfo != None :
                 value = var.arrayInfo.stringFromArrayDeclaration( var.adaName )
-        elif( var.schemaType == 'BOOLEAN' ) or ( var.schemaType == 'ENUM' ):
+        elif( var.schemaType == 'BOOLEAN' ):
+                value = var.adaName # assumes support for boolean in db, otherwise cast to 0/1 integer
+        elif( var.schemaType == 'ENUM' ):
                 value = "Integer( " + adaType+"'Pos( "+var.adaName +" ))"
         elif adaType == 'Unbounded_String':
                 value = "To_String( "+var.adaName +" )"

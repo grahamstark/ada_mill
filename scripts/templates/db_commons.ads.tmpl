@@ -101,6 +101,12 @@ $e
       op : operation_type;
       join : join_type; 
       value : Long_Float  ) return Criterion;
+
+   function Make_Criterion_Element( 
+      varname : String;
+      op : operation_type;
+      join : join_type; 
+      value : Boolean  ) return Criterion;
                                   
    function Make_Criterion_Element( 
       varname : String;
@@ -128,7 +134,7 @@ $e
    
    procedure Add_To_Criteria( cr : in out Criteria; elem : Criterion );
    procedure Add_To_Criteria( cr : in out Criteria; ob : Order_By_Element );
-
+   procedure Remove_From_Criteria( cr : in out Criteria; varname : String );
    DB_Exception : exception;
 
 private 
