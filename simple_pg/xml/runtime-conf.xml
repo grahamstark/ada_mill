@@ -4,7 +4,7 @@
         <propel>
                 <datasources>
                         <!-- NB ONLY 1st one gets processed -->
-                        <datasource id="simple_pg">
+                        <datasource id="adrs_data">
                                 <adapter>postgres</adapter>
                                 <connection>
                                         <hostspec>localhost</hostspec>

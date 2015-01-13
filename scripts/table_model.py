@@ -129,7 +129,8 @@ def valIfNotNoneOrBlank( s, default ):
 class ArrayInfo:
         def __init__( 
                 self,
-                isExternallyDefined, 
+                isExternallyDefined,
+                arrayIndexIsExternallyDefined,
                 arrayFirst, 
                 arrayLast, 
                 arrayIndexType, 
@@ -141,13 +142,13 @@ class ArrayInfo:
                 self.first = arrayFirst
                 self.last = arrayLast
                 self.indexType = arrayIndexType
+                self.arrayIndexIsExternallyDefined = arrayIndexIsExternallyDefined
                 self.adaIndexTypeName = arrayAdaIndexTypeName
                 if self.indexType == 'ENUM':
-                        self.adaIndexTypeName += "_Enum" # fixme should use getAdaType()??
+                        # self.adaIndexTypeName += "_Enum" 
+                        self.enumName = arrayAdaIndexTypeName
                 self.enumValues = arrayEnumValues
                 # print "got %d enums " % ( len(self.enumValues) )
-                if self.indexType == 'ENUM':
-                        self.enumName = arrayAdaIndexTypeName
                 self.name = arrayName
                 self.dataType = dataType
                 if self.adaIndexTypeName == None:
@@ -163,10 +164,8 @@ class ArrayInfo:
                         else:
                                 self.first = 1
                 if self.indexType == 'ENUM':
-                        # if( self.arrayEnumValues != None ):
                         p1 = arrayEnumValues.index( self.first )
                         p2 = arrayEnumValues.index( self.last )
-                        # print "p2 = %d p2=%d " % (p1, p2)
                         self.length = 1 + ( p2 - p1 )  
                 else:
                         self.last = int( self.last )
@@ -183,7 +182,7 @@ class ArrayInfo:
              
         def packageDeclaration( self, isDiscrete ):
                 floatOrDiscrete = 'Discrete' if isDiscrete else 'Float';
-                return "package %(packagename)s is new %(floatOrDiscrete)s_Mapper( Index=> %(index)s, Data_Type=>%(datatype)s, Array_Type=>%(arraytype)s_U );" %\
+                return "package %(packagename)s is new %(floatOrDiscrete)s_Mapper( Index=> %(index)s, Data_Type=>%(datatype)s, Array_Type=> Abs_%(arraytype)s );" %\
                        { 'packagename': self.packageName(), 'adaname':self.name, \
                        'floatOrDiscrete':floatOrDiscrete, 'index':self.adaIndexTypeName, \
                        'datatype': self.dataType, 'arraytype':self.name }
@@ -205,8 +204,8 @@ class ArrayInfo:
                         return {'',''}
                 rangestr = self.rangeString()
                 initstr = " := ( others => " + default + ")" 
-                s1 = "type %s_U is array( %s range<> ) of %s;"%( self.name, self.adaIndexTypeName, self.dataType )
-                s2 = "subtype %s is %s_U( %s );"%( self.name, self.name, rangestr )    
+                s1 = "type Abs_%s is array( %s range<> ) of %s;"%( self.name, self.adaIndexTypeName, self.dataType )
+                s2 = "subtype %s is Abs_%s( %s );"%( self.name, self.name, rangestr )    
                 return [s1,s2] 
                 
                 
@@ -291,7 +290,7 @@ class Variable:
                 elif ( self.isDateType() ):                                
                         adaType = 'Ada.Calendar.Time' 
                 elif self.schemaType == 'ENUM':  # FIXME we need to properly find the reference to the corresponding enumerated_type class here
-                        adaType = self.tablename + "_" + self.varname + "_Enum"
+                        adaType = self.tablename + "_" + self.varname # + "_Enum"
                 elif self.schemaType == 'BIGINT':
                         adaType = 'Big_Int'
                 return adaType
@@ -604,7 +603,7 @@ class Table:
                         self.enumeratedTypes[ etype.name ] = etype
                         ## fixme: short version only
                 if varClass.arrayInfo != None:
-                        if varClass.arrayInfo.indexType == 'ENUM':
+                        if varClass.arrayInfo.indexType == 'ENUM' and not varClass.arrayInfo.arrayIndexIsExternallyDefined:
                                         etype = EnumeratedType(
                                                 self.name,
                                                 varClass.varname,
@@ -719,8 +718,8 @@ class EnumeratedType:
                         valueNames.append( v.value );
                 valStr = ", ".join( valueNames );
                 name = self.name
-                if name[-5:] != '_Enum':
-                        name += "_Enum"
+                #if name[-5:] != '_Enum':
+                #        name += "_Enum"
                 return "type " + name + " is ( " + valStr + " ) "; 
            
         def addValue( self, value, number = None, string = None ):
@@ -995,6 +994,7 @@ def parseTable( xtable, databaseAdapter, databaseName, schemaName, adaDataPackag
                                 var.values = valuesStr.split()
                 if( var.isArray ):
                         isExternallyDefined = column.get( 'arrayIsExternallyDefined' ) == 'true'
+                        arrayIndexIsExternallyDefined = column.get( 'arrayIndexIsExternallyDefined' ) == 'true'
                         arrayFirst = get( column, 'arrayFirst', 1 )
                         arrayLast = get( column, 'arrayLast', 1 )
                         arrayIndexType = column.get( 'arrayIndexType' )
@@ -1006,6 +1006,7 @@ def parseTable( xtable, databaseAdapter, databaseName, schemaName, adaDataPackag
                         arrayName = column.get( 'arrayName' )
                         arrayInfo = ArrayInfo( 
                                 isExternallyDefined, 
+                                arrayIndexIsExternallyDefined,
                                 arrayFirst, 
                                 arrayLast, 
                                 arrayIndexType, 

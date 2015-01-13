@@ -70,4 +70,22 @@
                      <reference foreign="user_id" local="user_id"/>
                 </foreign-key>
         </table>
+        
+        <schema name='Schema1'>
+        
+                <table name="schema_group_members" description="Group a user belongs to">        
+                        <column name="group_name"
+                                type='CHAR'
+                                size='30'
+                                primaryKey='true'
+                                default=''
+                                description="Model Name"/>
+                        <column name="user_id"  
+                                primaryKey='true'
+                                type='INTEGER'
+                                description=""/>
+                </table>
+        
+        </schema>
+        
 </database>

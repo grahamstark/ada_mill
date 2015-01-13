@@ -1,14 +1,16 @@
 --
--- Created by ada_generator.py on 2014-02-14 14:43:50.957486
+-- Created by ada_generator.py on 2014-11-11 00:46:56.911361
 -- 
 with Ada.Calendar;
 with Ada.Containers.Vectors;
 with Ada.Exceptions;  
 with Ada.Strings.Unbounded; 
 with Ada.Text_IO.Editing;
+with GNATColl.Traces;
+with GNATCOLL.Templates;
+
 with Text_IO;
 with Base_Types; use Base_Types;
-with GNATColl.Traces;
 
 -- === CUSTOM IMPORTS START ===
 -- === CUSTOM IMPORTS END ===
@@ -28,8 +30,47 @@ package body DB_Commons is
       GNATColl.Traces.Trace( log_trace, s );
    end Log;
 
+   default_schema : Unbounded_String := Null_Unbounded_String;
    
-   -- return a string like '2007-09-24 16:07:47'
+   function Add_Trailing( s : String; to_add : Character := '.' ) return String is
+   begin
+      if s( s'Last ) = to_add then
+         return s;
+      end if;
+      return s & to_add;
+   end Add_Trailing;
+
+   function Get_Default_Schema return String is
+      s : constant String := To_String( default_schema );
+   begin
+      if s'Length > 0 then
+         return Add_Trailing( s ); -- ( if( s( s'Length ) = '.' )then s else s & "." );
+      end if;
+      return "";
+   end Get_Default_Schema;
+
+   procedure Set_Default_Schema( name : String ) is
+   begin
+      if( name = "" )then
+         default_schema := Null_Unbounded_String;
+      else
+         default_schema := To_Unbounded_String( name );
+      end if;
+   end  Set_Default_Schema;
+   
+   function Add_Schema_To_Query( query : String; default : String := "" ) return String is
+      val : aliased String := 
+         ( if default /= "" then Add_Trailing( default ) else Get_Default_Schema );
+      key : aliased String := "SCHEMA";
+      subs : constant GNATColl.Templates.Substitution_Array( 1 .. 1 ) := 
+         ( 1 => ( Name  => key'Unchecked_Access, 
+                  Value => val'Unchecked_Access ));
+      outs : constant String := GNATColl.Templates.Substitute( query, subs );
+   begin
+      return outs;      
+   end Add_Schema_To_Query;
+   
+  -- return a string like '2007-09-24 16:07:47'
    function to_string( t : Date_Time_Rec ) return String is      
       
       YEAR_PICTURE : constant Ada.Text_IO.Editing.Picture :=
@@ -316,6 +357,7 @@ package body DB_Commons is
    begin
       return Make_Criterion_Element( varname, op, false, join, value'Img );         
    end Make_Decimal_Criterion_Element;
+  
    
    -- === CUSTOM PROCS START ===
    -- === CUSTOM PROCS END ===

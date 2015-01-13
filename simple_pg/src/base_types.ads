@@ -1,5 +1,5 @@
 --
--- Created by ada_generator.py on 2014-02-14 14:43:50.762723
+-- Created by ada_generator.py on 2014-11-11 00:46:56.684793
 -- 
 with Ada.Text_IO; 
 with Ada.Strings.Bounded; 
@@ -32,7 +32,8 @@ package Base_Types is
    
    -- type Real is new Long_Float;
    type Decimal is delta 0.01 digits 10;
-   type Big_Int is range -9223372036854775808 .. 9223372036854775807;
+   subtype Big_Int is Long_Long_Integer;
+
    --
    --
    --
@@ -73,6 +74,39 @@ package Base_Types is
    package Real_IO is new Ada.Text_IO.Float_IO (Long_Float);
    package Std_IO is new Ada.Text_IO.Integer_IO (Integer);
    package String_IO renames Ada.Text_IO;
+   
+   
+   --
+   -- Packages for reading and writing arrays in the format used in Postgres. 
+   -- You need two near-dupicates here.
+   -- Odd that you can't have a generic *numeric*, but there you go..
+   --
+   generic
+      type Index is (<>);
+      type Data_Type is digits<>;
+      type Array_Type is array( Index range <> ) of Data_Type;   
+   package Float_Mapper is
+   
+     procedure SQL_Map_To_Array( s : String; a : out Array_Type );
+     function Array_To_SQL_String( a : Array_Type ) return String;
+     function To_String( a : Array_Type ) return String;
+
+   end Float_Mapper;
+   
+   generic
+      type Index is (<>);
+      type Data_Type is (<>);
+      type Array_Type is array( Index range <> ) of Data_Type;   
+   package Discrete_Mapper is
+   
+     procedure SQL_Map_To_Array( s : String; a : out Array_Type );
+     function Array_To_SQL_String( a : Array_Type ) return String;
+     function To_String( a : Array_Type ) return String;
+    
+   end Discrete_Mapper;
+   
+
+   
    -- === CUSTOM PROCS START ===
    -- === CUSTOM PROCS END ===
 

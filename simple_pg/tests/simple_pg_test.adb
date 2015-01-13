@@ -1,5 +1,5 @@
 --
--- Created by ada_generator.py on 2014-02-14 14:43:51.078438
+-- Created by ada_generator.py on 2014-11-10 20:22:15.500083
 -- 
 
 
@@ -20,9 +20,9 @@ with Simple_Pg_Data;
 
 with Connection_Pool;
 
-with Standard_User_IO;
-with Standard_Group_IO;
-with Group_Members_IO;
+with Adrs_Data.standard_user_IO;
+with Adrs_Data.standard_group_IO;
+with Adrs_Data.group_members_IO;
 
 
 -- === CUSTOM IMPORTS START ===
@@ -64,206 +64,209 @@ package body Simple_Pg_Test is
 -- test creating and deleting records  
 --
 --
-   procedure Standard_User_Create_Test(  T : in out AUnit.Test_Cases.Test_Case'Class ) is
+   procedure Adrs_Data_standard_user_Create_Test( T : in out AUnit.Test_Cases.Test_Case'Class ) is
+   
       --
       -- local print iteration routine
       --
-      procedure Print( pos : Standard_User_List.Cursor ) is 
-      a_standard_user_test_item : Simple_Pg_Data.Standard_User;
+      procedure Print( pos : Adrs_Data.standard_user_List.Cursor ) is 
+      a_standard_user_test_item : Adrs_Data.standard_user;
       begin
-         a_standard_user_test_item := Standard_User_List.element( pos );
+         a_standard_user_test_item := Adrs_Data.standard_user_List.Vector.Element( pos );
          Log( To_String( a_standard_user_test_item ));
       end print;
 
    
-      a_standard_user_test_item : Simple_Pg_Data.Standard_User;
-      a_standard_user_test_list : Simple_Pg_Data.Standard_User_List.Vector;
+      a_standard_user_test_item : Adrs_Data.standard_user;
+      a_standard_user_test_list : Adrs_Data.standard_user_List.Vector;
       criteria  : d.Criteria;
       startTime : Time;
       endTime   : Time;
       elapsed   : Duration;
    begin
       startTime := Clock;
-      Log( "Starting test Standard_User_Create_Test" );
+      Log( "Starting test Adrs_Data_standard_user_Create_Test" );
       
       Log( "Clearing out the table" );
-      Standard_User_IO.Delete( criteria );
+      Adrs_Data.standard_user_IO.Delete( criteria );
       
-      Log( "Standard_User_Create_Test: create tests" );
+      Log( "Adrs_Data_standard_user_Create_Test: create tests" );
       for i in 1 .. RECORDS_TO_ADD loop
-         a_standard_user_test_item.user_id := Standard_User_IO.Next_Free_user_id;
-         a_standard_user_test_item.username := To_Unbounded_String("dat forusername");
-         a_standard_user_test_item.password := To_Unbounded_String("dat forpassword");
-         -- missinga_standard_user_test_item declaration ;
-         -- missinga_standard_user_test_item declaration ;
-         -- missinga_standard_user_test_item declaration ;
-         a_standard_user_test_item.a_real := 1010100.012;
+         a_standard_user_test_item.user_id := Adrs_Data.standard_user_IO.Next_Free_user_id;
+         a_standard_user_test_item.username := To_Unbounded_String("dat forusername" & i'Img );
+         a_standard_user_test_item.password := To_Unbounded_String("dat forpassword" & i'Img );
+         -- missing declaration for a_standard_user_test_item.type1;
+         -- missing declaration for a_standard_user_test_item.type2;
+         -- missing declaration for a_standard_user_test_item.a_bigint;
+         a_standard_user_test_item.a_real := 1010100.012 + Long_Float( i );
          a_standard_user_test_item.a_decimal := 10201.11;
-         a_standard_user_test_item.a_double := 1010100.012;
-         -- missinga_standard_user_test_item declaration ;
-         a_standard_user_test_item.a_varchar := To_Unbounded_String("dat fora_varchar");
+         a_standard_user_test_item.a_double := 1010100.012 + Long_Float( i );
+         -- missing declaration for a_standard_user_test_item.a_boolean;
+         a_standard_user_test_item.a_varchar := To_Unbounded_String("dat fora_varchar" & i'Img );
          a_standard_user_test_item.a_date := Ada.Calendar.Clock;
-         Standard_User_IO.Save( a_standard_user_test_item, False );         
+         Adrs_Data.standard_user_IO.Save( a_standard_user_test_item, False );         
       end loop;
       
-      a_standard_user_test_list := Standard_User_IO.Retrieve( criteria );
+      a_standard_user_test_list := Adrs_Data.standard_user_IO.Retrieve( criteria );
       
-      Log( "Standard_User_Create_Test: alter tests" );
+      Log( "Adrs_Data_standard_user_Create_Test: alter tests" );
       for i in 1 .. RECORDS_TO_ALTER loop
-         a_standard_user_test_item := Standard_User_List.element( a_standard_user_test_list, i );
-         a_standard_user_test_item.username := To_Unbounded_String("Altered::dat forusername");
-         a_standard_user_test_item.password := To_Unbounded_String("Altered::dat forpassword");
-         a_standard_user_test_item.a_varchar := To_Unbounded_String("Altered::dat fora_varchar");
-         Standard_User_IO.Save( a_standard_user_test_item );         
+         a_standard_user_test_item := Adrs_Data.standard_user_List.element( a_standard_user_test_list, i );
+         a_standard_user_test_item.username := To_Unbounded_String("Altered::dat forusername" & i'Img);
+         a_standard_user_test_item.password := To_Unbounded_String("Altered::dat forpassword" & i'Img);
+         a_standard_user_test_item.a_varchar := To_Unbounded_String("Altered::dat fora_varchar" & i'Img);
+         Adrs_Data.standard_user_IO.Save( a_standard_user_test_item );         
       end loop;
       
-      Log( "Standard_User_Create_Test: delete tests" );
+      Log( "Adrs_Data_standard_user_Create_Test: delete tests" );
       for i in RECORDS_TO_DELETE .. RECORDS_TO_ADD loop
-         a_standard_user_test_item := Standard_User_List.element( a_standard_user_test_list, i );
-         Standard_User_IO.Delete( a_standard_user_test_item );         
+         a_standard_user_test_item := Adrs_Data.standard_user_List.element( a_standard_user_test_list, i );
+         Adrs_Data.standard_user_IO.Delete( a_standard_user_test_item );         
       end loop;
       
-      Log( "Standard_User_Create_Test: retrieve all records" );
-      Standard_User_List.iterate( a_standard_user_test_list, print'Access );
+      Log( "Adrs_Data_standard_user_Create_Test: retrieve all records" );
+      Adrs_Data.standard_user_List.iterate( a_standard_user_test_list, print'Access );
       endTime := Clock;
       elapsed := endTime - startTime;
-      Log( "Ending test Standard_User_Create_Test. Time taken = " & elapsed'Img );
+      Log( "Ending test Adrs_Data_standard_user_Create_Test. Time taken = " & elapsed'Img );
 
    exception 
       when Error : others =>
-         Log( "Standard_User_Create_Test execute query failed with message " & Exception_Information(Error) );
+         Log( "Adrs_Data_standard_user_Create_Test execute query failed with message " & Exception_Information(Error) );
          assert( False,  
-            "Standard_User_Create_Test : exception thrown " & Exception_Information(Error) );
-   end Standard_User_Create_Test;
+            "Adrs_Data_standard_user_Create_Test : exception thrown " & Exception_Information(Error) );
+   end Adrs_Data_standard_user_Create_Test;
 
    
 --
 -- test creating and deleting records  
 --
 --
-   procedure Standard_Group_Create_Test(  T : in out AUnit.Test_Cases.Test_Case'Class ) is
+   procedure Adrs_Data_standard_group_Create_Test( T : in out AUnit.Test_Cases.Test_Case'Class ) is
+   
       --
       -- local print iteration routine
       --
-      procedure Print( pos : Standard_Group_List.Cursor ) is 
-      a_standard_group_test_item : Simple_Pg_Data.Standard_Group;
+      procedure Print( pos : Adrs_Data.standard_group_List.Cursor ) is 
+      a_standard_group_test_item : Adrs_Data.standard_group;
       begin
-         a_standard_group_test_item := Standard_Group_List.element( pos );
+         a_standard_group_test_item := Adrs_Data.standard_group_List.Vector.Element( pos );
          Log( To_String( a_standard_group_test_item ));
       end print;
 
    
-      a_standard_group_test_item : Simple_Pg_Data.Standard_Group;
-      a_standard_group_test_list : Simple_Pg_Data.Standard_Group_List.Vector;
+      a_standard_group_test_item : Adrs_Data.standard_group;
+      a_standard_group_test_list : Adrs_Data.standard_group_List.Vector;
       criteria  : d.Criteria;
       startTime : Time;
       endTime   : Time;
       elapsed   : Duration;
    begin
       startTime := Clock;
-      Log( "Starting test Standard_Group_Create_Test" );
+      Log( "Starting test Adrs_Data_standard_group_Create_Test" );
       
       Log( "Clearing out the table" );
-      Standard_Group_IO.Delete( criteria );
+      Adrs_Data.standard_group_IO.Delete( criteria );
       
-      Log( "Standard_Group_Create_Test: create tests" );
+      Log( "Adrs_Data_standard_group_Create_Test: create tests" );
       for i in 1 .. RECORDS_TO_ADD loop
          a_standard_group_test_item.name := To_Unbounded_String( "k_" & i'img );
-         a_standard_group_test_item.description := To_Unbounded_String("dat fordescription");
-         Standard_Group_IO.Save( a_standard_group_test_item, False );         
+         a_standard_group_test_item.description := To_Unbounded_String("dat fordescription" & i'Img );
+         Adrs_Data.standard_group_IO.Save( a_standard_group_test_item, False );         
       end loop;
       
-      a_standard_group_test_list := Standard_Group_IO.Retrieve( criteria );
+      a_standard_group_test_list := Adrs_Data.standard_group_IO.Retrieve( criteria );
       
-      Log( "Standard_Group_Create_Test: alter tests" );
+      Log( "Adrs_Data_standard_group_Create_Test: alter tests" );
       for i in 1 .. RECORDS_TO_ALTER loop
-         a_standard_group_test_item := Standard_Group_List.element( a_standard_group_test_list, i );
-         a_standard_group_test_item.description := To_Unbounded_String("Altered::dat fordescription");
-         Standard_Group_IO.Save( a_standard_group_test_item );         
+         a_standard_group_test_item := Adrs_Data.standard_group_List.element( a_standard_group_test_list, i );
+         a_standard_group_test_item.description := To_Unbounded_String("Altered::dat fordescription" & i'Img);
+         Adrs_Data.standard_group_IO.Save( a_standard_group_test_item );         
       end loop;
       
-      Log( "Standard_Group_Create_Test: delete tests" );
+      Log( "Adrs_Data_standard_group_Create_Test: delete tests" );
       for i in RECORDS_TO_DELETE .. RECORDS_TO_ADD loop
-         a_standard_group_test_item := Standard_Group_List.element( a_standard_group_test_list, i );
-         Standard_Group_IO.Delete( a_standard_group_test_item );         
+         a_standard_group_test_item := Adrs_Data.standard_group_List.element( a_standard_group_test_list, i );
+         Adrs_Data.standard_group_IO.Delete( a_standard_group_test_item );         
       end loop;
       
-      Log( "Standard_Group_Create_Test: retrieve all records" );
-      Standard_Group_List.iterate( a_standard_group_test_list, print'Access );
+      Log( "Adrs_Data_standard_group_Create_Test: retrieve all records" );
+      Adrs_Data.standard_group_List.iterate( a_standard_group_test_list, print'Access );
       endTime := Clock;
       elapsed := endTime - startTime;
-      Log( "Ending test Standard_Group_Create_Test. Time taken = " & elapsed'Img );
+      Log( "Ending test Adrs_Data_standard_group_Create_Test. Time taken = " & elapsed'Img );
 
    exception 
       when Error : others =>
-         Log( "Standard_Group_Create_Test execute query failed with message " & Exception_Information(Error) );
+         Log( "Adrs_Data_standard_group_Create_Test execute query failed with message " & Exception_Information(Error) );
          assert( False,  
-            "Standard_Group_Create_Test : exception thrown " & Exception_Information(Error) );
-   end Standard_Group_Create_Test;
+            "Adrs_Data_standard_group_Create_Test : exception thrown " & Exception_Information(Error) );
+   end Adrs_Data_standard_group_Create_Test;
 
    
 --
 -- test creating and deleting records  
 --
 --
-   procedure Group_Members_Create_Test(  T : in out AUnit.Test_Cases.Test_Case'Class ) is
+   procedure Adrs_Data_group_members_Create_Test( T : in out AUnit.Test_Cases.Test_Case'Class ) is
+   
       --
       -- local print iteration routine
       --
-      procedure Print( pos : Group_Members_List.Cursor ) is 
-      a_group_members_test_item : Simple_Pg_Data.Group_Members;
+      procedure Print( pos : Adrs_Data.group_members_List.Cursor ) is 
+      a_group_members_test_item : Adrs_Data.group_members;
       begin
-         a_group_members_test_item := Group_Members_List.element( pos );
+         a_group_members_test_item := Adrs_Data.group_members_List.Vector.Element( pos );
          Log( To_String( a_group_members_test_item ));
       end print;
 
    
-      a_group_members_test_item : Simple_Pg_Data.Group_Members;
-      a_group_members_test_list : Simple_Pg_Data.Group_Members_List.Vector;
+      a_group_members_test_item : Adrs_Data.group_members;
+      a_group_members_test_list : Adrs_Data.group_members_List.Vector;
       criteria  : d.Criteria;
       startTime : Time;
       endTime   : Time;
       elapsed   : Duration;
    begin
       startTime := Clock;
-      Log( "Starting test Group_Members_Create_Test" );
+      Log( "Starting test Adrs_Data_group_members_Create_Test" );
       
       Log( "Clearing out the table" );
-      Group_Members_IO.Delete( criteria );
+      Adrs_Data.group_members_IO.Delete( criteria );
       
-      Log( "Group_Members_Create_Test: create tests" );
+      Log( "Adrs_Data_group_members_Create_Test: create tests" );
       for i in 1 .. RECORDS_TO_ADD loop
          a_group_members_test_item.group_name := To_Unbounded_String( "k_" & i'img );
-         a_group_members_test_item.user_id := Group_Members_IO.Next_Free_user_id;
-         Group_Members_IO.Save( a_group_members_test_item, False );         
+         a_group_members_test_item.user_id := Adrs_Data.group_members_IO.Next_Free_user_id;
+         Adrs_Data.group_members_IO.Save( a_group_members_test_item, False );         
       end loop;
       
-      a_group_members_test_list := Group_Members_IO.Retrieve( criteria );
+      a_group_members_test_list := Adrs_Data.group_members_IO.Retrieve( criteria );
       
-      Log( "Group_Members_Create_Test: alter tests" );
+      Log( "Adrs_Data_group_members_Create_Test: alter tests" );
       for i in 1 .. RECORDS_TO_ALTER loop
-         a_group_members_test_item := Group_Members_List.element( a_group_members_test_list, i );
-         Group_Members_IO.Save( a_group_members_test_item );         
+         a_group_members_test_item := Adrs_Data.group_members_List.element( a_group_members_test_list, i );
+         Adrs_Data.group_members_IO.Save( a_group_members_test_item );         
       end loop;
       
-      Log( "Group_Members_Create_Test: delete tests" );
+      Log( "Adrs_Data_group_members_Create_Test: delete tests" );
       for i in RECORDS_TO_DELETE .. RECORDS_TO_ADD loop
-         a_group_members_test_item := Group_Members_List.element( a_group_members_test_list, i );
-         Group_Members_IO.Delete( a_group_members_test_item );         
+         a_group_members_test_item := Adrs_Data.group_members_List.element( a_group_members_test_list, i );
+         Adrs_Data.group_members_IO.Delete( a_group_members_test_item );         
       end loop;
       
-      Log( "Group_Members_Create_Test: retrieve all records" );
-      Group_Members_List.iterate( a_group_members_test_list, print'Access );
+      Log( "Adrs_Data_group_members_Create_Test: retrieve all records" );
+      Adrs_Data.group_members_List.iterate( a_group_members_test_list, print'Access );
       endTime := Clock;
       elapsed := endTime - startTime;
-      Log( "Ending test Group_Members_Create_Test. Time taken = " & elapsed'Img );
+      Log( "Ending test Adrs_Data_group_members_Create_Test. Time taken = " & elapsed'Img );
 
    exception 
       when Error : others =>
-         Log( "Group_Members_Create_Test execute query failed with message " & Exception_Information(Error) );
+         Log( "Adrs_Data_group_members_Create_Test execute query failed with message " & Exception_Information(Error) );
          assert( False,  
-            "Group_Members_Create_Test : exception thrown " & Exception_Information(Error) );
-   end Group_Members_Create_Test;
+            "Adrs_Data_group_members_Create_Test : exception thrown " & Exception_Information(Error) );
+   end Adrs_Data_group_members_Create_Test;
 
    
    
@@ -275,14 +278,14 @@ package body Simple_Pg_Test is
       --
       -- Tests of record creation/deletion
       --
-      Register_Routine (T, Standard_User_Create_Test'Access, "Test of Creation and deletion of Standard_User" );
-      Register_Routine (T, Standard_Group_Create_Test'Access, "Test of Creation and deletion of Standard_Group" );
-      Register_Routine (T, Group_Members_Create_Test'Access, "Test of Creation and deletion of Group_Members" );
+      Register_Routine (T, Adrs_Data_standard_user_Create_Test'Access, "Test of Creation and deletion of Adrs_Data.standard_user" );
+      Register_Routine (T, Adrs_Data_standard_group_Create_Test'Access, "Test of Creation and deletion of Adrs_Data.standard_group" );
+      Register_Routine (T, Adrs_Data_group_members_Create_Test'Access, "Test of Creation and deletion of Adrs_Data.group_members" );
       --
       -- Tests of foreign key relationships
       --
-      --  not implemented yet Register_Routine (T, Standard_User_Child_Retrieve_Test'Access, "Test of Finding Children of Standard_User" );
-      --  not implemented yet Register_Routine (T, Standard_Group_Child_Retrieve_Test'Access, "Test of Finding Children of Standard_Group" );
+      --  not implemented yet Register_Routine (T, Adrs_Data_standard_user_Child_Retrieve_Test'Access, "Test of Finding Children of Adrs_Data.standard_user" );
+      --  not implemented yet Register_Routine (T, Adrs_Data_standard_group_Child_Retrieve_Test'Access, "Test of Finding Children of Adrs_Data.standard_group" );
    end Register_Tests;
    
    --  Register routines to be run

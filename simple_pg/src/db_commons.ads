@@ -1,25 +1,21 @@
 --
--- Created by ada_generator.py on 2014-02-14 14:43:50.976270
+-- Created by ada_generator.py on 2014-11-11 00:46:56.929993
 -- 
 with Ada.Calendar;
 with Ada.Containers.Vectors;
 with Ada.Strings.Bounded;
 with Ada.Strings.Wide_Fixed;
 with ada.strings.Unbounded; 
-with Base_Types; use Base_Types;
+with Base_Types; 
+
 -- === CUSTOM IMPORTS START ===
-                      
-with GNATCOLL.SQL.Exec;                      
-                      
 -- === CUSTOM IMPORTS END ===
  
 package DB_Commons is
 
+   use Base_Types;
+   
    -- === CUSTOM TYPES START ===
-                      
-   subtype Connection is GNATCOLL.SQL.Exec.Database_Connection;                      
-   NULL_Conn : constant Connection := null;                      
-                      
    -- === CUSTOM TYPES END ===
    
    --
@@ -31,6 +27,13 @@ package DB_Commons is
    -- NULL_Conn : constant Connection := null;
 
    Mill_Exception : exception;
+   
+   -- rudimentary schema handling
+   function Get_Default_Schema return String;
+   procedure Set_Default_Schema( name : String );
+   
+   -- schema placeholder should be delimited %{SCHEMA}
+   function Add_Schema_To_Query( query : String; default : String := "" ) return String;
    
    -- subtype Real is Base_Types.Real;
    subtype Decimal is Base_Types.Decimal;
@@ -98,8 +101,7 @@ package DB_Commons is
       op : operation_type;
       join : join_type; 
       t : Ada.Calendar.Time  ) return Criterion;
-                                  
-                                  
+  
    generic
       type Dec is delta<> digits<>;
       function Make_Decimal_Criterion_Element( 
@@ -118,37 +120,37 @@ package DB_Commons is
    --
    function To_Crude_Array_Of_Values( c : Criteria ) return String;
    
-   procedure add_to_criteria( cr : in out Criteria; elem : Criterion );
-   procedure add_to_criteria( cr : in out Criteria; ob : Order_By_Element );
-   
+   procedure Add_To_Criteria( cr : in out Criteria; elem : Criterion );
+   procedure Add_To_Criteria( cr : in out Criteria; ob : Order_By_Element );
+
    DB_Exception : exception;
-   
-   private 
+
+private 
  
-   use ada.strings.Unbounded;
+   use Ada.Strings.Unbounded;
    
    package String80 is new Ada.Strings.Bounded.Generic_Bounded_Length (80);
    
    use String80;
    
    type Criterion is record
-      s : Unbounded_String;
+      s     : Unbounded_String;
       value : Unbounded_String;
-      join : Join_Type;
+      join  : Join_Type;
    end record;
    
    type Order_By_Element is new Ada.Strings.Unbounded.Unbounded_String;
            
    package Criteria_P is new Ada.Containers.Vectors( 
       Element_Type => Criterion, 
-      Index_Type => Positive );
+      Index_Type   => Positive );
            
    package Order_By_P is new Ada.Containers.Vectors( 
       Element_Type => Order_By_Element, 
-      Index_Type => Positive );
+      Index_Type   => Positive );
    
    type Criteria is record
-      elements : Criteria_P.Vector;
+      elements  : Criteria_P.Vector;
       orderings : Order_By_P.Vector;
    end record;
    

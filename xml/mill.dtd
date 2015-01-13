@@ -26,7 +26,7 @@ PHP class or method name.
   name           CDATA #REQUIRED
 >
 
-<!ELEMENT schema( table+ )>
+<!ELEMENT schema( table+, adaDataPackage? )>
 <!ATTLIST schema
   name           CDATA #REQUIRED
 >
@@ -85,6 +85,8 @@ PHP class or method name.
   arrayLast CDATA #IMPLIED
   arrayIndexType (ENUM|INTEGER) "INTEGER"
   arrayAdaIndexTypeName CDATA "Positive"
+  arrayIndexIsExternallyDefined (true|false) "false" 
+  
   arrayEnumValues CDATA #IMPLIED
   arrayName CDATA #IMPLIED
   
