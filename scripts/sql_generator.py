@@ -53,14 +53,13 @@ def writeTable( table, databaseAdapter ):
                 if( var.notNull ):
                         varstring += ' not null'
                 if( var.default != None ):
-                        varstring += ' default '
                         default = var.getDefaultSQLValue( databaseAdapter )
                         if( var.isStringType() ):
                                 default = "'"+default+"'";
                         if var.arrayInfo != None:
                                 default = var.arrayInfo.sqlArrayDefaultDeclaration( default );
-                        varstring += default;
-                        
+                        if default != None and len( default ) > 0:
+                                varstring += ' default '+default
                 clauses.append( varstring )
         if( table.hasPrimaryKey() ):
                 constraintCount += 1                        

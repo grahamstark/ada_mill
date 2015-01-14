@@ -153,20 +153,23 @@ class ArrayInfo:
                 self.dataType = dataType
                 if self.adaIndexTypeName == None:
                         self.adaIndexTypeName = 'Positive'
-                if self.first == None:
+                if isNullOrBlank( self.first ):
                         if self.indexType == 'ENUM':
-                                self.first = arrayEnumValues[0]
+                                self.first = self.enumName+"'First" #arrayEnumValues[0]
                         else:
                                 self.first = 1
-                if self.last == None:
+                if isNullOrBlank( self.last ):
                         if self.indexType == 'ENUM':
-                                self.last = arrayEnumValues[-1]
+                                self.last = self.enumName+"'Last" #arrayEnumValues[-1]
                         else:
                                 self.first = 1
                 if self.indexType == 'ENUM':
-                        p1 = arrayEnumValues.index( self.first )
-                        p2 = arrayEnumValues.index( self.last )
-                        self.length = 1 + ( p2 - p1 )  
+                        if arrayEnumValues != None and len( arrayEnumValues ) >0 :
+                                p1 = arrayEnumValues.index( self.first )
+                                p2 = arrayEnumValues.index( self.last )
+                                self.length = 1 + ( p2 - p1 )
+                        else:
+                                self.length = None
                 else:
                         self.last = int( self.last )
                         self.first = int( self.first )
@@ -210,6 +213,8 @@ class ArrayInfo:
                 
                 
         def sqlArrayDefaultDeclaration( self, default ):
+                if self.length == None or self.length == 0:
+                        return ''
                 s = "array[ "
                 for i in range( 0, self.length ):
                         s += default
