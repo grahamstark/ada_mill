@@ -489,24 +489,26 @@ class Table:
                 elif itemType == ItemType.io_package:
                         itemName += '_IO'
                 qualification = ''
-                if qualificationLevel != Qualification.unqualified:
-                        if notNullOrBlank( self.adaDataPackageName ) and format != Format.unformatted:
-                                qualification = self.adaDataPackageName
+                if isNullOrBlank( self.adaExternalName ): # go no further if user has supplied name
+                        if qualificationLevel != Qualification.unqualified:
+                                if notNullOrBlank( self.adaDataPackageName ) and format != Format.unformatted:
+                                        qualification = self.adaDataPackageName
+                                else:
+                                        items = []   
+                                        if qualificationLevel == Qualification.full:
+                                                items.append( self.databaseName )
+                                        if qualificationLevel == Qualification.schema or qualificationLevel == Qualification.full:
+                                                items.append( self.schemaName )
+                                        if len( items ) > 0:
+                                                qualification = concatList( items, '.' )
+                                if format != Format.unformatted:
+                                        qualification = adafyName( qualification, spaceBetweenWords = False )
+                        if itemType != ItemType.schema_name and itemType != ItemType.database_name:
+                                fullName = concatenate( qualification, itemName, '.' )
                         else:
-                                items = []   
-                                if qualificationLevel == Qualification.full:
-                                        items.append( self.databaseName )
-                                if qualificationLevel == Qualification.schema or qualificationLevel == Qualification.full:
-                                        items.append( self.schemaName )
-                                if len( items ) > 0:
-                                        qualification = concatList( items, '.' )
-                        if format != Format.unformatted:
-                                qualification = adafyName( qualification, spaceBetweenWords = False )
-                if itemType != ItemType.schema_name and itemType != ItemType.database_name:
-                        fullName = concatenate( qualification, itemName, '.' )
+                                fullName = qualification
                 else:
-                        fullName = qualification
-                                
+                        fullName = itemName
                 if format == Format.ada_filename:
                         fullName = nameToAdaFileName( fullName )
                 return fullName

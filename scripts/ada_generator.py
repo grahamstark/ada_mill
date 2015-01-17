@@ -598,7 +598,7 @@ def makeRecordList( tabList, numIndents = 1 ):
                                 records.append( record );
         return records
 
-def makeOneDataADS( database, parent ):
+def makeOneDataADS( database, parent, addArrayDecls ):
         """
          Write a .ads file containing all the data records and container declarations 
          writes to a file  in the src output directory. 
@@ -633,8 +633,13 @@ def makeOneDataADS( database, parent ):
                 template.customProcs = customProcs;
                 template.adaTypePackages = parent.adaTypePackages
                 template.name = packageName
-                template.arrayDeclarations = parent.getArrayDeclarations();
-                template.arrayPackages = parent.getArrayPackages();
+                if addArrayDecls == True:
+                        template.arrayDeclarations = parent.getArrayDeclarations()                
+                        template.arrayPackages = parent.getArrayPackages()
+                else:
+                        template.arrayDeclarations = []                
+                        template.arrayPackages = []
+                        
                 template.date = datetime.datetime.now()
                 template.childPackages = childPackages;        
                 outfile.write( str(template) )
@@ -642,9 +647,9 @@ def makeOneDataADS( database, parent ):
 
 
 def makeDataADS( database ):
-        makeOneDataADS( database, database )
+        makeOneDataADS( database, database, True )
         for schema in database.schemas:
-                makeOneDataADS( schema, database )
+                makeOneDataADS( schema, database, False )
                 
         # childPackages = []
                 # stemplate = Template( 
@@ -811,6 +816,7 @@ def makeCreateTest( databaseName, procName, table ):
         """
          Write an create test 
         """
+        
         adaTypeName = table.makeName( Format.ada, Qualification.full, ItemType.table )
         template = Template( file=paths.getPaths().templatesPath+"create_test.proc.tmpl" )
         ioPackageName = table.makeName( 
@@ -855,6 +861,7 @@ def makeCreateTest( databaseName, procName, table ):
         template.saveStatement = ioPackageName + ".Save( "+varname+", False )"
         template.updateStatement = ioPackageName + ".Save( "+varname+" )"
         template.deleteStatement = ioPackageName + ".Delete( "+varname+" )"
+        # template.dataPackageName = table.makeName( Format.ada, Qualification.full, ItemType.schema_name )
         template.elementFromList = varname+ ' := ' + table.makeName( 
                 Format.ada, 
                 Qualification.full, 
@@ -870,7 +877,7 @@ def makeCreateTest( databaseName, procName, table ):
                                 key = varname+'.'+var.adaName+ ' := ' + ioPackageName + \
                                         '.Next_Free_'+var.adaName  
                         else:
-                                key = varname+'.'+var.adaName+ ' := '+ adaTypeName +"'First"
+                                key = varname+'.'+var.adaName+ ' := ' + var.getAdaType( True ) + "'First"
                         template.createKeyStatements.append( key )
                 else:
                         assign = "-- missing declaration for "+varname+'.'+var.adaName
@@ -916,6 +923,7 @@ def writeTestCaseADB( database ):
         template.childRegisters = []
         template.createTests = []
         template.childTests = []
+        
         for table in database.getAllTables():
                 adaTypeName = table.makeName( 
                         Format.ada, 
@@ -933,6 +941,10 @@ def writeTestCaseADB( database ):
                 if( len( table.childRelations ) > 0 ):
                         template.childRegisters.append( "Register_Routine (T, " + childTestName + "'Access, " + '"Test of Finding Children of '+adaTypeName+'" );' );
                         template.childTests.append( makeChildTests( database.databaseName, childTestName, table ) ) 
+        # template.dbPackages.append( str.capitalize( database.name ));
+        for schema in database.schemas:
+                template.dbPackages.append( schema.makeName( Format.ada, Qualification.full, ItemType.schema_name ));
+                
         template.date = datetime.datetime.now()
         outfile = file( outfileName, 'w' );
         outfile.write( str(template) )
