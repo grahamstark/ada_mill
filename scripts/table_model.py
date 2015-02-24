@@ -268,8 +268,8 @@ class Variable:
                 elif self.schemaType == 'DECIMAL' :
                         sqlType = 'DECIMAL(' + self.size+', '+ self.scale + ')'
                 elif self.schemaType == 'BOOLEAN':
-                        sqlType = 'BOOLEAN'
-                elif  self.schemaType == 'ENUM' :
+                	sqlType = 'BOOLEAN'
+                elif self.schemaType == 'ENUM' :
                         sqlType = 'INTEGER'
                 elif self.schemaType == 'CLOB':
                         sqlType = databaseAdapter.longCharType
@@ -382,7 +382,7 @@ class Variable:
                 elif (self.schemaType == 'DECIMAL') or (self.schemaType == 'REAL') or (self.schemaType == 'DOUBLE'):
                         default = '0.0'
                 elif (self.schemaType == 'BOOLEAN'):
-                        default = 'False'
+                	default = 'f'
                 elif (self.schemaType == 'ENUM') or (self.schemaType == 'INTEGER') or  (self.schemaType == 'BIGINT'):
                         default = '0'
                 elif ( self.isDateType() ):
