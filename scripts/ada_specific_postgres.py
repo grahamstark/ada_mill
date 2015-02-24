@@ -181,15 +181,15 @@ def makeValueFunction( variable, posStr, default_value=None ):
                         # no defaults for pure 'value'
                         # fixme add a clause
                         posStr = posStr + ", " + default_value
-        if( variable.hasUserDefinedAdaType()):
+        if( variable.schemaType == 'BOOLEAN' ):
+                v = "gse.Boolean_Value( cursor, " + posStr + " );\n"
+                needsCasting = 0
+        elif( variable.hasUserDefinedAdaType()):
                 v =  variable.adaTypeName + "'Value( gse.Value( cursor, " + posStr + " ));\n" 
         elif( variable.isDecimalType() ):
                 v = variable.adaType+"'Value( gse.Value( cursor, " + posStr + " ));\n" 
         elif( variable.schemaType == 'BIGINT' ):
                 v = "Big_Int'Value( gse.Value( cursor, " + posStr + " ));\n"
-        elif( variable.schemaType == 'BOOLEAN' ):
-                v = "gse.Boolean_Value( cursor, " + posStr + " );\n"
-                needsCasting = 0
         elif( variable.schemaType == 'INTEGER' ) or ( variable.schemaType == 'ENUM' ): 
                 v = "gse.Integer_Value( cursor, " + posStr + " );\n"
         elif( variable.isFloatingPointType() ): 
