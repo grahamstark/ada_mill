@@ -256,7 +256,7 @@ class Variable:
                 elif self.schemaType == 'BIGINT':
                         odbcType = 'Big_Int'
                 return odbcType
-;
+
         def getSQLType( self, databaseAdapter ):
                 if( self.isFloatingPointType() ):
                         sqlType = 'DOUBLE PRECISION'
@@ -267,7 +267,7 @@ class Variable:
                                 sqlType = 'VARCHAR('+str( self.size )+')'
                 elif self.schemaType == 'DECIMAL' :
                         sqlType = 'DECIMAL(' + self.size+', '+ self.scale + ')'
-                elif self.schemaType == 'BOOLEAN'
+                elif self.schemaType == 'BOOLEAN':
                 	sqlType = 'BOOLEAN'
                 elif self.schemaType == 'ENUM' :
                         sqlType = 'INTEGER'
