@@ -99,7 +99,7 @@ $e
            declare
               its : constant String := Data_Type'Image( a( i ));
            begin   
-              s := s & its( its'First+1 .. its'Last );
+              s := s & its; -- ( its'First+1 .. its'Last );
            end;
            if( i < a'Last )then
               s := s & ",";
