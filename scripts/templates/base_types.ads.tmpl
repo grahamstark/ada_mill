@@ -117,7 +117,16 @@ $e
     
    end Discrete_Mapper;
    
-
+   generic
+      type Index is (<>);
+      type Array_Type is array( Index range <> ) of Boolean;   
+   package Boolean_Mapper is
+   
+     procedure SQL_Map_To_Array( s : String; a : out Array_Type );
+     function Array_To_SQL_String( a : Array_Type ) return String;
+     function To_String( a : Array_Type ) return String;
+    
+   end Boolean_Mapper;
    
    -- === CUSTOM PROCS START ===
 #for $e in $customProcs
