@@ -84,6 +84,9 @@ $e
    package Std_IO is new Ada.Text_IO.Integer_IO (Integer);
    package String_IO renames Ada.Text_IO;
    
+   -- "True" "T" "YES" "1" all true "False" "F" "N" "0" all false 
+   --else raises Constraint exception; case insensitive
+   function Boolean_Value( s : String ) return Boolean;
    
    --
    -- Packages for reading and writing arrays in the format used in Postgres. 

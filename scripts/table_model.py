@@ -184,11 +184,19 @@ class ArrayInfo:
                 return "%(arrayname)s_Package"%{ 'arrayname':self.name } 
              
         def packageDeclaration( self, isDiscrete ):
-                floatOrDiscrete = 'Discrete' if isDiscrete else 'Float';
-                return "package %(packagename)s is new %(floatOrDiscrete)s_Mapper( Index=> %(index)s, Data_Type=>%(datatype)s, Array_Type=> Abs_%(arraytype)s );" %\
-                       { 'packagename': self.packageName(), 'adaname':self.name, \
-                       'floatOrDiscrete':floatOrDiscrete, 'index':self.adaIndexTypeName, \
-                       'datatype': self.dataType, 'arraytype':self.name }
+                # special handling of booleans since they are returned like 'f,t,f' which
+                # needs specific parsing
+                if self.dataType == 'Boolean':
+                        return "package %(packagename)s is new Boolean_Mapper( Index=> %(index)s, Array_Type=> Abs_%(arraytype)s );" %\
+                               { 'packagename': self.packageName(), 'adaname':self.name, \
+                                'index':self.adaIndexTypeName, \
+                                'arraytype':self.name }
+                else:
+                        floatOrDiscrete = 'Discrete' if isDiscrete else 'Float';
+                        return "package %(packagename)s is new %(floatOrDiscrete)s_Mapper( Index=> %(index)s, Data_Type=>%(datatype)s, Array_Type=> Abs_%(arraytype)s );" %\
+                               { 'packagename': self.packageName(), 'adaname':self.name, \
+                               'floatOrDiscrete':floatOrDiscrete, 'index':self.adaIndexTypeName, \
+                               'datatype': self.dataType, 'arraytype':self.name }
                 
         def rangeString( self ):
                 if self.first == None and self.last == None:
