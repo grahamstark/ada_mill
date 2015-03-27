@@ -39,6 +39,24 @@ $e
 
    default_schema : Unbounded_String := Null_Unbounded_String;
    
+   function Merge( c1 : Criteria; c2 : Criteria ) return Criteria is
+      cc : Criteria := c1;
+   begin
+      -- cc.elements := c1.element;
+      -- cc.orderings.Copy( c1.orderings );
+      for e of c2.elements loop
+         if not cc.elements.Contains( e ) then
+            cc.elements.Append( e );
+         end if;
+      end loop;
+      for o of c2.orderings loop
+         if not cc.orderings.Contains( o ) then
+            cc.orderings.Append( o );
+         end if;
+      end loop;   
+      return cc;
+   end Merge;
+   
    function Add_Trailing( s : String; to_add : Character := '.' ) return String is
    begin
       if s( s'Last ) = to_add then

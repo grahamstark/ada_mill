@@ -135,6 +135,8 @@ $e
    procedure Add_To_Criteria( cr : in out Criteria; elem : Criterion );
    procedure Add_To_Criteria( cr : in out Criteria; ob : Order_By_Element );
    procedure Remove_From_Criteria( cr : in out Criteria; varname : String );
+   function Merge( c1 : Criteria; c2 : Criteria ) return Criteria;
+   
    DB_Exception : exception;
 
 private 
