@@ -58,7 +58,7 @@ def makeUpdateStatement( table ):
         print ""
 
 def makeInsertStatement( table ):
-        s = "insert into %{SCHEMA}"+table.qualifiedName()+" values( "
+        s = "insert into "+table.qualifiedName()+" values( "
 
 def makeCastStatement( var ):
         if( var.hasUserDefinedAdaType() ):
@@ -419,25 +419,25 @@ def sqlVariablesList( table ):
         return s                
 
 def makeDeletePartString( table ):
-        s = 'DELETE_PART : constant String := "delete from %{SCHEMA}'+table.qualifiedName()+' "'
+        s = 'DELETE_PART : constant String := "delete from '+table.qualifiedName()+' "'
         return s
 
 def makeSelectPartString( table ):
         s = 'SELECT_PART : constant String := "select " &'+"\n"
         s += sqlVariablesList( table )
         s += " &\n";
-        s += INDENT*3 + '" from %{SCHEMA}'+table.qualifiedName()+' " '
+        s += INDENT*3 + '" from '+table.qualifiedName()+' " '
         return s
         
 def makeInsertPartString( table ):
-        s = 'INSERT_PART : constant String := "insert into %{SCHEMA}'+table.qualifiedName()+' (" &'+"\n"
+        s = 'INSERT_PART : constant String := "insert into '+table.qualifiedName()+' (" &'+"\n"
         s += sqlVariablesList( table )
         s += " &\n";
         s += INDENT*3 + '" ) values " '
         return s
 
 def makeUpdatePartString( table ):
-        s = 'UPDATE_PART : constant String := "update %{SCHEMA}'+table.qualifiedName()+' set  "'
+        s = 'UPDATE_PART : constant String := "update '+table.qualifiedName()+' set  "'
         return s
 
 def  makeEnvironmentADB( runtime ):

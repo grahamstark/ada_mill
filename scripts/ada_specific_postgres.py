@@ -325,7 +325,7 @@ def makeNextFreeFunc( table, var ):
         """
         template = Template( file=templatesPath()+"get_next_free.func.tmpl" )
         template.functionHeader = makeNextFreeHeader( var, CONNECTION_STRING, ' is' )
-        template.statement = "select coalesce( max( "+var.varname+" ) + 1, 1 ) from %{SCHEMA}"+table.qualifiedName()
+        template.statement = "select coalesce( max( "+var.varname+" ) + 1, 1 ) from "+table.qualifiedName()
         template.functionName = "Next_Free_"+var.adaName
         template.adaName = var.adaName
         template.default = var.getDefaultAdaValue()
