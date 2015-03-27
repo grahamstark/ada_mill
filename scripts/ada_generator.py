@@ -323,6 +323,7 @@ def makeIOAds( database, adaTypePackages, table ):
         template.IOName = packageName
         template.dbWiths = asp.getDBAdsWiths();
         template.IOName_Upper_Case = packageName.upper()
+        template.schema_name = table.schemaName
         template.criteria = []
         template.nullName = table.makeName( Format.ada, Qualification.full, ItemType.null_constant );
         template.orderingStatements = []

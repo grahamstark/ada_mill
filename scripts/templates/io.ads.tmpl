@@ -28,6 +28,8 @@ package $IOName is
    use Ada.Strings.Unbounded;
    use Ada.Calendar;
    
+   SCHEMA_NAME : constant String := "$schema_name";
+   
 #for $e in $dbWiths
    use $e;
 #end for

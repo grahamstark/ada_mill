@@ -74,7 +74,7 @@ def makePreparedRetrieveStatementBodies( table ):
         p = 0
         for var in table.getPrimaryKeyVariables():
                 p += 1
-                pk_queries.append( "${0:s} = ${1:d}".format( var.varname, p ))
+                pk_queries.append( "{0:s} = ${1:d}".format( var.varname, p ))
         template.pkText = " and ".join( pk_queries )
         template.tableName = table.qualifiedName()
         return str( template )
