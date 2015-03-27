@@ -1,7 +1,7 @@
    $procedureHeader
       ps : sql.SQLHDBC := sql.SQL_NULL_HANDLE;
       connection : dodbc.Database_Connection := Connection_Pool.Lease;
-      query : Unbounded_String := DB_Commons.Add_Schema_To_Query( INSERT_PART ) & " ";
+      query : Unbounded_String := DB_Commons.Add_Schema_To_Query( INSERT_PART, SCHEMA_NAME ) & " ";
       c : d.Criteria;
       $tmpVariableWithAssignment;
    begin

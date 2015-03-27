@@ -11,7 +11,7 @@
 
    function Get_Prepared_Retrieve_Statement( sqlstr : String ) return gse.Prepared_Statement is 
       ps : gse.Prepared_Statement; 
-      query : constant String := DB_Commons.Add_Schema_To_Query( SELECT_PART ) & sqlstr; 
+      query : constant String := DB_Commons.Add_Schema_To_Query( SELECT_PART, SCHEMA_NAME ) & sqlstr; 
    begin 
       ps := gse.Prepare( query, On_Server => True ); 
       return ps; 

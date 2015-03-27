@@ -126,7 +126,7 @@ $deleteSpecificFunc
    procedure Delete( where_Clause : String ) is
       ps : sql.SQLHDBC := sql.SQL_NULL_HANDLE;
       connection : dodbc.Database_Connection;
-      query : Unbounded_String := DB_Commons.Add_Schema_To_Query( DELETE_PART ) 
+      query : Unbounded_String := DB_Commons.Add_Schema_To_Query( DELETE_PART, SCHEMA_NAME ) 
          & To_Unbounded_String(" ");
    begin
       query := query & where_Clause;

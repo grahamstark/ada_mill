@@ -3,7 +3,7 @@
    --
    $functionHeader
       query               : constant String := 
-         DB_Commons.Add_Schema_To_Query( "$statement" );
+         DB_Commons.Add_Schema_To_Query( "$statement", SCHEMA_NAME );
       cursor              : gse.Forward_Cursor;
       ai                  : $adaType;
       ps                  : gse.Prepared_Statement;

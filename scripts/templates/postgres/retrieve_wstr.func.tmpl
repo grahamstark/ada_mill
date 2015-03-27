@@ -12,7 +12,7 @@ $binding
       ps : gse.Prepared_Statement;
       local_connection : Database_Connection;
       is_local_connection : Boolean;
-      query : constant String := DB_Commons.Add_Schema_To_Query( SELECT_PART ) 
+      query : constant String := DB_Commons.Add_Schema_To_Query( SELECT_PART, SCHEMA_NAME ) 
          & " " & sqlstr;
       cursor   : gse.Forward_Cursor;
    begin

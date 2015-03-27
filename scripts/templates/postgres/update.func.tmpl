@@ -26,7 +26,7 @@
       $cr;
 #end for;
       declare      
-         query : constant String := DB_Commons.Add_Schema_To_Query( UPDATE_PART ) & 
+         query : constant String := DB_Commons.Add_Schema_To_Query( UPDATE_PART, SCHEMA_NAME ) & 
             " " & d.To_String( values_c, "," ) & d.To_String( pk_c );
       begin
          Log( "update; executing query" & query );

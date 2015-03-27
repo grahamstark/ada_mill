@@ -3,7 +3,7 @@
       local_connection : Database_Connection;
       locally_allocated_connection : Boolean;
 
-      query : Unbounded_String := DB_Commons.Add_Schema_To_Query( INSERT_PART ) & To_Unbounded_String(" ");
+      query : Unbounded_String := DB_Commons.Add_Schema_To_Query( INSERT_PART, SCHEMA_NAME ) & To_Unbounded_String(" ");
       c : d.Criteria;
       $tmpVariableWithAssignment;
    begin
