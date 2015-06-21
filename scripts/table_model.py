@@ -525,7 +525,7 @@ class Table:
                         fullName = nameToAdaFileName( fullName )
                 return fullName
         
-        def __init__( self, databaseName, schemaName, tableName, description, adaExternalName, adaDataPackageName ):
+        def __init__( self, databaseName, schemaName, tableName, description, adaExternalName, adaDataPackageName, generateSQL ):
                 print "creating table with name |"+tableName + "| adaExternalName |" +  adaExternalName;
 
                 self.databaseName = databaseName
@@ -534,7 +534,7 @@ class Table:
                 self.description = description
                 self.adaExternalName = adaExternalName
                 self.adaDataPackageName = adaDataPackageName
-                
+                self.generateSQL = generateSQL
                 self.variables = []
                 self.adaTypePackages = []
                 self.primaryKey = []
@@ -842,7 +842,7 @@ class Database( TableContainer ):
                                         td = v.arrayInfo.typeDeclaration( v.getDefaultAdaValue() )
                                         arrays.append( td[0] );
                                         arrays.append( td[1] );
-                return arrays;
+                return set( arrays );
                         
         def getArrayPackages( self ):
                 pkgs = []
@@ -850,7 +850,7 @@ class Database( TableContainer ):
                         for v in t.variables:
                                 if v.arrayInfo != None:
                                         pkgs.append( v.arrayInfo.packageDeclaration( v.isDiscreteTypeInAda() ))                        
-                return pkgs        
+                return set( pkgs )        
                 
                 
         def __repr__( self ):
@@ -972,6 +972,7 @@ def parseTable( xtable, databaseAdapter, databaseName, schemaName, adaDataPackag
         name = xtable.get( 'name' )
         description = xtable.get( 'description' )
         adaExternalName = get( xtable, 'adaExternalName', '' )
+        generateSQL = get( xtable, 'generateSQL', 'true' ) == 'true'
         if( isNullOrBlank( description )):
                 description = ''
         stable = Table( databaseName       = databaseName, 
@@ -979,10 +980,12 @@ def parseTable( xtable, databaseAdapter, databaseName, schemaName, adaDataPackag
                         tableName          = name, 
                         description        = description, 
                         adaExternalName    = adaExternalName,
-                        adaDataPackageName = adaDataPackageName )
+                        adaDataPackageName = adaDataPackageName,
+                        generateSQL        = generateSQL )
         defaultInstanceName = get( xtable, 'defaultInstanceName', '' )
         for column in xtable.iter( "column" ):
                 varname = column.get( 'name' )
+                print( "on column " + varname )
                 stype = column.get( 'type' )
                 adaTypeName = column.get( 'adaTypeName' )
                 size = get( column, 'size', 1 );
@@ -1023,6 +1026,7 @@ def parseTable( xtable, databaseAdapter, databaseName, schemaName, adaDataPackag
                         if arrayEnumValuesStr != None:
                                 arrayEnumValues = arrayEnumValuesStr.split()
                         arrayName = column.get( 'arrayName' )
+                        print( "on array " + arrayName )
                         arrayInfo = ArrayInfo( 
                                 isExternallyDefined, 
                                 arrayIndexIsExternallyDefined,
