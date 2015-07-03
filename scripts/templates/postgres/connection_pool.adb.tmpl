@@ -95,6 +95,8 @@ $e
            ( free_connections.Length + used_connections.Length ) < maximum_size is
          nf : constant Natural := Natural( free_connections.Length ); 
       begin
+         Log( "leasing, before; free connections: " & free_connections.Length'Img &
+              " used: " & used_connections.Length'Img );
          if nf = 0  then
             c := db_descr.Build_Connection; 
             used_connections.Append( c );
@@ -109,6 +111,8 @@ $e
       use Connection_List_Package;
          cur : Cursor:= used_connections.Find( c );
       begin
+         Log( "returning; before- free connections: " & free_connections.Length'Img &
+           " used: " & used_connections.Length'Img );
          used_connections.Delete( cur );
          free_connections.Append( c );
       end  Return_Connection;
