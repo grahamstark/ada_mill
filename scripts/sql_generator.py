@@ -19,10 +19,6 @@
 # Boston, MA 02110-1301, USA.
 # 
 # /////////////////////////////
-# 
-# $Revision: 13949 $
-# $Author: graham_s $
-# $Date: 2012-02-08 15:40:40 +0000 (Wed, 08 Feb 2012) $
 #
 
 """
@@ -136,7 +132,10 @@ def makeDatabaseSQL( database ):
         for schema in database.schemas:
                 outfile.write( "--\n--\n-- tables for schema " + schema.schemaName + "  starts\n--\n--\n" )
                 for table in schema.tables:
-                        outfile.write( writeTable( table, database.databaseAdapter ) )
-                        outfile.write( "\n" )
+                        if table.generateSQL:
+                                outfile.write( writeTable( table, database.databaseAdapter ) )
+                                outfile.write( "\n" )
+                        else:
+                                outfile.write( "--\n-- Note: SQL code for " + table.name + " not generated\n--\n\n\n" )
         outfile.write( database.databaseAdapter.databasePostText )
         outfile.close()        
