@@ -186,3 +186,12 @@ SQL1327N
 An implicit connection attempt failed. database-name  is not a valid database name.
 varnames < 30 maximum length is "30".  SQLSTATE=42622
 
+ARRAYS
+
+NATIVE INTERFACE
+
+INSTALL
+
+PYTHON ENUMS
+
+TODO sort out Booleans: "1" "True" "T" (any case) should work everywhere, "False", "F" "0"

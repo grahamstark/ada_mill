@@ -46,10 +46,7 @@ PHP class or method name.
   filename CDATA #REQUIRED
 >
 
-<!--
-     note: the interface="true", requires that useManagers=true in the
-     properties file.
--->
+
 <!ELEMENT table (localAdaTypePackage*, column+, (foreign-key|index|unique)* )>
 
 <!ATTLIST table
@@ -57,6 +54,7 @@ PHP class or method name.
   description     CDATA #IMPLIED
   adaExternalName CDATA #IMPLIED
   defaultInstanceName CDATA #IMPLIED
+  generateSQL (true|false) "true" 
 >
 
 <!ELEMENT column ((inheritance|vendor)*)>
