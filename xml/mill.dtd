@@ -26,7 +26,7 @@ PHP class or method name.
   name           CDATA #REQUIRED
 >
 
-<!ELEMENT schema( table+, adaDataPackage? )>
+<!ELEMENT schema ( table+, adaDataPackage? )>
 <!ATTLIST schema
   name           CDATA #REQUIRED
 >
