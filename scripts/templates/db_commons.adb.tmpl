@@ -23,7 +23,8 @@ package body DB_Commons is
 
    use Ada.Exceptions;
    use Ada.Strings.Unbounded;
-
+   use type Ada.Containers.Count_Type;
+   
    -- === CUSTOM TYPES START ===
 #for $e in $customTypes 
 $e 
@@ -297,6 +298,9 @@ $e
    procedure Remove_From_Criteria( cr : in out Criteria; varname : String ) is
       i : Natural := 1;
    begin
+      if cr.elements.Length = 0 then
+         return;
+      end if;
       loop
          declare
             s1 : constant String  := To_String( cr.elements.Element( i ).s );
@@ -307,8 +311,8 @@ $e
                cr.Elements.Delete( i );
             end if;
          end;
-         exit when i > Natural( cr.elements.Length );
          i := i + 1;
+         exit when i > Natural( cr.elements.Length );
       end loop;
    end Remove_From_Criteria;
 
