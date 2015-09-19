@@ -33,7 +33,6 @@
          Check_Result( local_connection );
       end;   
       if( from_pool )then
-         local_connection.Commit;
          Check_Result( connection );
          Connection_Pool.Return_Connection( local_connection );
       end if;
