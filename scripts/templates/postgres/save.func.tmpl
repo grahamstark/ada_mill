@@ -17,7 +17,6 @@
          $existsCheck
             $updateCall;
             if( is_local_connection )then
-               local_connection.Commit;
                Connection_Pool.Return_Connection( local_connection );
             end if;
             return;
@@ -35,7 +34,6 @@
          Check_Result( local_connection );
       end;   
       if( is_local_connection )then
-         local_connection.Commit;
          Connection_Pool.Return_Connection( local_connection );
       end if;
    end Save;
