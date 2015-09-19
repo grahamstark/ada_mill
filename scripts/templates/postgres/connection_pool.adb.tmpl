@@ -70,6 +70,13 @@ $e
    
    protected body Pool_Type is
    
+         function Make_Connection( auto_transactions : Boolean := False ) return dexec.Database_Connection is
+         dc : dexec.Database_Connection := db_descr.Build_Connection;
+      begin
+         dc.Automatic_Transactions( auto_transactions );
+         return dc;      
+      end Make_Connection;
+   
       procedure Initialise( 
          server_name  : String;
          database     : String;
@@ -80,13 +87,13 @@ $e
       begin
          if( max_size = 0 ) then 
             maximum_size := Count_Type( initial_size );
-         else 
+         else                      
             maximum_size := Count_Type( max_size );
          end if;
          Assert( Natural( maximum_size ) >= initial_size, "maximum_size < initial_size " & maximum_size'Img & " : " & initial_size'Img );
          db_descr :=  GNATCOLL.SQL.Postgres.Setup( database, user_name, server_name, password );
          for i in 1 .. initial_size loop
-            free_connections.Append( db_descr.Build_Connection );
+            free_connections.Append( Make_Connection );
          end loop;
       end Initialise;
       
@@ -98,7 +105,7 @@ $e
          Log( "leasing, before; free connections: " & free_connections.Length'Img &
               " used: " & used_connections.Length'Img );
          if nf = 0  then
-            c := db_descr.Build_Connection; 
+            c := Make_Connection; 
             used_connections.Append( c );
          else
             c := free_connections.Element( nf );
@@ -114,6 +121,9 @@ $e
          Log( "returning; before- free connections: " & free_connections.Length'Img &
            " used: " & used_connections.Length'Img );
          used_connections.Delete( cur );
+         if c.In_Transaction then
+            c.Commit_Or_Rollback;
+         end if;
          free_connections.Append( c );
       end  Return_Connection;
       
