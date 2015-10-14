@@ -33,7 +33,6 @@
          gse.Execute( local_connection, query );
          Check_Result( local_connection );
          if( is_local_connection )then
-            local_connection.Commit;
             Connection_Pool.Return_Connection( local_connection );
          end if;
       end;
