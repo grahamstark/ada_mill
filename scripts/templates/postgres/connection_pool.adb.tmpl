@@ -149,9 +149,9 @@ $e
       pool.Shutdown;
    end Shutdown;
    
-   procedure Return_Connection( c : dexec.Database_Connection ) is
+   procedure Return_Connection( conn : in out dexec.Database_Connection ) is
    begin
-      pool.Return_Connection( c );
+      pool.Return_Connection( conn );
    end  Return_Connection;
    
    procedure Initialise( 

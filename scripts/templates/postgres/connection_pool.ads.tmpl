@@ -25,7 +25,7 @@ $e
       maximum_size : Natural := 0 );
       
    function Lease return dexec.Database_Connection;
-   procedure Return_Connection( c : dexec.Database_Connection );
+   procedure Return_Connection( conn : in out dexec.Database_Connection );
    procedure Shutdown;
 
    -- === CUSTOM IMPORTS START ===
