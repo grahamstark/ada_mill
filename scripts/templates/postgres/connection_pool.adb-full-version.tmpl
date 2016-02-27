@@ -4,7 +4,6 @@ with Ada.Containers.Vectors;
 with GNATColl.Traces;
 with GNATCOLL.SQL.Postgres; 
 
-with Environment;
 
 -- === CUSTOM IMPORTS START ===
 #for $e in $customImports 
@@ -122,9 +121,9 @@ $e
          Log( "returning; before- free connections: " & free_connections.Length'Img &
            " used: " & used_connections.Length'Img );
          used_connections.Delete( cur );
-         -- if c.In_Transaction then
-            -- c.Commit_Or_Rollback;
-         -- end if;
+         if c.In_Transaction then
+            c.Commit_Or_Rollback;
+         end if;
          free_connections.Append( c );
       end  Return_Connection;
       
@@ -164,19 +163,24 @@ $e
    begin
       pool.Return_Connection( conn );
    end  Return_Connection;
-
+   
    procedure Initialise( 
-      initial_size : Positive := 30 ) is
+      server_name  : String;
+      database     : String;
+      user_name    : String;
+      password     : String;
+      initial_size : Positive;
+      maximum_size : Natural := 0 ) is
    begin
       pool.Initialise( 
-         Environment.Get_server_name, 
-         Environment.Get_database_Name, 
-         Environment.Get_username,   
-         Environment.Get_password,    
+         server_name, 
+         database, 
+         user_name,   
+         password,    
          initial_size,
-         0 );
+         maximum_size );
    end Initialise;
-   
+
    -- === CUSTOM PROCS START ===
 #for $e in $customProcs
 $e 
