@@ -94,19 +94,30 @@ def makePreparedInsertStatementBody( table ):
         template.posIndicators = ", ".join( queries )
         return str(template)
 
-def makePrimaryKeyAliasedStrings( table ):
-        variables = table.getPrimaryKeyVariables()
+def makeAliasedStrings( instanceName, variables ):
         alist = []
+        if instanceName != None:
+                instanceName = instanceName + '.'
+        else:
+                instanceName = ''
+        
         for var in variables:
-                if( var.isStringType()):
-                        s = 'aliased_' + var.adaName + ' : aliased String := To_String( '+var.varname + ' )';
+                if var.isStringType():
+                        s = 'aliased_' + var.adaName + ' : aliased String := To_String( '+instanceName+var.varname + ' )';
+                        alist.append( s )
+                elif var.arrayInfo != None:
+                        s = 'aliased_' + var.adaName + ' : aliased String := '+var.arrayInfo.stringFromArrayDeclaration( var.adaName );
                         alist.append( s )
         return alist;
 
 
-def makeParamsBindings( variableList ):
+def makeParamsBindings( instanceName, variableList ):
         # FIXME incomplete - record decl - date, array
         p = 0
+        if instanceName != None:
+                instanceName = instanceName + '.'
+        else:
+                instanceName = ''
         alist = []
         for var in variableList:
                 p += 1
@@ -115,12 +126,14 @@ def makeParamsBindings( variableList ):
                         alist.append( pstr + '"+"( aliased_' + var.adaName +"'Access )")
                 elif( var.isStringType() ):
                         alist.append( pstr + '"+"( aliased_' + var.adaName +"'Access )")
+                elif var.isRealOrDecimalType():
+                        alist.append( pstr + '"+"( Float(' + instanceName + var.adaName +" ))")
                 elif( var.isNumericType() ):
-                        alist.append( pstr + '"+"( ' +var.adaName +" )")
+                        alist.append( pstr + '"+"( ' + instanceName + var.adaName +" )")
                 elif( isIntegerTypeInPostgres( var )):
-                        alist.append( pstr + '"+"( ' + var.adaTypeName + 'Pos( '+var.adaName +"))")
+                        alist.append( pstr + '"+"( ' + var.getAdaType( True ) + "'Pos( "+ instanceName + var.adaName +" ))")
                 elif ( var.isDateType() ):
-                        alist.append( pstr + '"+"( ' +var.adaName +" )")
+                        alist.append( pstr + '"+"( ' +instanceName + var.adaName +" )")
         return alist
 
 def makeConfiguredParamsHeader( templateName, variableList ):
@@ -431,10 +444,13 @@ def makeSaveProcBody( table ):
         primaryKey = makePrimaryKeySubmitFields( table )
         # template.tmpVariable = instanceName + "_tmp"
         pkFields = table.getPrimaryKeyVariables()
+        template.insertStrings = makeAliasedStrings( instanceName, table.variables )
         template.existsCheck = 'Exists( ' + primaryKey + ' ) then'
         template.updateCall = 'Update( '+ instanceName + ', local_connection )'
-        template.tmpVariableWithAssignment = instanceName + "_tmp : " + outputRecord;
+        # template.tmpVariableWithAssignment = instanceName + "_tmp : " + outputRecord;
         template.has_pk = table.hasPrimaryKey()
-        template.retrieveByPK = instanceName + '_tmp := retrieve_By_PK( ' + primaryKey + ' )'
+        # template.retrieveByPK = instanceName + '_tmp := retrieve_By_PK( ' + primaryKey + ' )'
+        
+        template.allParams = makeParamsBindings( instanceName, table.variables )
         s = str(template) 
         return s        

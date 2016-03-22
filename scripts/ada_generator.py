@@ -171,9 +171,9 @@ def makeExistsBody( table, connection_string ):
                         import ada_specific_sqlite as asp
         template = Template( file=paths.getPaths().templatesPath+"exists.func.tmpl" )
         template.functionHeader = makeExistsHeader( table, connection_string, ' is' )
-        template.primaryKeyStrings = asp.makePrimaryKeyAliasedStrings( table )
+        template.primaryKeyStrings = asp.makeAliasedStrings( None, table.getPrimaryKeyVariables() )
         template.tableName = table.makeName( format=Format.unformatted, qualificationLevel=Qualification.schema, itemType=ItemType.table )
-        template.primaryKeyParams = asp.makeParamsBindings( table.getPrimaryKeyVariables())
+        template.primaryKeyParams = asp.makeParamsBindings( None, table.getPrimaryKeyVariables())
         s = str(template) 
         return s
 

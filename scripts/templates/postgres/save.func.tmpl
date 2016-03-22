@@ -1,6 +1,11 @@
    $procedureHeader   
+      params : gse.SQL_Parameters := Get_Configured_Insert_Params;
+#for pr in $insertStrings:
+      $pr;
+#end for;
+      ps     : gse.Prepared_Statement := Get_Prepared_Insert_Statement;      
+        
       c : d.Criteria;
-      $tmpVariableWithAssignment;
       local_connection : Database_Connection;
       is_local_connection : Boolean;
    begin
@@ -22,6 +27,9 @@
 #end if      
 #for $cr in $allCriteria:
       $cr;
+#end for;
+#for $pr in $allParams
+      $pr;
 #end for;
       declare
          query : constant String := DB_Commons.Add_Schema_To_Query( INSERT_PART, SCHEMA_NAME ) & " ( "  & d.To_Crude_Array_Of_Values( c ) & " )";
