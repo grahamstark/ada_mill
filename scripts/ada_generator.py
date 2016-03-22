@@ -161,6 +161,14 @@ def makePKBody( table, connection_string ):
         s = str(template) 
         return s
         
+def makeQs( variables ):
+        a = []
+        i = 0
+        for v in variables:
+               i += 1
+               a.append( v.varname + " = $"+`i` )
+        return ' and '.join( a )
+        
 def makeExistsBody( table, connection_string ):
         if TARGETS.binding == 'odbc':
                 import ada_specific_odbc as asp
@@ -172,6 +180,7 @@ def makeExistsBody( table, connection_string ):
         template = Template( file=paths.getPaths().templatesPath+"exists.func.tmpl" )
         template.functionHeader = makeExistsHeader( table, connection_string, ' is' )
         template.primaryKeyStrings = asp.makeAliasedStrings( None, table.getPrimaryKeyVariables() )
+        template.pkqs = makeQs( table.getPrimaryKeyVariables())
         template.tableName = table.makeName( format=Format.unformatted, qualificationLevel=Qualification.schema, itemType=ItemType.table )
         template.primaryKeyParams = asp.makeParamsBindings( None, table.getPrimaryKeyVariables())
         s = str(template) 
