@@ -30,12 +30,18 @@ package ${IOName}_Base is
    --
    $isNullFunc
    
+   
    --
    -- returns the single $outputRecordName matching the primary key fields, or the $nullName record
    -- if no such record exists
    --
    $pkFunc
    
+   --
+   -- Returns true if record with the given primary key exists
+   --
+   $existsFunc
+
    --
    -- Retrieves a list of $outputRecordType matching the criteria, or throws an exception
    --

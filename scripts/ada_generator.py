@@ -118,7 +118,19 @@ def makeCriteriaBody( var, isString = False ):
         template.adaName = var.adaName
         s = str(template) 
         return s
-  
+
+def makeExistsHeader( table, connection_string, ending ):
+        pks = []
+        for var in table.variables:
+                if( var.isPrimaryKey ):
+                        pks.append( var.adaName + " : " + var.adaType )
+        pkFields = '; '.join( pks )
+        outputRecord = table.makeName( 
+                Format.ada, 
+                Qualification.full, 
+                ItemType.table )
+        return "function Exists( " + pkFields + "; " + connection_string + " ) return Boolean " + ending
+
 def makePKHeader( table, connection_string, ending ):
         pks = []
         for var in table.variables:
@@ -148,6 +160,22 @@ def makePKBody( table, connection_string ):
         template.adaName = instanceName
         s = str(template) 
         return s
+        
+def makeExistsBody( table, connection_string ):
+        if TARGETS.binding == 'odbc':
+                import ada_specific_odbc as asp
+        elif TARGETS.binding == 'native':
+                if TARGETS.databaseType == 'postgres':
+                        import ada_specific_postgres as asp
+                elif TARGETS.databaseType == 'sqlite':
+                        import ada_specific_sqlite as asp
+        template = Template( file=paths.getPaths().templatesPath+"exists.func.tmpl" )
+        template.functionHeader = makeExistsHeader( table, connection_string, ' is' )
+        template.primaryKeyStrings = asp.makePrimaryKeyAliasedStrings( table )
+        template.tableName = table.makeName( format=Format.unformatted, qualificationLevel=Qualification.schema, itemType=ItemType.table )
+        template.primaryKeyParams = asp.makeParamsBindings( table.getPrimaryKeyVariables())
+        s = str(template) 
+        return s
 
 def makeIsNullFunc( table, adaDataPackageName ):
         instanceName = table.makeName( Format.ada, Qualification.unqualified, ItemType.instanceName )
@@ -156,10 +184,6 @@ def makeIsNullFunc( table, adaDataPackageName ):
         template.adaName = table.makeName( Format.ada, Qualification.full, ItemType.table )
         template.functionHeader = makeIsNullFuncHeader( table, ' is' )
         template.returnStatement = 'return '+ instanceName + ' = ' + qualifiedNullName
-        if notNullOrBlank( table.schemaName ):
-                schemaBit = '.' + table.schemaName
-        else:
-                schemaBit = ''
         template.use = '' #"use " + adaDataPackageName + schemaBit
         template.nullName = qualifiedNullName
         s = str(template) 
@@ -347,8 +371,11 @@ def makeIOAds( database, adaTypePackages, table ):
         
         if( table.hasPrimaryKey()):                                
                 template.pkFunc = makePKHeader( table, asp.CONNECTION_STRING, ';' )
+                template.existsFunc = makeExistsHeader( table, asp.CONNECTION_STRING, ';' )
         else:
                 template.pkFunc = ''
+                template.existsFunc = ''
+                
         template.isNullFunc = makeIsNullFuncHeader( table, ';' );
         template.retrieveByCFunc = makeRetrieveCHeader( table, asp.CONNECTION_STRING, ';' );
         template.retrieveBySFunc = makeRetrieveSHeader( table, asp.CONNECTION_STRING, ';' );
@@ -813,7 +840,7 @@ def writeTestCaseADS( database ):
 def makeChildTests( databaseName, testName, table ):
         return ''        
 
-def makeCreateTest( databaseName, procName, table ):
+def makeCreateTest( databaseName, schemaPackageName, procName, table ):
         """
          Write an create test 
         """
@@ -844,13 +871,14 @@ def makeCreateTest( databaseName, procName, table ):
                 Format.ada, 
                 Qualification.full, 
                 ItemType.alist );
+        
         template.printHeader = 'procedure Print( pos : ' + cursor + ' ) is '
         template.clearTable =  ioPackageName +".Delete( criteria )"
         template.retrieveUser = varname+' := '+table.makeName( 
                 Format.ada, 
                 Qualification.full, 
                 ItemType.list_container )+'.Element( pos )'
-        template.toString = 'Log( To_String( '+ varname + ' ))'
+        template.toString = 'Log( '+ schemaPackageName + 'To_String( ' + varname + ' ))'
         template.completeListStatement = listname +' := '+ ioPackageName +'.Retrieve( criteria )'
         template.iterate = table.makeName( 
                 Format.ada, 
@@ -934,11 +962,16 @@ def writeTestCaseADB( database ):
                         Format.ada, 
                         Qualification.full, 
                         ItemType.io_package )
+                schemaPackageName = ''
+                if table.schemaName != None:
+                        print "schemaName |" + table.schemaName + "|" 
+                        schema = database.getSchema( table.schemaName )
+                        schemaPackageName = schema.makeName( Format.ada, Qualification.full, ItemType.schema_name ) + ".";
                 testName = ( adaTypeName+ "_Create_Test" ).replace( '.', '_' )
                 childTestName = ( adaTypeName+ "_Child_Retrieve_Test" ).replace( '.', '_' )
                 template.dbPackages.append( ioPackageName );
                 template.createRegisters.append( "Register_Routine (T, " + testName + "'Access, " + '"Test of Creation and deletion of '+adaTypeName+'" );' );
-                template.createTests.append( makeCreateTest( database.databaseName, testName, table ))
+                template.createTests.append( makeCreateTest( database.databaseName,  schemaPackageName, testName, table ))
                 if( len( table.childRelations ) > 0 ):
                         template.childRegisters.append( "Register_Routine (T, " + childTestName + "'Access, " + '"Test of Finding Children of '+adaTypeName+'" );' );
                         template.childTests.append( makeChildTests( database.databaseName, childTestName, table ) ) 
@@ -1040,8 +1073,10 @@ def makeIOAdb( database, table ):
                                 template.incr_integer_pk_fields.append( asp.makeNextFreeFunc( table, var ) );
         if( table.hasPrimaryKey()):                                
                 template.pkFunc = makePKBody( table, asp.CONNECTION_STRING )
+                template.existsFunc = makeExistsBody( table, asp.CONNECTION_STRING )
         else:
                 template.pkFunc = ''
+                template.existsFunc = ''
         template.has_primary_key = table.hasPrimaryKey();
         dataPackageName = database.makeName( 
                 Format.ada, 

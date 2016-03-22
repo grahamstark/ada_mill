@@ -80,7 +80,12 @@ $ass
    -- returns true if the primary key parts of $outputRecordName match the defaults in $nullName
    --
 $isNullFunc
-   
+
+   --
+   -- Returns true if record with the given primary key exists
+   --
+$existsFunc
+
    --
    -- returns the single $outputRecordName matching the primary key fields, or the $nullName record
    -- if no such record exists

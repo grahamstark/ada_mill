@@ -46,7 +46,7 @@ from paths import WorkingPaths
 # http://stackoverflow.com/questions/36932/how-can-i-represent-an-enum-in-python
 Format = Enum( 'Format', 'unformatted ada ada_filename' )
 Qualification = Enum( 'Qualification', 'full schema unqualified' )
-ItemType = Enum( 'ItemType', 'table alist list_container, io_package null_constant instanceName schema_name, database_name, data_package_name' )
+ItemType = Enum( 'ItemType', 'table alist list_container io_package null_constant instanceName schema_name, database_name data_package_name none' )
 
 #
 # this just tries to cover everything that's specific to 
@@ -500,6 +500,8 @@ class Table:
                         itemName += '_List_Package'
                 elif itemType == ItemType.io_package:
                         itemName += '_IO'
+                else:
+                        pass
                 qualification = ''
                 if isNullOrBlank( self.adaExternalName ): # go no further if user has supplied name
                         if qualificationLevel != Qualification.unqualified:
@@ -817,6 +819,11 @@ class Database( TableContainer ):
                 self.databaseAdapter = getDatabaseAdapter( self.dataSource )
                 self.name = name,
                 # self.databaseName = self.dataSource.database
+           
+        def getSchema( self, schemaName ):
+                for schema in self.schemas:
+                        if schema.schemaName == schemaName:
+                                return schema
                 
              
         def getOneTable( self, schemaName, name ):

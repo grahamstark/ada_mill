@@ -113,12 +113,7 @@ $e
    --  Preparation performed before each routine:
    procedure Set_Up( t : in out Test_Case ) is
    begin
-       Connection_Pool.Initialise(
-              Environment.Get_Server_Name,
-              Environment.Get_Database_Name,
-              Environment.Get_Username,
-              Environment.Get_Password,
-              10 );
+      Connection_Pool.Initialise( 10 ); 
       GNATColl.Traces.Parse_Config_File( "$logFileName" );
    end Set_Up;
    

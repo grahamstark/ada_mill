@@ -23,6 +23,10 @@
 # $Author: graham_s $
 # $Date: 2013-06-11 17:45:20 +0100 (Tue, 11 Jun 2013) $
 #
+#
+# TODO replace insert/update with prepared statements
+# add stuff for update prepared statements as well as insert
+#
 """
  code to generate our ada .ads and .adb files, using Cheetah templating system
  for the most part
@@ -89,6 +93,35 @@ def makePreparedInsertStatementBody( table ):
                 queries.append( "${0:d}".format( p ))
         template.posIndicators = ", ".join( queries )
         return str(template)
+
+def makePrimaryKeyAliasedStrings( table ):
+        variables = table.getPrimaryKeyVariables()
+        alist = []
+        for var in variables:
+                if( var.isStringType()):
+                        s = 'aliased_' + var.adaName + ' : aliased String := To_String( '+var.varname + ' )';
+                        alist.append( s )
+        return alist;
+
+
+def makeParamsBindings( variableList ):
+        # FIXME incomplete - record decl - date, array
+        p = 0
+        alist = []
+        for var in variableList:
+                p += 1
+                pstr = "params( "+`p`+" ) := " 
+                if var.arrayInfo != None:
+                        alist.append( pstr + '"+"( aliased_' + var.adaName +"'Access )")
+                elif( var.isStringType() ):
+                        alist.append( pstr + '"+"( aliased_' + var.adaName +"'Access )")
+                elif( var.isNumericType() ):
+                        alist.append( pstr + '"+"( ' +var.adaName +" )")
+                elif( isIntegerTypeInPostgres( var )):
+                        alist.append( pstr + '"+"( ' + var.adaTypeName + 'Pos( '+var.adaName +"))")
+                elif ( var.isDateType() ):
+                        alist.append( pstr + '"+"( ' +var.adaName +" )")
+        return alist
 
 def makeConfiguredParamsHeader( templateName, variableList ):
         comments = []
@@ -396,8 +429,9 @@ def makeSaveProcBody( table ):
         template.procedureHeader = makeSaveProcHeader( table, CONNECTION_STRING, ' is' )
         template.allCriteria = makeCriterionList( table, 'c', 'all', True )
         primaryKey = makePrimaryKeySubmitFields( table )
-        template.tmpVariable = instanceName + "_tmp"
-        template.existsCheck = 'if( not is_Null( ' + instanceName + '_tmp )) then'
+        # template.tmpVariable = instanceName + "_tmp"
+        pkFields = table.getPrimaryKeyVariables()
+        template.existsCheck = 'Exists( ' + primaryKey + ' ) then'
         template.updateCall = 'Update( '+ instanceName + ', local_connection )'
         template.tmpVariableWithAssignment = instanceName + "_tmp : " + outputRecord;
         template.has_pk = table.hasPrimaryKey()

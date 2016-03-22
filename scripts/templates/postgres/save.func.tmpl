@@ -12,15 +12,12 @@
           is_local_connection := False;
       end if;
 #if $has_pk:   
-      if( overwrite ) then
-         $retrieveByPK;
-         $existsCheck
-            $updateCall;
-            if( is_local_connection )then
-               Connection_Pool.Return_Connection( local_connection );
-            end if;
-            return;
+      if overwrite and $existsCheck
+         $updateCall;
+         if( is_local_connection )then
+            Connection_Pool.Return_Connection( local_connection );
          end if;
+         return;
       end if;
 #end if      
 #for $cr in $allCriteria:
