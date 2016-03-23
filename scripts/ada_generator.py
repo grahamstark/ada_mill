@@ -426,7 +426,7 @@ def makeIOAds( database, adaTypePackages, table ):
         template.dataPackageName = dataPackageName 
         
         template.preparedInsertStatementHeader = asp.makePreparedInsertStatementHeader()
-        template.preparedUpdateStatementHeaders = asp.makePreparedUpdateStatementHeader()
+        template.preparedUpdateStatementHeader = asp.makePreparedUpdateStatementHeader()
         template.configuredInsertParamsHeader = asp.makeConfiguredInsertParamsHeader( table )
         
         template.preparedRetrieveStatementHeaders = asp.makePreparedRetrieveStatementHeaders()
