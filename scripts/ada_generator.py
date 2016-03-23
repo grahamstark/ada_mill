@@ -181,7 +181,7 @@ def makeExistsBody( table, connection_string ):
         template.functionHeader = makeExistsHeader( table, connection_string, ' is' )
         template.primaryKeyStrings = asp.makeAliasedStrings( None, table.getPrimaryKeyVariables() )
         template.pkqs = makeQs( table.getPrimaryKeyVariables())
-        template.tableName = table.makeName( format=Format.unformatted, qualificationLevel=Qualification.schema, itemType=ItemType.table )
+        template.tableName = table.qualifiedName()
         template.primaryKeyParams = asp.makeParamsBindings( None, table.getPrimaryKeyVariables())
         s = str(template) 
         return s
