@@ -60,8 +60,9 @@ def makeMapFromCursorHeader( adaQualifiedOutputRecord ):
 
 # FIXME these next 3 are actually the same for all Native DB interfaces, not just postgres
 def makePreparedInsertStatementHeader():
-        return '   function Get_Prepared_Insert_Statement return GNATCOLL.SQL.Exec.Prepared_Statement;'        
-def makePreparedInsertStatementHeader():
+        return '   function Get_Prepared_Insert_Statement return GNATCOLL.SQL.Exec.Prepared_Statement;'
+        
+def makePreparedUpdateStatementHeader():
         return '   function Get_Prepared_Update_Statement return GNATCOLL.SQL.Exec.Prepared_Statement;'        
 
 def makePreparedRetrieveStatementHeaders():
