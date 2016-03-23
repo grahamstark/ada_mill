@@ -434,6 +434,7 @@ def makeUpdateProcBody( table ):
         template.procedureHeader = makeUpdateProcHeader( table, CONNECTION_STRING, ' is' )
         template.pkCriteria = makeCriterionList( table, 'pk_c', 'primaryKeyOnly', True )
         template.inputCriteria = makeCriterionList( table, 'values_c', 'allButPrimaryKey', True )
+        template.insertStrings = makeAliasedStrings( instanceName, table.variables )
         template.allParams = makeParamsBindings( instanceName, makeVariablesInUpdateOrder( table.variables ))
         return str(template) 
 

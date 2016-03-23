@@ -1,9 +1,11 @@
    $procedureHeader
-      pk_c : d.Criteria;
-      values_c : d.Criteria;
-      local_connection : Database_Connection;
+      params              : gse.SQL_Parameters := Get_Configured_Insert_Params( Update_Order => True );
+      ps                  : gse.Prepared_Statement := Get_Prepared_Update_Statement;      
+      local_connection    : Database_Connection;
       is_local_connection : Boolean;
-
+#for pr in $insertStrings:
+      $pr;
+#end for;
    begin
       if( connection = null )then
           local_connection := Connection_Pool.Lease;
@@ -13,32 +15,14 @@
           is_local_connection := False;
       end if;
 
-      --
-      -- values to be updated
-      --
-#for $cr in $inputCriteria:
-      $cr;
-#end for;
-      --
-      -- primary key fields
-      --
-#for $cr in $pkCriteria:
-      $cr;
-#end for;
 #for $pr in $allParams
       $pr;
 #end for;
       
-      declare      
-         query : constant String := DB_Commons.Add_Schema_To_Query( UPDATE_PART, SCHEMA_NAME ) & 
-            " " & d.To_String( values_c, "," ) & d.To_String( pk_c );
-      begin
-         Log( "update; executing query" & query );
-         gse.Execute( local_connection, query );
-         Check_Result( local_connection );
-         if( is_local_connection )then
-            Connection_Pool.Return_Connection( local_connection );
-         end if;
-      end;
+      gse.Execute( local_connection, query, params );
+      Check_Result( local_connection );
+      if( is_local_connection )then
+         Connection_Pool.Return_Connection( local_connection );
+      end if;
    end Update;
 
