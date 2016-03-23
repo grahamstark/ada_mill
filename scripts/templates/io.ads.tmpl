@@ -118,7 +118,15 @@ $mapFromCursorHeader
 
 $configuredInsertParamsHeader
 
+--
+-- a prepared statement of the form insert into xx values ( [ everything, including pk fields ] )
+--
 $preparedInsertStatementHeader
+
+--
+-- a prepared statement of the form update xx set [ everything except pk fields ] where [pk fields ] 
+-- 
+$preparedUpdateStatementHeader
 
 $configuredRetrieveParamsHeader
 

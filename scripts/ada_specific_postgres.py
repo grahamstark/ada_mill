@@ -58,9 +58,11 @@ def writeProjectFile( database ):
 def makeMapFromCursorHeader( adaQualifiedOutputRecord ):
         return INDENT + "function Map_From_Cursor( cursor : GNATCOLL.SQL.Exec.Forward_Cursor ) return " + adaQualifiedOutputRecord +";"  
 
-# FIXME these next 2 are actually the same for all Native DB interfaces, not just postgres
+# FIXME these next 3 are actually the same for all Native DB interfaces, not just postgres
 def makePreparedInsertStatementHeader():
         return '   function Get_Prepared_Insert_Statement return GNATCOLL.SQL.Exec.Prepared_Statement;'        
+def makePreparedInsertStatementHeader():
+        return '   function Get_Prepared_Update_Statement return GNATCOLL.SQL.Exec.Prepared_Statement;'        
 
 def makePreparedRetrieveStatementHeaders():
         o = []
@@ -90,13 +92,14 @@ def makePreparedUpdateStatementBody( table ):
         p = 0
         for var in table.getNonPrimaryKeyVariables():
                 p += 1
-                uvars.append( var.varname " = ${0:d}".format( p )                
+                uvars.append( var.varname + " = ${0:d}".format( p ))                
         template.updateFields = ', '.join( uvars )
         
+        pkfields = []
         for var in table.getPrimaryKeyVariables():
                 p += 1
-                queries.append( var.varname + " = ${0:d}".format( p ))
-        template.pkFields = " and ".join( queries )
+                pkfields.append( var.varname + " = ${0:d}".format( p ))
+        template.pkFields = " and ".join( pkfields )
         return str(template)
 
 def makePreparedInsertStatementBody( table ):
