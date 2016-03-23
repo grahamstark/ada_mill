@@ -19,7 +19,7 @@
       $pr;
 #end for;
       
-      gse.Execute( local_connection, query, params );
+      gse.Execute( local_connection, ps, params );
       Check_Result( local_connection );
       if( is_local_connection )then
          Connection_Pool.Return_Connection( local_connection );
