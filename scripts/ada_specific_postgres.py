@@ -173,33 +173,41 @@ def makeConfiguredInsertParamsHeader( table ):
        
 def makeConfiguredParamsBody( templateName, variableList ):        
         template = Template( file=templatesPath() + templateName + '.tmpl' )
-        p = 0
-        n = len( variableList )
-        rows = []
-        for var in variableList:
-                p += 1
-                if var.arrayInfo != None:
-                        typ = 'Parameter_Text'
-                        default = 'null' #'"'+var.arrayInfo.sqlArrayDefaultDeclaration( var.getDefaultAdaValue() )+'"'
-                elif isIntegerTypeInPostgres( var ):
-                        typ = 'Parameter_Integer'
-                        default = '0'
-                elif var.isStringType():
-                        typ = 'Parameter_Text'
-                        default = 'null';
-                elif var.isNumericType():
-                        typ = 'Parameter_Float'
-                        default = '0.0'
-                elif var.isDateType():
-                        typ = 'Parameter_Date'
-                        default = 'Clock'
-                s = '        {0:>2d} => ( {1:s}, {2:s} )'.format( p, typ, default )
-                if( p < n ):
-                        s += ","
-                s += "   -- " + " : " + var.adaName + " (" + var.adaType +")" 
-                rows.append( s )
-        template.n = p
-        template.rows = rows
+        n = len( varList )        
+        template.n = n
+        for t in 1..2:        
+                if t == 1:
+                        varList = variableList
+                else:
+                        varList = makeVariablesInUpdateOrder( variableList )
+                p = 0
+                rows = []
+                for var in varList:
+                        p += 1
+                        if var.arrayInfo != None:
+                                typ = 'Parameter_Text'
+                                default = 'null' #'"'+var.arrayInfo.sqlArrayDefaultDeclaration( var.getDefaultAdaValue() )+'"'
+                        elif isIntegerTypeInPostgres( var ):
+                                typ = 'Parameter_Integer'
+                                default = '0'
+                        elif var.isStringType():
+                                typ = 'Parameter_Text'
+                                default = 'null';
+                        elif var.isNumericType():
+                                typ = 'Parameter_Float'
+                                default = '0.0'
+                        elif var.isDateType():
+                                typ = 'Parameter_Date'
+                                default = 'Clock'
+                        s = '        {0:>2d} => ( {1:s}, {2:s} )'.format( p, typ, default )
+                        if( p < n ):
+                                s += ","
+                        s += "   -- " + " : " + var.adaName + " (" + var.adaType +")" 
+                        rows.append( s )
+                if t == 1:
+                        template.insertRows = rows
+                else:
+                        template.updateRows = rows
         return str(template)
 
 

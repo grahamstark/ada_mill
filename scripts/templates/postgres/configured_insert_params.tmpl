@@ -1,10 +1,15 @@
-   function Get_Configured_Insert_Params return GNATCOLL.SQL.Exec.SQL_Parameters is
+   function Get_Configured_Insert_Params( update_order : Boolean := False )  return GNATCOLL.SQL.Exec.SQL_Parameters is
    use GNATCOLL.SQL_Impl;
-      params : constant SQL_Parameters( 1 .. $n ) := (
-#for $r in $rows
+      params : constant SQL_Parameters( 1 .. $n ) := ( if update_order then (
+#for $r in $updateRows
 $r
 #end for 
-      );
+      ) else (
+#for $r in $insertRows
+$r
+#end for 
+      
+      ));
    begin
       return params;
    end Get_Configured_Insert_Params;
