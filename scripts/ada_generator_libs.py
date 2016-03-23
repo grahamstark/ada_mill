@@ -87,6 +87,8 @@ def makeNextFreeHeader( var, connection_string, ending ):
         return "function Next_Free_"+var.adaName+"( " + connection_string + ") return " + var.getAdaType( True ) + ending
 
 
+
+
 def makeCriterionList( table, criterionName, includeAll, qualifyVarname ):
         """        
          table, 
@@ -108,7 +110,18 @@ def makeCriterionList( table, criterionName, includeAll, qualifyVarname ):
                                 varname = instanceName + "."+varname
                         critElement = "Add_"+var.adaName + "( "+criterionName +", "+ varname +" )"
                         l.append( critElement );
-        return l               
+        return l      
+        
+def makeVariablesInUpdateOrder( variableList ):
+        oList = []
+        pkList = []
+        for var in variableList:
+                if var.isPrimaryKey:
+                        pkList.append( var )
+                else:
+                        oList.append( var )
+        return oList + pkList
+
 
 def makePrimaryKeySubmitFields( table ):
         pks = []

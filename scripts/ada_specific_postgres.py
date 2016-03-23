@@ -39,7 +39,7 @@ from table_model import DataSource, Format, Qualification, ItemType
 from utils import makePlural, adafyName, makePaddedString, INDENT, MAXLENGTH, readLinesBetween
 from ada_generator_libs import makeRetrieveSHeader, makeSaveProcHeader, makeUpdateProcHeader, \
      makeDeleteSpecificProcHeader, makeCriterionList, makePrimaryKeySubmitFields, \
-     makePrimaryKeyCriterion, makeNextFreeHeader
+     makePrimaryKeyCriterion, makeNextFreeHeader, makeVariablesInUpdateOrder
 
 CONNECTION_STRING = "connection : Database_Connection := null"
 
@@ -429,10 +429,12 @@ def writeConnectionPoolADS():
                                   
 
 def makeUpdateProcBody( table ):
+        instanceName = table.makeName( Format.ada, Qualification.unqualified, ItemType.instanceName )
         template = Template( file=templatesPath()+"update.func.tmpl" )
         template.procedureHeader = makeUpdateProcHeader( table, CONNECTION_STRING, ' is' )
         template.pkCriteria = makeCriterionList( table, 'pk_c', 'primaryKeyOnly', True )
         template.inputCriteria = makeCriterionList( table, 'values_c', 'allButPrimaryKey', True )
+        template.allParams = makeParamsBindings( instanceName, makeVariablesInUpdateOrder( table.variables ))
         return str(template) 
 
 def makeSaveProcBody( table ):

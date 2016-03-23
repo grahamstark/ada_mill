@@ -25,6 +25,10 @@
 #for $cr in $pkCriteria:
       $cr;
 #end for;
+#for $pr in $allParams
+      $pr;
+#end for;
+      
       declare      
          query : constant String := DB_Commons.Add_Schema_To_Query( UPDATE_PART, SCHEMA_NAME ) & 
             " " & d.To_String( values_c, "," ) & d.To_String( pk_c );
