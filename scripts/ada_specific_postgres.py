@@ -147,10 +147,12 @@ def makeParamsBindings( instanceName, variableList ):
                         alist.append( pstr + '"+"( aliased_' + var.adaName +"'Access )")
                 elif var.isRealOrDecimalType():
                         alist.append( pstr + '"+"( Float( ' + instanceName + var.adaName +" ))")
-                elif( var.isNumericType() ):
-                        alist.append( pstr + '"+"( ' + instanceName + var.adaName +" )")
-                elif( isIntegerTypeInPostgres( var )):
-                        alist.append( pstr + '"+"( ' + var.getAdaType( True ) + "'Pos( "+ instanceName + var.adaName +" ))")
+                elif( var.isDiscreteTypeInAda()):
+                        alist.append( pstr + '"+"( ' + var.getAdaType( True ) + "'Pos( "+ instanceName + var.adaName +" ))")                                        
+                # elif( var.isNumericType() ):
+                        # alist.append( pstr + '"+"( ' + instanceName + var.adaName +" )")
+                # elif( isIntegerTypeInPostgres( var )):
+                        # alist.append( pstr + '"+"( ' + var.getAdaType( True ) + "'Pos( "+ instanceName + var.adaName +" ))")
                 elif ( var.isDateType() ):
                         alist.append( pstr + '"+"( ' +instanceName + var.adaName +" )")
         return alist
