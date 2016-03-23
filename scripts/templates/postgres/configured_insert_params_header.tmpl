@@ -4,4 +4,4 @@
 #for $c in $comments
    -- $c
 #end for 
-   function Get_Configured_Insert_Params return GNATCOLL.SQL.Exec.SQL_Parameters;
+   function Get_Configured_Insert_Params( update_order : Boolean := False ) return GNATCOLL.SQL.Exec.SQL_Parameters;

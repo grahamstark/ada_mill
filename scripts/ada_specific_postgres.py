@@ -84,6 +84,21 @@ def makePreparedRetrieveStatementBodies( table ):
         return str( template )
         
 
+def makePreparedUpdateStatementBody( table ):
+        template = Template( file=templatesPath() + 'prepared_update_statement.tmpl' )
+        uvars = []
+        p = 0
+        for var in table.getNonPrimaryKeyVariables():
+                p += 1
+                uvars.append( var.varname " = ${0:d}".format( p )                
+        template.updateFields = ', '.join( uvars )
+        
+        for var in table.getPrimaryKeyVariables():
+                p += 1
+                queries.append( var.varname + " = ${0:d}".format( p ))
+        template.pkFields = " and ".join( queries )
+        return str(template)
+
 def makePreparedInsertStatementBody( table ):
         template = Template( file=templatesPath() + 'prepared_insert_statement.tmpl' )
         queries = []
@@ -106,7 +121,7 @@ def makeAliasedStrings( instanceName, variables ):
                         s = 'aliased_' + var.adaName + ' : aliased String := To_String( '+instanceName+var.varname + ' )';
                         alist.append( s )
                 elif var.arrayInfo != None:
-                        s = 'aliased_' + var.adaName + ' : aliased String := '+var.arrayInfo.stringFromArrayDeclaration( var.adaName );
+                        s = 'aliased_' + var.adaName + ' : aliased String := '+var.arrayInfo.stringFromArrayDeclaration( instanceName+var.adaName );
                         alist.append( s )
         return alist;
 
@@ -171,11 +186,12 @@ def makeConfiguredRetrieveParamsHeader( table ):
 def makeConfiguredInsertParamsHeader( table ):
         return makeConfiguredParamsHeader( 'configured_insert_params_header', table.variables );
        
-def makeConfiguredParamsBody( templateName, variableList ):        
+def makeConfiguredParamsBody( templateName, variableList, versions ):        
         template = Template( file=templatesPath() + templateName + '.tmpl' )
-        n = len( varList )        
+        n = len( variableList )        
         template.n = n
-        for t in 1..2:        
+        for t in range(1,versions+1):
+                print " t = " + `t` + " template " + templateName + "versions" + `versions`
                 if t == 1:
                         varList = variableList
                 else:
@@ -199,24 +215,26 @@ def makeConfiguredParamsBody( templateName, variableList ):
                         elif var.isDateType():
                                 typ = 'Parameter_Date'
                                 default = 'Clock'
-                        s = '        {0:>2d} => ( {1:s}, {2:s} )'.format( p, typ, default )
+                        s = '           {0:>2d} => ( {1:s}, {2:s} )'.format( p, typ, default )
                         if( p < n ):
                                 s += ","
                         s += "   -- " + " : " + var.adaName + " (" + var.adaType +")" 
                         rows.append( s )
                 if t == 1:
-                        template.insertRows = rows
+                        print "adding insert rows"
+                        template.rows = rows
                 else:
+                        print "adding update rows"
                         template.updateRows = rows
         return str(template)
 
 
 def makeConfiguredRetrieveParamsBody( table ):
         variables = table.getPrimaryKeyVariables()        
-        return makeConfiguredParamsBody( 'configured_retrieve_params', variables );        
+        return makeConfiguredParamsBody( 'configured_retrieve_params', variables, 1 );        
 
 def makeConfiguredInsertParamsBody( table ):
-        return makeConfiguredParamsBody( 'configured_insert_params', table.variables );        
+        return makeConfiguredParamsBody( 'configured_insert_params', table.variables, 2 );        
         
 
 def isIntegerTypeInPostgres( variable ):
@@ -304,7 +322,7 @@ def makeErrorCheckingCode():
         return str( template );
 
 def makeRetrieveSFunc( table, database ):
-        """
+        """                                  
          table - Table class from table_model.py
          database - complete enclosuing Database model from  table_model.py
          
@@ -440,8 +458,8 @@ def makeUpdateProcBody( table ):
         instanceName = table.makeName( Format.ada, Qualification.unqualified, ItemType.instanceName )
         template = Template( file=templatesPath()+"update.func.tmpl" )
         template.procedureHeader = makeUpdateProcHeader( table, CONNECTION_STRING, ' is' )
-        template.pkCriteria = makeCriterionList( table, 'pk_c', 'primaryKeyOnly', True )
-        template.inputCriteria = makeCriterionList( table, 'values_c', 'allButPrimaryKey', True )
+        #template.pkCriteria = makeCriterionList( table, 'pk_c', 'primaryKeyOnly', True )
+        #template.inputCriteria = makeCriterionList( table, 'values_c', 'allButPrimaryKey', True )
         template.insertStrings = makeAliasedStrings( instanceName, table.variables )
         template.allParams = makeParamsBindings( instanceName, makeVariablesInUpdateOrder( table.variables ))
         return str(template) 

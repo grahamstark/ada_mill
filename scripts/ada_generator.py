@@ -1120,6 +1120,7 @@ def makeIOAdb( database, table ):
                 Qualification.full, 
                 ItemType.data_package_name ) 
         template.preparedInsertStatementBody = asp.makePreparedInsertStatementBody( table )
+        template.preparedUpdateStatementBody = asp.makePreparedUpdateStatementBody( table )
         template.configuredInsertParamsBody = asp.makeConfiguredInsertParamsBody( table )
         template.preparedRetrieveStatementBodies = asp.makePreparedRetrieveStatementBodies( table )
         template.configuredRetrieveParamsBody = asp.makeConfiguredRetrieveParamsBody( table )
