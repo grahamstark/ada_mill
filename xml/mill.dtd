@@ -21,12 +21,12 @@ PHP class or method name.
               to lowercase.
 -->
 
-<!ELEMENT database ( adaTypePackage*, adaDataPackage?, table+, schema* )>
+<!ELEMENT database ( adaTypePackage*, adaDataPackage?, table*, schema* )>
 <!ATTLIST database
   name           CDATA #REQUIRED
 >
 
-<!ELEMENT schema ( table+, adaDataPackage? )>
+<!ELEMENT schema ( adaTypePackage*, table+, adaDataPackage? )>
 <!ATTLIST schema
   name           CDATA #REQUIRED
 >
@@ -57,7 +57,14 @@ PHP class or method name.
   generateSQL (true|false) "true" 
 >
 
-<!ELEMENT column ((inheritance|vendor)*)>
+<!ELEMENT localAdaTypePackage EMPTY >
+
+<!ATTLIST localAdaTypePackage
+  name CDATA #REQUIRED
+>
+
+
+<!ELEMENT column EMPTY >    
 
 <!ATTLIST column
   name CDATA #REQUIRED
@@ -79,8 +86,8 @@ PHP class or method name.
   adaTypeName CDATA #IMPLIED
   isArray (true|false) "false" 
   arrayIsExternallyDefined (true|false) "false" 
-  arrayFirst CDATA #IMPLIED "1"
-  arrayLast CDATA #IMPLIED
+  arrayFirst CDATA #IMPLIED 
+  arrayLast CDATA #IMPLIED 
   arrayIndexType (ENUM|INTEGER) "INTEGER"
   arrayAdaIndexTypeName CDATA "Positive"
   arrayIndexIsExternallyDefined (true|false) "false" 
