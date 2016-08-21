@@ -1,14 +1,17 @@
 --
--- Created by ada_generator.py on 2014-02-01 16:13:07.630894
+-- Created by ada_generator.py on 2016-07-05 16:20:16.715440
 -- 
 with Ada.Calendar;
 with Ada.Containers.Vectors;
 with Ada.Exceptions;  
 with Ada.Strings.Unbounded; 
 with Ada.Text_IO.Editing;
+with Ada.Strings.Fixed;
+with GNATColl.Traces;
+with GNATCOLL.Templates;
+
 with Text_IO;
 with Base_Types; use Base_Types;
-with GNATColl.Traces;
 
 -- === CUSTOM IMPORTS START ===
 -- === CUSTOM IMPORTS END ===
@@ -17,7 +20,8 @@ package body DB_Commons is
 
    use Ada.Exceptions;
    use Ada.Strings.Unbounded;
-
+   use type Ada.Containers.Count_Type;
+   
    -- === CUSTOM TYPES START ===
    -- === CUSTOM TYPES END ===
 
@@ -28,8 +32,65 @@ package body DB_Commons is
       GNATColl.Traces.Trace( log_trace, s );
    end Log;
 
+   default_schema : Unbounded_String := Null_Unbounded_String;
    
-   -- return a string like '2007-09-24 16:07:47'
+   function Merge( c1 : Criteria; c2 : Criteria ) return Criteria is
+      cc : Criteria := c1;
+   begin
+      -- cc.elements := c1.element;
+      -- cc.orderings.Copy( c1.orderings );
+      for e of c2.elements loop
+         if not cc.elements.Contains( e ) then
+            cc.elements.Append( e );
+         end if;
+      end loop;
+      for o of c2.orderings loop
+         if not cc.orderings.Contains( o ) then
+            cc.orderings.Append( o );
+         end if;
+      end loop;   
+      return cc;
+   end Merge;
+   
+   function Add_Trailing( s : String; to_add : Character := '.' ) return String is
+   begin
+      if s( s'Last ) = to_add then
+         return s;
+      end if;
+      return s & to_add;
+   end Add_Trailing;
+
+   function Get_Default_Schema return String is
+      s : constant String := To_String( default_schema );
+   begin
+      if s'Length > 0 then
+         return Add_Trailing( s ); -- ( if( s( s'Length ) = '.' )then s else s & "." );
+      end if;
+      return "";
+   end Get_Default_Schema;
+
+   procedure Set_Default_Schema( name : String ) is
+   begin
+      if( name = "" )then
+         default_schema := Null_Unbounded_String;
+      else
+         default_schema := To_Unbounded_String( name );
+      end if;
+   end  Set_Default_Schema;
+   
+   function Add_Schema_To_Query( query : String; default : String := "" ) return String is
+      val : aliased String := 
+         ( if default /= "" then Add_Trailing( default ) else Get_Default_Schema );
+      key : aliased String := "SCHEMA";
+      subs : constant GNATColl.Templates.Substitution_Array( 1 .. 1 ) := 
+         ( 1 => ( Name  => key'Unchecked_Access, 
+                  Value => val'Unchecked_Access ));
+      outs : constant String := GNATColl.Templates.Substitute( query, subs );
+   begin
+      return outs;      
+   end Add_Schema_To_Query;
+   
+  -- return a string like '2007-09-24 16:07:47'
    function to_string( t : Date_Time_Rec ) return String is      
       
       YEAR_PICTURE : constant Ada.Text_IO.Editing.Picture :=
@@ -206,6 +267,13 @@ package body DB_Commons is
       return Make_Criterion_Element( varname, op, false, join, value'Img );
    end Make_Criterion_Element;
 
+   function Make_Criterion_Element( varname : String;
+                                  op : operation_type;
+                                  join : join_type; 
+                                  value : Boolean  ) return Criterion is
+   begin
+      return Make_Criterion_Element( varname, op, false, join, value'Img );
+   end Make_Criterion_Element;
    
    function Make_Criterion_Element( varname : String;
                                   op : operation_type;
@@ -221,7 +289,27 @@ package body DB_Commons is
       return s;      
    end Make_Order_By_Element;
 
-   
+   procedure Remove_From_Criteria( cr : in out Criteria; varname : String ) is
+      i : Natural := 1;
+   begin
+      if cr.elements.Length = 0 then
+         return;
+      end if;
+      loop
+         declare
+            s1 : constant String  := To_String( cr.elements.Element( i ).s );
+            p  : constant Natural := Ada.Strings.Fixed.Index( s1, " " );
+            s  : constant String  := s1( 1 .. p-1 );
+         begin
+            if s = varname then
+               cr.Elements.Delete( i );
+            end if;
+         end;
+         i := i + 1;
+         exit when i > Natural( cr.elements.Length );
+      end loop;
+   end Remove_From_Criteria;
+
    procedure Add_To_Criteria( cr : in out Criteria; elem : Criterion ) is
    begin
       Criteria_P.append( cr.elements, elem );
@@ -316,6 +404,7 @@ package body DB_Commons is
    begin
       return Make_Criterion_Element( varname, op, false, join, value'Img );         
    end Make_Decimal_Criterion_Element;
+  
    
    -- === CUSTOM PROCS START ===
    -- === CUSTOM PROCS END ===

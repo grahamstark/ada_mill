@@ -1,11 +1,14 @@
-with DB_Commons.ODBC;
+with Ada.Assertions;
 with Ada.Strings.Unbounded;
 with Ada.Containers.Vectors;
-with GNU.DB.SQLCLI; 
 with GNATColl.Traces;
+with GNATCOLL.SQL.Postgres; 
+
+with Environment;
 
 -- === CUSTOM IMPORTS START ===
 -- === CUSTOM IMPORTS END ===
+
 
 package body Connection_Pool is 
 
@@ -14,7 +17,8 @@ package body Connection_Pool is
    
    use Ada.Strings.Unbounded;
    use Ada.Containers;
-
+   use Ada.Assertions;
+   
    log_trace : GNATColl.Traces.Trace_Handle := GNATColl.Traces.Create( "CONNECTION_POOL" );
    
    procedure Log( s : String ) is
@@ -24,87 +28,47 @@ package body Connection_Pool is
 
    -- === CUSTOM TYPES START ===
    -- === CUSTOM TYPES END ===
-   
-   function Equal_Connections( left, right : dodbc.Database_Connection ) return Boolean is
-      use GNU.DB.SQLCLI;
-   begin
-      return left.Environment = right.Environment and left.connection = right.connection;
-   end Equal_Connections;
-   
-   package Connection_List_Package is new Ada.Containers.Vectors( 
-      Index_Type   => Positive, 
-      Element_Type => dodbc.Database_Connection,
-      "=" => Equal_Connections );
-   
-   subtype Connection_List is Connection_List_Package.Vector;
-   
-   used_connections : Connection_List;
-   free_connections : Connection_List;
-   
-   t_server_name   : Unbounded_String;
-   t_database_name : Unbounded_String;
-   t_user_name     : Unbounded_String;
-   t_password      : Unbounded_String;
 
-   procedure Initialise( 
-      server_name   : String;
-      database_name : String;
-      user_name     : String;
-      password      : String;
-      initial_size  : Positive ) is
-   begin
-      t_server_name    := To_Unbounded_String( server_name );
-      t_database_name  := To_Unbounded_String( database_name );
-      t_user_name      := To_Unbounded_String( user_name );
-      t_password       := To_Unbounded_String( password );
-      for i in 1 .. initial_size loop
-         free_connections.Append( dodbc.Connect( database_name, user_name, password ));
-      end loop;
-   end Initialise;
+   --
+   -- NOTE: not really a connection pool! the connection_pool.adb-full is a complete
+   -- implementation. Just here to keep the interface the same.
+   -- 
+   -- Tests show this is just as fast;see Performance_And_Threading_Tests in the southampton project
+   -- TODO write this up; allow option in build to allow full version
+   -- TODO make things like auto commit, buffering options in XML
+   -- 
+   use dexec;
    
-   function Lease return dodbc.Database_Connection is
-      c : dodbc.Database_Connection;
-      n : Natural := Natural( free_connections.Length );
+   function Lease return dexec.Database_Connection is
+      db_descr : Database_Description := GNATCOLL.SQL.Postgres.Setup( 
+         Database => Environment.Get_database_Name, 
+         User     => Environment.Get_username, 
+         Host     => Environment.Get_server_name, 
+         Password => Environment.Get_password );
+      c : Database_Connection := db_descr.Build_Connection;
    begin
-      if n = 0 then
-         c := dodbc.Connect( 
-            To_String( t_database_name ), 
-            To_String( t_user_name ), 
-            To_String( t_password ));
-            used_connections.Append( c );         
-       else
-          c := free_connections.Element( n );
-          used_connections.Append( c );
-          free_connections.Delete( n );
-      end if;
-      return c;
+      c.Automatic_Transactions( Active => True );
+      return c;      
    end Lease;
    
-   procedure Return_Connection( c : dodbc.Database_Connection ) is
-   use Connection_List_Package;
-      cur : Cursor:= used_connections.Find( c );
-   begin
-      used_connections.Delete( cur );
-      free_connections.Append( c );
-   end  Return_Connection;
-   
    procedure Shutdown is
-   use Connection_List_Package;
-      
-      procedure Close( cur : Cursor ) is
-         c : dodbc.Database_Connection := Element( cur );
-      begin
-         dodbc.Disconnect( c );
-       end Close;
-      
    begin
-      used_connections.Iterate( Close'Access );
-      used_connections.Clear;
-      free_connections.Iterate( Close'Access );
-      free_connections.Clear;
+      null;
    end Shutdown;
+   
+   procedure Return_Connection( conn : in out dexec.Database_Connection ) is
+   begin
+      conn.Commit;
+      Free( conn );
+   end  Return_Connection;
 
+   procedure Initialise( 
+      initial_size : Positive := 30 ) is
+   begin
+      null;
+   end Initialise;
+   
    -- === CUSTOM PROCS START ===
    -- === CUSTOM PROCS END ===
-    
+     
 end Connection_Pool;
