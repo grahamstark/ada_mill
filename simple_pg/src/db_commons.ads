@@ -1,5 +1,5 @@
 --
--- Created by ada_generator.py on 2014-11-11 00:46:56.929993
+-- Created by ada_generator.py on 2016-03-22 22:11:02.365942
 -- 
 with Ada.Calendar;
 with Ada.Containers.Vectors;
@@ -95,6 +95,12 @@ package DB_Commons is
       op : operation_type;
       join : join_type; 
       value : Long_Float  ) return Criterion;
+
+   function Make_Criterion_Element( 
+      varname : String;
+      op : operation_type;
+      join : join_type; 
+      value : Boolean  ) return Criterion;
                                   
    function Make_Criterion_Element( 
       varname : String;
@@ -122,7 +128,9 @@ package DB_Commons is
    
    procedure Add_To_Criteria( cr : in out Criteria; elem : Criterion );
    procedure Add_To_Criteria( cr : in out Criteria; ob : Order_By_Element );
-
+   procedure Remove_From_Criteria( cr : in out Criteria; varname : String );
+   function Merge( c1 : Criteria; c2 : Criteria ) return Criteria;
+   
    DB_Exception : exception;
 
 private 

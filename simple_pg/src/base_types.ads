@@ -1,5 +1,5 @@
 --
--- Created by ada_generator.py on 2014-11-11 00:46:56.684793
+-- Created by ada_generator.py on 2016-03-22 22:11:02.230302
 -- 
 with Ada.Text_IO; 
 with Ada.Strings.Bounded; 
@@ -42,8 +42,8 @@ package Base_Types is
 
    type Decimal_12_2 is delta 0.010000 digits 12;
    
-   type standard_user_type1_Enum is ( a3, b4, c5 ) ;
-   type standard_user_type2_Enum is ( v1, v2, v3 ) ;
+   type standard_user_type1 is ( a3, b4, c5 ) ;
+   type standard_user_type2 is ( v1, v2, v3 ) ;
    
    MISSING_I_KEY : constant := -12345678;
    MISSING_S_KEY : constant String := "-12345678";
@@ -75,6 +75,9 @@ package Base_Types is
    package Std_IO is new Ada.Text_IO.Integer_IO (Integer);
    package String_IO renames Ada.Text_IO;
    
+   -- "True" "T" "YES" "1" all true "False" "F" "N" "0" all false 
+   --else raises Constraint exception; case insensitive
+   function Boolean_Value( s : String ) return Boolean;
    
    --
    -- Packages for reading and writing arrays in the format used in Postgres. 
@@ -105,7 +108,16 @@ package Base_Types is
     
    end Discrete_Mapper;
    
-
+   generic
+      type Index is (<>);
+      type Array_Type is array( Index range <> ) of Boolean;   
+   package Boolean_Mapper is
+   
+     procedure SQL_Map_To_Array( s : String; a : out Array_Type );
+     function Array_To_SQL_String( a : Array_Type ) return String;
+     function To_String( a : Array_Type ) return String;
+    
+   end Boolean_Mapper;
    
    -- === CUSTOM PROCS START ===
    -- === CUSTOM PROCS END ===

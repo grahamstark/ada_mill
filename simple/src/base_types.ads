@@ -1,5 +1,5 @@
 --
--- Created by ada_generator.py on 2014-02-01 16:13:07.437984
+-- Created by ada_generator.py on 2015-10-15 00:52:41.587896
 -- 
 with Ada.Text_IO; 
 with Ada.Strings.Bounded; 
@@ -32,7 +32,8 @@ package Base_Types is
    
    -- type Real is new Long_Float;
    type Decimal is delta 0.01 digits 10;
-   type Big_Int is range -9223372036854775808 .. 9223372036854775807;
+   subtype Big_Int is Long_Long_Integer;
+
    --
    --
    --
@@ -40,7 +41,7 @@ package Base_Types is
    UNIX_NEW_LINE : constant String (1 .. 1) := (1 => stda.LF);
 
    
-   type standard_user_type2_Enum is ( v1, v2, v3 ) ;
+   type standard_user_type2 is ( v1, v2, v3 ) ;
    
    MISSING_I_KEY : constant := -12345678;
    MISSING_S_KEY : constant String := "-12345678";
@@ -71,6 +72,51 @@ package Base_Types is
    package Real_IO is new Ada.Text_IO.Float_IO (Long_Float);
    package Std_IO is new Ada.Text_IO.Integer_IO (Integer);
    package String_IO renames Ada.Text_IO;
+   
+   -- "True" "T" "YES" "1" all true "False" "F" "N" "0" all false 
+   --else raises Constraint exception; case insensitive
+   function Boolean_Value( s : String ) return Boolean;
+   
+   --
+   -- Packages for reading and writing arrays in the format used in Postgres. 
+   -- You need two near-dupicates here.
+   -- Odd that you can't have a generic *numeric*, but there you go..
+   --
+   generic
+      type Index is (<>);
+      type Data_Type is digits<>;
+      type Array_Type is array( Index range <> ) of Data_Type;   
+   package Float_Mapper is
+   
+     procedure SQL_Map_To_Array( s : String; a : out Array_Type );
+     function Array_To_SQL_String( a : Array_Type ) return String;
+     function To_String( a : Array_Type ) return String;
+
+   end Float_Mapper;
+   
+   generic
+      type Index is (<>);
+      type Data_Type is (<>);
+      type Array_Type is array( Index range <> ) of Data_Type;   
+   package Discrete_Mapper is
+   
+     procedure SQL_Map_To_Array( s : String; a : out Array_Type );
+     function Array_To_SQL_String( a : Array_Type ) return String;
+     function To_String( a : Array_Type ) return String;
+    
+   end Discrete_Mapper;
+   
+   generic
+      type Index is (<>);
+      type Array_Type is array( Index range <> ) of Boolean;   
+   package Boolean_Mapper is
+   
+     procedure SQL_Map_To_Array( s : String; a : out Array_Type );
+     function Array_To_SQL_String( a : Array_Type ) return String;
+     function To_String( a : Array_Type ) return String;
+    
+   end Boolean_Mapper;
+   
    -- === CUSTOM PROCS START ===
    -- === CUSTOM PROCS END ===
 
