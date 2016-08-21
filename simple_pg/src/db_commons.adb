@@ -1,11 +1,12 @@
 --
--- Created by ada_generator.py on 2014-11-11 00:46:56.911361
+-- Created by ada_generator.py on 2016-03-22 22:11:02.356847
 -- 
 with Ada.Calendar;
 with Ada.Containers.Vectors;
 with Ada.Exceptions;  
 with Ada.Strings.Unbounded; 
 with Ada.Text_IO.Editing;
+with Ada.Strings.Fixed;
 with GNATColl.Traces;
 with GNATCOLL.Templates;
 
@@ -19,7 +20,8 @@ package body DB_Commons is
 
    use Ada.Exceptions;
    use Ada.Strings.Unbounded;
-
+   use type Ada.Containers.Count_Type;
+   
    -- === CUSTOM TYPES START ===
    -- === CUSTOM TYPES END ===
 
@@ -31,6 +33,24 @@ package body DB_Commons is
    end Log;
 
    default_schema : Unbounded_String := Null_Unbounded_String;
+   
+   function Merge( c1 : Criteria; c2 : Criteria ) return Criteria is
+      cc : Criteria := c1;
+   begin
+      -- cc.elements := c1.element;
+      -- cc.orderings.Copy( c1.orderings );
+      for e of c2.elements loop
+         if not cc.elements.Contains( e ) then
+            cc.elements.Append( e );
+         end if;
+      end loop;
+      for o of c2.orderings loop
+         if not cc.orderings.Contains( o ) then
+            cc.orderings.Append( o );
+         end if;
+      end loop;   
+      return cc;
+   end Merge;
    
    function Add_Trailing( s : String; to_add : Character := '.' ) return String is
    begin
@@ -247,6 +267,13 @@ package body DB_Commons is
       return Make_Criterion_Element( varname, op, false, join, value'Img );
    end Make_Criterion_Element;
 
+   function Make_Criterion_Element( varname : String;
+                                  op : operation_type;
+                                  join : join_type; 
+                                  value : Boolean  ) return Criterion is
+   begin
+      return Make_Criterion_Element( varname, op, false, join, value'Img );
+   end Make_Criterion_Element;
    
    function Make_Criterion_Element( varname : String;
                                   op : operation_type;
@@ -262,7 +289,27 @@ package body DB_Commons is
       return s;      
    end Make_Order_By_Element;
 
-   
+   procedure Remove_From_Criteria( cr : in out Criteria; varname : String ) is
+      i : Natural := 1;
+   begin
+      if cr.elements.Length = 0 then
+         return;
+      end if;
+      loop
+         declare
+            s1 : constant String  := To_String( cr.elements.Element( i ).s );
+            p  : constant Natural := Ada.Strings.Fixed.Index( s1, " " );
+            s  : constant String  := s1( 1 .. p-1 );
+         begin
+            if s = varname then
+               cr.Elements.Delete( i );
+            end if;
+         end;
+         i := i + 1;
+         exit when i > Natural( cr.elements.Length );
+      end loop;
+   end Remove_From_Criteria;
+
    procedure Add_To_Criteria( cr : in out Criteria; elem : Criterion ) is
    begin
       Criteria_P.append( cr.elements, elem );

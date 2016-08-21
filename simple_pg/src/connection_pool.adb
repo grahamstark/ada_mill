@@ -4,6 +4,7 @@ with Ada.Containers.Vectors;
 with GNATColl.Traces;
 with GNATCOLL.SQL.Postgres; 
 
+with Environment;
 
 -- === CUSTOM IMPORTS START ===
 -- === CUSTOM IMPORTS END ===
@@ -27,140 +28,46 @@ package body Connection_Pool is
 
    -- === CUSTOM TYPES START ===
    -- === CUSTOM TYPES END ===
-   
-   function Equal_Connections( left, right : dexec.Database_Connection ) return Boolean is
-      use type dexec.Database_Connection;
-   begin
-      return left = right;
-   end Equal_Connections;
-   
-   package Connection_List_Package is new Ada.Containers.Vectors( 
-      Index_Type   => Positive, 
-      Element_Type => dexec.Database_Connection,
-      "=" => Equal_Connections );
-   
-   subtype Connection_List is Connection_List_Package.Vector;
-   use type Ada.Containers.Count_Type;
-   
-   protected type Pool_Type is
 
-      entry Lease( c : out dexec.Database_Connection );
-      procedure Return_Connection( c : dexec.Database_Connection );
-      procedure Initialise( 
-         server_name  : String;
-         database     : String;
-         user_name    : String;
-         password     : String;
-         initial_size : Positive;
-         max_size     : Natural );
-      procedure Shutdown;
-         
-   private
-      maximum_size     : Count_Type;
-      used_connections : Connection_List;
-      free_connections : Connection_List;
-      db_descr         : dexec.Database_Description;
-   end Pool_Type;
-   
-   protected body Pool_Type is
-   
-      procedure Initialise( 
-         server_name  : String;
-         database     : String;
-         user_name    : String;
-         password     : String;
-         initial_size : Positive;
-         max_size     : Natural ) is
-      begin
-         if( max_size = 0 ) then 
-            maximum_size := Count_Type( initial_size );
-         else 
-            maximum_size := Count_Type( max_size );
-         end if;
-         Assert( Natural( maximum_size ) >= initial_size, "maximum_size < initial_size " & maximum_size'Img & " : " & initial_size'Img );
-         db_descr :=  GNATCOLL.SQL.Postgres.Setup( database, user_name, server_name, password );
-         for i in 1 .. initial_size loop
-            free_connections.Append( db_descr.Build_Connection );
-         end loop;
-      end Initialise;
-      
-      entry Lease( c : out dexec.Database_Connection ) when
-           free_connections.Length > 0  or 
-           ( free_connections.Length + used_connections.Length ) < maximum_size is
-         nf : constant Natural := Natural( free_connections.Length ); 
-      begin
-         if nf = 0  then
-            c := db_descr.Build_Connection; 
-            used_connections.Append( c );
-         else
-            c := free_connections.Element( nf );
-            used_connections.Append( c );
-            free_connections.Delete( nf );
-         end if;
-      end Lease;
-      
-      procedure Return_Connection( c : dexec.Database_Connection ) is
-      use Connection_List_Package;
-         cur : Cursor:= used_connections.Find( c );
-      begin
-         used_connections.Delete( cur );
-         free_connections.Append( c );
-      end  Return_Connection;
-      
-      procedure Shutdown is
-      use Connection_List_Package;
-         
-         procedure Close( cur : Cursor ) is
-            c : dexec.Database_Connection := Element( cur );
-         begin
-            dexec.Free( c );
-          end Close;
-         
-      begin
-         used_connections.Iterate( Close'Access );
-         used_connections.Clear;
-         free_connections.Iterate( Close'Access );
-         free_connections.Clear;
-      end Shutdown;
-
-   end Pool_Type;
-   
-   pool : Pool_Type;
+   --
+   -- NOTE: not really a connection pool! the connection_pool.adb-full is a complete
+   -- implementation. Just here to keep the interface the same.
+   -- 
+   -- Tests show this is just as fast;see Performance_And_Threading_Tests in the southampton project
+   -- TODO write this up; allow option in build to allow full version
+   -- TODO make things like auto commit, buffering options in XML
+   -- 
+   use dexec;
    
    function Lease return dexec.Database_Connection is
-      c : dexec.Database_Connection;
+      db_descr : Database_Description := GNATCOLL.SQL.Postgres.Setup( 
+         Database => Environment.Get_database_Name, 
+         User     => Environment.Get_username, 
+         Host     => Environment.Get_server_name, 
+         Password => Environment.Get_password );
+      c : Database_Connection := db_descr.Build_Connection;
    begin
-      pool.lease( c );
-      return c;
+      c.Automatic_Transactions( Active => True );
+      return c;      
    end Lease;
    
    procedure Shutdown is
    begin
-      pool.Shutdown;
+      null;
    end Shutdown;
    
-   procedure Return_Connection( c : dexec.Database_Connection ) is
+   procedure Return_Connection( conn : in out dexec.Database_Connection ) is
    begin
-      pool.Return_Connection( c );
+      conn.Commit;
+      Free( conn );
    end  Return_Connection;
-   
-   procedure Initialise( 
-      server_name  : String;
-      database     : String;
-      user_name    : String;
-      password     : String;
-      initial_size : Positive;
-      maximum_size : Natural := 0 ) is
-   begin
-      pool.Initialise( 
-         server_name, 
-         database, 
-         user_name,   
-         password,    
-         initial_size,
-         maximum_size );
-   end Initialise;
 
+   procedure Initialise( 
+      initial_size : Positive := 30 ) is
+   begin
+      null;
+   end Initialise;
+   
    -- === CUSTOM PROCS START ===
    -- === CUSTOM PROCS END ===
      
