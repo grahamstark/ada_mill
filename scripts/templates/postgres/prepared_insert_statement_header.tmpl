@@ -2,7 +2,9 @@
       ps : gse.Prepared_Statement; 
       query : constant String := DB_Commons.Add_Schema_To_Query( INSERT_PART, SCHEMA_NAME ) & " ( $posIndicators )"; 
    begin 
-      ps := gse.Prepare( query, On_Server => True ); 
+      ps := gse.Prepare( 
+        query, 
+        On_Server => True ); 
       return ps; 
    end Get_Prepared_Insert_Statement; 
 

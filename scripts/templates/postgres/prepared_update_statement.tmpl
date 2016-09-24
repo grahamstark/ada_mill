@@ -3,7 +3,9 @@
       
       query : constant String := DB_Commons.Add_Schema_To_Query( UPDATE_PART, SCHEMA_NAME ) & " $updateFields where $pkFields"; 
    begin 
-      ps := gse.Prepare( query, On_Server => True ); 
+      ps := gse.Prepare( 
+        query, 
+        On_Server => True ); 
       return ps; 
    end Get_Prepared_Update_Statement; 
 

@@ -4,6 +4,7 @@
 with Ada.Calendar;
 with Ada.Containers.Vectors;
 with Ada.Exceptions;  
+with Ada.Numerics.Discrete_Random;
 with Ada.Strings.Unbounded; 
 with Ada.Text_IO.Editing;
 with Ada.Strings.Fixed;
@@ -410,7 +411,35 @@ $e
    begin
       return Make_Criterion_Element( varname, op, false, join, value'Img );         
    end Make_Decimal_Criterion_Element;
+   
+   function Make_Limits_Clause( 
+      start : Positive := 1;
+      count : Positive := Positive'Last ) return String is
+      n_start : Natural := start-1;
+   begin
+      if start = 1 and count = Positive'Last then
+         return "";
+      end if;
+      return " limit " & count'Img & " offset " & n_start'Img;
+   end Make_Limits_Clause;
   
+   package Random_Positive is new Ada.Numerics.Discrete_Random( Positive );
+
+   Generator : Random_Positive.Generator;
+
+   function Random_String return String is
+      use Ada.Strings;
+      use Ada.Strings.Fixed;
+      i : Positive := Random_Positive.Random( Generator );
+      iss : constant String := i'Img( 2 .. i'Img'Length );
+      j : Positive := Random_Positive.Random( Generator );
+      jss : constant String := j'Img( 2 .. j'Img'Length );
+      k : Positive := Random_Positive.Random( Generator );
+      kss : constant String := k'Img( 2 .. k'Img'Length );
+   begin
+      return iss & jss & kss;
+   end Random_String;
+   
    
    -- === CUSTOM PROCS START ===
 #for $e in $customProcs

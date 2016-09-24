@@ -1,9 +1,12 @@
+   EXISTS_PS : constant gse.Prepared_Statement := gse.Prepare( 
+        "select 1 from $tableName where $pkqs", 
+        On_Server => True );
+        
    $functionHeader
       params : gse.SQL_Parameters := Get_Configured_Retrieve_Params;
 #for pr in $primaryKeyStrings:
       $pr;
 #end for;
-      ps     : gse.Prepared_Statement := gse.Prepare( "select 1 from $tableName where $pkqs", On_Server => True );      
       cursor : gse.Forward_Cursor;
       local_connection : Database_Connection;
       is_local_connection : Boolean;
@@ -19,7 +22,7 @@
 #for pr in $primaryKeyParams:
       $pr;
 #end for;
-      cursor.Fetch( local_connection, ps, params );
+      cursor.Fetch( local_connection, EXISTS_PS, params );
       Check_Result( local_connection );
       found := gse.Has_Row( cursor );
       if( is_local_connection )then

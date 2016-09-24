@@ -884,7 +884,7 @@ def parseRuntimeSchema( xRuntime ):
                 database = connection.find( 'database' ).text
                 portElem = connection.find( 'port' )
                 if portElem != None:
-                        port = portElem.text.to_i
+                        port = int(portElem.text)
                 else:
                         port = -1
                 did = datasource.get( "id" )        

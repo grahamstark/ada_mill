@@ -1,6 +1,7 @@
+   SAVE_PS : constant gse.Prepared_Statement := Get_Prepared_Insert_Statement;      
+
    $procedureHeader   
       params              : gse.SQL_Parameters := Get_Configured_Insert_Params;
-      ps                  : gse.Prepared_Statement := Get_Prepared_Insert_Statement;      
       local_connection    : Database_Connection;
       is_local_connection : Boolean;
 #for pr in $insertStrings:
@@ -26,7 +27,7 @@
 #for $pr in $allParams
       $pr;
 #end for;
-      gse.Execute( local_connection, ps, params );  
+      gse.Execute( local_connection, SAVE_PS, params );  
       Check_Result( local_connection );
       if( is_local_connection )then
          Connection_Pool.Return_Connection( local_connection );

@@ -32,10 +32,10 @@ $e
       return PORT;
    end Get_Port;    
 
-   function Set_Port( new_port : Integer ) is
+   procedure Set_Port( new_port : Integer ) is
    begin
       PORT := new_port;
-   end Get_Port;    
+   end Set_Port;    
    
    function Get_Server_Name return String is
    begin

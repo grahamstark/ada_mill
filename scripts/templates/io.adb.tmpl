@@ -63,7 +63,6 @@ $e
 #end for
    -- === CUSTOM TYPES END ===
 
-   
    --
    -- generic packages to handle each possible type of decimal, if any, go here
    --
@@ -71,8 +70,6 @@ $e
    $dec;
 #end for
 
-
-   
    --
    -- Select all variables; substring to be competed with output from some criteria
    --
@@ -93,6 +90,15 @@ $e
    -- update
    --
    $updatePart;
+$configuredInsertParamsBody
+
+$preparedInsertStatementBody
+
+$configuredRetrieveParamsBody
+
+$preparedRetrieveStatementBodies
+
+$preparedUpdateStatementBody
    
 $errorCheck
    
@@ -176,16 +182,6 @@ $cr
 $ord
 #end for
 
-$configuredInsertParamsBody
-
-$preparedInsertStatementBody
-
-$configuredRetrieveParamsBody
-
-$preparedRetrieveStatementBodies
-
-$preparedUpdateStatementBody
-   
    -- === CUSTOM PROCS START ===
 #for $e in $customProcs
 $e 

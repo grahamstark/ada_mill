@@ -1,12 +1,13 @@
+   ${functionName}_query : constant String := 
+         DB_Commons.Add_Schema_To_Query( "$statement", SCHEMA_NAME );
+   ${functionName}_ps : gse.Prepared_Statement := 
+        gse.Prepare( ${functionName}_query, On_Server => True );
    -- 
    -- Next highest avaiable value of $adaName - useful for saving  
    --
    $functionHeader
-      query               : constant String := 
-         DB_Commons.Add_Schema_To_Query( "$statement", SCHEMA_NAME );
       cursor              : gse.Forward_Cursor;
       ai                  : $adaType;
-      ps                  : gse.Prepared_Statement;
       local_connection    : Database_Connection;
       is_local_connection : Boolean;
    begin
@@ -17,8 +18,8 @@
          local_connection := connection;          
          is_local_connection := False;
       end if;
-      ps := gse.Prepare( query, On_Server => True );
-      cursor.Fetch( local_connection, ps );
+      
+      cursor.Fetch( local_connection, ${functionName}_ps );
       Check_Result( local_connection );
       if( gse.Has_Row( cursor ))then
          ai := $getFunction

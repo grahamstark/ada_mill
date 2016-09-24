@@ -136,6 +136,16 @@ $e
    procedure Add_To_Criteria( cr : in out Criteria; ob : Order_By_Element );
    procedure Remove_From_Criteria( cr : in out Criteria; varname : String );
    function Merge( c1 : Criteria; c2 : Criteria ) return Criteria;
+   --
+   -- so, if start=3 and count=1000, gives " limit 1000 offset 2 " since counting from zero
+   -- if start=1 and count=Last, returns a zero length string.
+   --
+   function Make_Limits_Clause( 
+      start : Positive := 1;
+      count : Positive := Positive'Last ) return String;
+      
+  function Random_String return String;    
+      
    
    DB_Exception : exception;
 
@@ -167,7 +177,7 @@ private
       elements  : Criteria_P.Vector;
       orderings : Order_By_P.Vector;
    end record;
-   
+
    -- === CUSTOM PROCS START ===
 #for $e in $customProcs
 $e 

@@ -6,10 +6,9 @@ $binding
 #end for
       return $adaInstanceName;
    end Map_From_Cursor;
-   
+
    $functionHeader
       l : $listType;
-      ps : gse.Prepared_Statement;
       local_connection : Database_Connection;
       is_local_connection : Boolean;
       query : constant String := DB_Commons.Add_Schema_To_Query( SELECT_PART, SCHEMA_NAME ) 
@@ -24,8 +23,7 @@ $binding
           is_local_connection := False;
       end if;
       Log( "retrieve made this as query " & query );
-      ps := gse.Prepare( query, On_Server => True );
-      cursor.Fetch( local_connection, ps );
+      cursor.Fetch( local_connection, query );
       Check_Result( local_connection );
       while gse.Has_Row( cursor ) loop
          declare
