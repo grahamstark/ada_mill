@@ -1,5 +1,5 @@
 --
--- Created by ada_generator.py on 2016-03-22 22:11:02.221784
+-- Created by ada_generator.py on 2016-09-24 16:35:18.254503
 -- 
 
 -- === CUSTOM IMPORTS START ===
@@ -16,11 +16,21 @@ package body Environment is
    DATABASE_NAME     : Unbounded_String := To_Unbounded_String( "simple_pg" );
    USER_NAME         : Unbounded_String := To_Unbounded_String( "postgres" );
    PASSWORD          : Unbounded_String := To_Unbounded_String( "" );
+   PORT              : Integer := -1;
 
    -- === CUSTOM TYPES START ===
    -- === CUSTOM TYPES END ===
 
+   function Get_Port return Integer is
+   begin
+      return PORT;
+   end Get_Port;    
 
+   function Set_Port( new_port : Integer ) is
+   begin
+      PORT := new_port;
+   end Get_Port;    
+   
    function Get_Server_Name return String is
    begin
       return To_String( SERVER_NAME );

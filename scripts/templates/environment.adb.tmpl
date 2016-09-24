@@ -19,6 +19,7 @@ package body Environment is
    DATABASE_NAME     : Unbounded_String := To_Unbounded_String( "$database" );
    USER_NAME         : Unbounded_String := To_Unbounded_String( "$username" );
    PASSWORD          : Unbounded_String := To_Unbounded_String( "$password" );
+   PORT              : Integer := -1;
 
    -- === CUSTOM TYPES START ===
 #for $e in $customTypes 
@@ -26,7 +27,16 @@ $e
 #end for
    -- === CUSTOM TYPES END ===
 
+   function Get_Port return Integer is
+   begin
+      return PORT;
+   end Get_Port;    
 
+   function Set_Port( new_port : Integer ) is
+   begin
+      PORT := new_port;
+   end Get_Port;    
+   
    function Get_Server_Name return String is
    begin
       return To_String( SERVER_NAME );

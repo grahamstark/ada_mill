@@ -457,14 +457,14 @@ class Variable:
                           'size': self.size }
 
 class DataSource:
-        def __init__( self, id, databaseType, hostname, database, username, password ):
+        def __init__( self, id, databaseType, hostname, database, username, password, port ):
                 self.id = id
                 self.databaseType = databaseType
                 self.hostname = hostname
                 self.database = database
                 self.username = username
                 self.password = password                
-
+                self.port = port
         def __repr__( self ):
                 return " id %(id)s databaseType %(databaseType)s hostname %(hostname)s, database %(database)s username %(username)s password %(password)s " % \
                        { 'id' : self.id, 'databaseType' : self.databaseType, 'hostname' : self.hostname, 'database' : self.database, 'username' : self.username, 'password': self.password }
@@ -882,8 +882,13 @@ def parseRuntimeSchema( xRuntime ):
                 username = connection.find( 'username' ).text
                 password = connection.find( 'password' ).text
                 database = connection.find( 'database' ).text
+                portElem = connection.find( 'port' )
+                if portElem != None:
+                        port = portElem.text.to_i
+                else:
+                        port = -1
                 did = datasource.get( "id" )        
-                return DataSource( did, databaseType, hostname, database, username, password )
+                return DataSource( did, databaseType, hostname, database, username, password, port )
 
 def makeForeignKey( xfk, childTable ):
         parentTableKey = xfk.get( 'foreignTable' )

@@ -492,6 +492,7 @@ def  makeEnvironmentADB( runtime ):
         template.database = runtime.database
         template.password = runtime.password
         template.username = runtime.username
+        template.port = runtime.port
         template.date = datetime.datetime.now()
         outfile = file( outfileName, 'w' );
         outfile.write( str(template) )
@@ -1142,7 +1143,7 @@ def makeIO( database ):
                 makeIOAds( database, database.adaTypePackages, table )
                 makeIOAdb( database, table )
 
-def writeConnectionPool():
+def writeConnectionPool( runtime ):
         """
         """
         if TARGETS.binding == 'odbc':
@@ -1153,5 +1154,5 @@ def writeConnectionPool():
                 elif TARGETS.databaseType == 'sqlite':
                         import ada_specific_sqlite as asp
         asp.writeConnectionPoolADS();
-        asp.writeConnectionPoolADB();
+        asp.writeConnectionPoolADB( runtime );
 

@@ -84,7 +84,7 @@ makeBasicTypesADB();
 makeIO( database )
 makeCommons()
 asp.makeDriverCommons()
-writeConnectionPool();
+writeConnectionPool( database.dataSource );
 asp.writeProjectFile( database );
 
 print "writing sample configuration and project file to "+paths.getPaths().etcDir

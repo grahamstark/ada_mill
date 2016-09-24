@@ -434,14 +434,14 @@ def makeDriverCommons():
         
         return
        
-def writeConnectionPoolADB():
+def writeConnectionPoolADB( runtime ):
         outfileName = paths.getPaths().srcDir + 'connection_pool.adb'
         template = Template( file=templatesPath()+"connection_pool.adb.tmpl" )
         template.date = datetime.datetime.now()
         template.customImports = readLinesBetween( outfileName, ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
         template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
         template.customProcs = readLinesBetween( outfileName, ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
-
+        template.hasPort = runtime.port > 0
         outfile = file( outfileName, 'w' );
         outfile.write( str(template) )
         outfile.close() 

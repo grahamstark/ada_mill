@@ -50,6 +50,9 @@ $e
          Database => Environment.Get_database_Name, 
          User     => Environment.Get_username, 
          Host     => Environment.Get_server_name, 
+#if $hasPort:
+         Port     => Environment.Get_Port,  
+#end if         
          Password => Environment.Get_password );
       c : Database_Connection := db_descr.Build_Connection;
    begin

@@ -273,7 +273,7 @@ def makeDriverCommons():
                         outfile.close()
                         
 
-def writeConnectionPoolADB():
+def writeConnectionPoolADB( runtime ):
         outfileName = paths.getPaths().srcDir + 'connection_pool.adb'
         template = Template( file=templatesPath()+"connection_pool.adb.tmpl" )
         template.date = datetime.datetime.now()
