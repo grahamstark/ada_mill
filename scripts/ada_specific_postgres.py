@@ -147,6 +147,8 @@ def makeParamsBindings( instanceName, variableList ):
                         alist.append( pstr + '"+"( aliased_' + var.adaName +"'Access )")
                 elif var.isRealOrDecimalType():
                         alist.append( pstr + '"+"( Float( ' + instanceName + var.adaName +" ))")
+                elif isBigIntTypeInPostgres( var ):
+                        alist.append( pstr + 'As_Bigint( ' + instanceName + var.adaName +" )" )
                 elif( var.isDiscreteTypeInAda()):
                         alist.append( pstr + '"+"( ' + var.getAdaType( True ) + "'Pos( "+ instanceName + var.adaName +" ))")                                        
                 # elif( var.isNumericType() ):
@@ -168,6 +170,9 @@ def makeConfiguredParamsHeader( templateName, variableList ):
                         default = 'null, Null_Unbounded_String' #'"'+var.arrayInfo.sqlArrayDefaultDeclaration( var.getDefaultAdaValue() )+'"'
                 elif( isIntegerTypeInPostgres( var )):
                         typ = 'Parameter_Integer'
+                        default = '0'
+                elif( isBigIntTypeInPostgres( var )):
+                        typ = 'Parameter_Bigint'
                         default = '0'
                 elif( var.isStringType() ):
                         typ = 'Parameter_Text'
@@ -212,6 +217,9 @@ def makeConfiguredParamsBody( templateName, variableList, versions ):
                         elif isIntegerTypeInPostgres( var ):
                                 typ = 'Parameter_Integer'
                                 default = '0'
+                        elif isBigIntTypeInPostgres( var ):
+                                typ = 'Parameter_Bigint'
+                                default = '0'
                         elif var.isStringType():
                                 typ = 'Parameter_Text'
                                 default = 'null, Null_Unbounded_String';
@@ -244,7 +252,10 @@ def makeConfiguredInsertParamsBody( table ):
         
 
 def isIntegerTypeInPostgres( variable ):
-        return ( variable.schemaType == 'INTEGER' ) or ( variable.schemaType == 'BOOLEAN' ) or ( variable.schemaType == 'ENUM' ) or ( variable.schemaType == 'BIGINT' )
+        return ( variable.schemaType == 'INTEGER' ) or ( variable.schemaType == 'BOOLEAN' ) or ( variable.schemaType == 'ENUM' )
+        
+def isBigIntTypeInPostgres( variable ):
+         return ( variable.schemaType == 'BIGINT' )
 
 
 def makeValueFunction( variable, posStr, default_value=None ):
@@ -294,7 +305,7 @@ def makeBinding( databaseAdapter, instanceName, var, pos ):
                 binding += INDENT*4 + var.arrayInfo.arrayFromStringDeclaration( varname ) + ";\n";
                 binding += INDENT*3 + "end;\n"
                 binding += INDENT*2 + "end if;"
-        elif isIntegerTypeInPostgres( var ):
+        elif isIntegerTypeInPostgres( var ) or isBigIntTypeInPostgres( var ):
                 binding = INDENT*2 + "if not gse.Is_Null( cursor, " + posStr + " )then\n"
                 if( var.schemaType == 'ENUM' ):
                         binding += INDENT*3 + "declare\n"
