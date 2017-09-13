@@ -59,7 +59,7 @@ def writeTable( table, databaseAdapter ):
                 clauses.append( varstring )
         if( table.hasPrimaryKey() ):
                 constraintCount += 1                        
-                varstring =  INDENT+'PRIMARY KEY( ' +  ', '.join( table.primaryKey ) + " )";
+                varstring =  INDENT+'CONSTRAINT ' + table.name+ '_pk PRIMARY KEY( ' +  ', '.join( table.primaryKey ) + " )";
                 clauses.append( varstring );
         if( table.hasForeignKeys() ):
                 n = 0
