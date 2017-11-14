@@ -26,6 +26,7 @@
 
 from Cheetah.Template import Template
 import paths
+
 from table_model import DataSource, Format, Qualification, ItemType
 """
 A bunch of stuff is (or may be) shared between the db-specific ada generation module and the general one

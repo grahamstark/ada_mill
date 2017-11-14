@@ -28,6 +28,7 @@
  for the most part
 """
 from Cheetah.Template import Template
+
 import datetime
 
 from sys_targets import TARGETS
@@ -36,7 +37,7 @@ import os
 from table_model import DataSource, Format, Qualification, ItemType
 from utils import makePlural, adafyName, makePaddedString, \
         INDENT, MAXLENGTH, readLinesBetween, makeUniqueArray, \
-        notNullOrBlank, isNullOrBlank
+        notNullOrBlank, isNullOrBlank, conditionalWrite
 from ada_generator_libs import makeRetrieveSHeader, makeSaveProcHeader, \
         makeRetrieveCHeader, \
         makeUpdateProcHeader, makeDeleteSpecificProcHeader, makeCriterionList, \
@@ -335,7 +336,7 @@ def makeIOAds( database, adaTypePackages, table ):
                 Format.ada,
                 Qualification.full,
                 ItemType.table )
-        print "makeIOAds; outputRecord = " + outputRecord
+        # print "makeIOAds; outputRecord = " + outputRecord
         packageName = table.makeName( 
                 Format.ada, 
                 Qualification.full, 
@@ -432,9 +433,10 @@ def makeIOAds( database, adaTypePackages, table ):
         template.preparedRetrieveStatementHeaders = asp.makePreparedRetrieveStatementHeaders()
         template.configuredRetrieveParamsHeader = asp.makeConfiguredRetrieveParamsHeader( table )
         template.mapFromCursorHeader = asp.makeMapFromCursorHeader( outputRecord );
-        outfile = file( outfileName, 'w' );        
-        outfile.write( str(template) ) 
-        outfile.close()
+        # outfile = file( outfileName, 'w' );        
+        # outfile.write( str(template) ) 
+        # outfile.close()
+        conditionalWrite( outfileName,  str(template) )
 
 def sqlVariablesList( table ):
         selects = []
@@ -494,9 +496,10 @@ def  makeEnvironmentADB( runtime ):
         template.username = runtime.username
         template.port = runtime.port
         template.date = datetime.datetime.now()
-        outfile = file( outfileName, 'w' );
-        outfile.write( str(template) )
-        outfile.close()
+        #outfile = file( outfileName, 'w' );
+        #outfile.write( str(template) )
+        #outfile.close()
+        conditionalWrite( outfileName, str(template) ) 
 
 def makeToStringBody( table, indent ):
         template = Template( file=paths.getPaths().templatesPath+"to_string.proc.tmpl" )
@@ -581,7 +584,7 @@ def makeRecord( table, numIndents = 1 ):
         xml=>sql=>ada type mappings and defaults.
         """
         uqname = table.makeName( Format.ada, Qualification.unqualified, ItemType.table )
-        print "making record for table " + uqname 
+        # print "making record for table " + uqname 
         s = INDENT*numIndents +"--\n"
         s += INDENT*numIndents +"-- record modelling "+ uqname + " : " + table.description[:MAXLENGTH]+"\n"
         s += INDENT*numIndents +"--\n"
@@ -650,21 +653,19 @@ def makeOneDataADS( database, parent, addArrayDecls ):
         # rtabs = copy.deepcopy( schema.tables ) # FIXME: maybe one per schema??
         totalRecords = len( database.getAllTables( True )) # fixme slow copy
         childPackages = []
-        print "makeOneDataADS entered "
         if totalRecords > 0 :                
                 outfileName = paths.getPaths().srcDir + \
                         database.makeName( 
                                 Format.ada_filename, 
                                 Qualification.full, 
                                 ItemType.schema_name ) + '.ads'
-                print "makeDataADS writing to " + outfileName
+                # print "makeDataADS writing to " + outfileName
                 customImports = readLinesBetween( outfileName, 
                         ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
                 customTypes = readLinesBetween( outfileName, 
                         ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
                 customProcs = readLinesBetween( outfileName, 
                         ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
-                outfile = file( outfileName, 'w' );
                 template = Template( file=paths.getPaths().templatesPath+"data.ads.tmpl" )
                 template.records = records;
                 template.customImports = customImports;
@@ -681,8 +682,10 @@ def makeOneDataADS( database, parent, addArrayDecls ):
                         
                 template.date = datetime.datetime.now()
                 template.childPackages = childPackages;        
-                outfile.write( str(template) )
-                outfile.close
+                #outfile = file( outfileName, 'w' );
+                #outfile.write( str(template) )
+                #outfile.close
+                conditionalWrite( outfileName, str( template )) 
 
 
 def makeDataADS( database ):
@@ -727,7 +730,7 @@ def makeOneDataADB( database, parent ):
                 Format.ada_filename, 
                 Qualification.full, 
                 ItemType.schema_name ) +'.adb' # _data
-        print "makeOneDataADB; writing to " + outfileName
+        # print "makeOneDataADB; writing to " + outfileName
         tabs = database.getAllTables( False )
         n_tables = len( tabs )
         template.toStrings = makeToStringBodies( tabs, 1 );
@@ -736,9 +739,10 @@ def makeOneDataADB( database, parent ):
                 template.customImports = readLinesBetween( outfileName, ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
                 template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
                 template.customProcs = readLinesBetween( outfileName, ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
-                outfile = file( outfileName, 'w' );
-                outfile.write( str( template ))
-                outfile.close
+                #outfile = file( outfileName, 'w' );
+                #outfile.write( str( template ))
+                #outfile.close
+                conditionalWrite( outfileName, str( template ))
 
 def makeDataADB( database ):
         makeOneDataADB( database, database )
@@ -767,9 +771,10 @@ def makeEnvironmentADS( runtime ):
 
         template.unit_name   = runtime.database+'_db_environment'
         template.date = datetime.datetime.now()
-        outfile = file( outfileName, 'w' );
-        outfile.write( str(template) )
-        outfile.close()
+        #outfile = file( outfileName, 'w' );
+        #outfile.write( str(template) )
+        #outfile.close()
+        conditionalWrite( outfileName, str( template ))
 
 def makeBaseTypesADS( database ):
         """
@@ -795,9 +800,10 @@ def makeBaseTypesADS( database ):
         template.enum_reps = enums;
         template.date = datetime.datetime.now()
         template.adaTypePackages = database.adaTypePackages
-        outfile = file( outfileName, 'w' );
-        outfile.write( str(template) )
-        outfile.close()
+        #outfile = file( outfileName, 'w' );
+        #outfile.write( str(template) )
+        #outfile.close()
+        conditionalWrite( outfileName, str( template ))
         
 def makeBasicTypesADB():
         """
@@ -809,9 +815,10 @@ def makeBasicTypesADB():
         template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
         template.customProcs = readLinesBetween( outfileName, ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
         template.date = datetime.datetime.now()
-        outfile = file( outfileName, 'w' );
-        outfile.write( str(template) )
-        outfile.close()
+        #outfile = file( outfileName, 'w' );
+        #outfile.write( str(template) )
+        #outfile.close()
+        conditionalWrite( outfileName, str( template ))
         
 def makeCommons():
         """
@@ -828,9 +835,10 @@ def makeCommons():
                         template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
                         template.customProcs = readLinesBetween( outfileName, ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
                         template.date = datetime.datetime.now()
-                        outfile = file( outfileName, 'w' );
-                        outfile.write( str(template) )
-                        outfile.close()
+                        #outfile = file( outfileName, 'w' );
+                        #outfile.write( str(template) )
+                        #outfile.close()
+                        conditionalWrite( outfileName, str( template ))
                         
 def writeTestCaseADS( database ):
         """
@@ -843,10 +851,10 @@ def writeTestCaseADS( database ):
         template.customImports = readLinesBetween( outfileName, ".*CUSTOM.*IMPORTS.*START", ".*CUSTOM.*IMPORT.*END" )
         template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
         template.customProcs = readLinesBetween( outfileName, ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
-
-        outfile = file( outfileName, 'w' );
-        outfile.write( str(template) )
-        outfile.close()
+        conditionalWrite( outfileName, str( template ))
+        #outfile = file( outfileName, 'w' );
+        #outfile.write( str(template) )
+        #outfile.close()
         
 def makeChildTests( databaseName, testName, table ):
         return ''        
@@ -975,7 +983,7 @@ def writeTestCaseADB( database ):
                         ItemType.io_package )
                 schemaPackageName = ''
                 if table.schemaName != None:
-                        print "schemaName |" + table.schemaName + "|" 
+                        # print "schemaName |" + table.schemaName + "|" 
                         schema = database.getSchema( table.schemaName )
                         schemaPackageName = schema.makeName( Format.ada, Qualification.full, ItemType.schema_name ) + ".";
                 testName = ( adaTypeName+ "_Create_Test" ).replace( '.', '_' )
@@ -991,28 +999,33 @@ def writeTestCaseADB( database ):
                 template.dbPackages.append( schema.makeName( Format.ada, Qualification.full, ItemType.schema_name ));
                 
         template.date = datetime.datetime.now()
-        outfile = file( outfileName, 'w' );
-        outfile.write( str(template) )
-        outfile.close()
+        #outfile = file( outfileName, 'w' );
+        #outfile.write( str(template) )
+        #outfile.close()
+        conditionalWrite( outfileName, str( template ))
 
 def writeSuiteADB( database ):
         """
          Write the exe file bit (adb) for the test case 
         """
-        outfile = file( paths.getPaths().testsDir+ 'suite.adb', 'w' );
         template = Template( file=paths.getPaths().templatesPath+"suite.adb.tmpl" )
         template.testFile = adafyName( database.databaseName +"_Test" )
         template.testCase = adafyName( database.databaseName +  '_test.Test_Case' );
         template.date = datetime.datetime.now()
-        outfile.write( str(template) )
-        outfile.close()
+        outfileName = paths.getPaths().testsDir+ 'suite.adb'
+        #outfile = file( outfileName, 'w' );
+        #outfile.write( str(template) )
+        #outfile.close()
+        conditionalWrite( outfileName, str( template ))
         
 def writeHarness():
-        outfile = file( paths.getPaths().testsDir+ 'harness.adb', 'w' );
+        outfileName = paths.getPaths().testsDir+ 'harness.adb'
         template = Template( file=paths.getPaths().templatesPath+"harness.adb.tmpl" )
         template.date = datetime.datetime.now()
-        outfile.write( str(template) )
-        outfile.close() 
+        #outfile = file( outfileName, 'w' );
+        #outfile.write( str(template) )
+        #outfile.close() 
+        conditionalWrite( outfileName, str( template ))
         
 def makeIOAdb( database, table ):
         """
@@ -1126,9 +1139,10 @@ def makeIOAdb( database, table ):
         template.configuredInsertParamsBody = asp.makeConfiguredInsertParamsBody( table )
         template.preparedRetrieveStatementBodies = asp.makePreparedRetrieveStatementBodies( table )
         template.configuredRetrieveParamsBody = asp.makeConfiguredRetrieveParamsBody( table )
-        outfile = file( outfileName, 'w' );
-        outfile.write( str(template) ) 
-        outfile.close()
+        #outfile = file( outfileName, 'w' );
+        #outfile.write( str(template) ) 
+        #outfile.close()
+        conditionalWrite( outfileName, str( template ))
         
 def makeIO( database ):
         """

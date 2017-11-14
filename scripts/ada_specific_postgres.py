@@ -36,7 +36,8 @@ import datetime
 
 import paths
 from table_model import DataSource, Format, Qualification, ItemType
-from utils import makePlural, adafyName, makePaddedString, INDENT, MAXLENGTH, readLinesBetween
+from utils import makePlural, adafyName, makePaddedString, INDENT, MAXLENGTH, readLinesBetween, \
+     conditionalWrite
 from ada_generator_libs import makeRetrieveSHeader, makeSaveProcHeader, makeUpdateProcHeader, \
      makeDeleteSpecificProcHeader, makeCriterionList, makePrimaryKeySubmitFields, \
      makePrimaryKeyCriterion, makeNextFreeHeader, makeVariablesInUpdateOrder
@@ -48,12 +49,14 @@ def templatesPath():
         return paths.getPaths().templatesPath+paths.getPaths().sep+'postgres'+paths.getPaths().sep;
 
 def writeProjectFile( database ):
-        outfile = file( paths.getPaths().etcDir + database.databaseName+'.gpr' , 'w' );
         template = Template( file=templatesPath() + 'project_file.tmpl' )
         template.date = datetime.datetime.now()
         template.projectName = adafyName(database.databaseName)
-        outfile.write( str(template) )
-        outfile.close()
+        outfileName = paths.getPaths().etcDir + database.databaseName+'.gpr'
+        #outfile = file( outfileName , 'w' );
+        #outfile.write( str(template) )
+        #outfile.close()
+        conditionalWrite( outfileName, str( template ))
 
 def makeMapFromCursorHeader( adaQualifiedOutputRecord ):
         return INDENT + "function Map_From_Cursor( cursor : GNATCOLL.SQL.Exec.Forward_Cursor ) return " + adaQualifiedOutputRecord +";"  
@@ -202,7 +205,7 @@ def makeConfiguredParamsBody( templateName, variableList, versions ):
         n = len( variableList )        
         template.n = n
         for t in range(1,versions+1):
-                print " t = " + `t` + " template " + templateName + "versions" + `versions`
+                # print " t = " + `t` + " template " + templateName + "versions" + `versions`
                 if t == 1:
                         varList = variableList
                 else:
@@ -235,10 +238,10 @@ def makeConfiguredParamsBody( templateName, variableList, versions ):
                         s += "   -- " + " : " + var.adaName + " (" + var.adaType +")" 
                         rows.append( s )
                 if t == 1:
-                        print "adding insert rows"
+                        # print "adding insert rows"
                         template.rows = rows
                 else:
-                        print "adding update rows"
+                        # print "adding update rows"
                         template.updateRows = rows
         return str(template)
 
@@ -439,9 +442,10 @@ def makeDriverCommons():
                         template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
                         template.customProcs = readLinesBetween( outfileName, ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
                         template.date = datetime.datetime.now()
-                        outfile = file( outfileName, 'w' );
-                        outfile.write( str(template) )
-                        outfile.close()
+                        #outfile = file( outfileName, 'w' );
+                        #outfile.write( str(template) )
+                        #outfile.close()
+                        conditionalWrite( outfileName, str( template ))
         
         return
        
@@ -453,9 +457,10 @@ def writeConnectionPoolADB( runtime ):
         template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
         template.customProcs = readLinesBetween( outfileName, ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
         template.hasPort = runtime.port > 0
-        outfile = file( outfileName, 'w' );
-        outfile.write( str(template) )
-        outfile.close() 
+        #outfile = file( outfileName, 'w' );
+        #outfile.write( str(template) )
+        #outfile.close() 
+        conditionalWrite( outfileName, str( template ))
 
 def writeConnectionPoolADS():
         outfileName = paths.getPaths().srcDir+ 'connection_pool.ads'
@@ -466,9 +471,10 @@ def writeConnectionPoolADS():
         template.customTypes = readLinesBetween( outfileName, ".*CUSTOM.*TYPES.*START", ".*CUSTOM.*TYPES.*END" )
         template.customProcs = readLinesBetween( outfileName, ".*CUSTOM.*PROCS.*START", ".*CUSTOM.*PROCS.*END" )
         
-        outfile = file( outfileName, 'w' );
-        outfile.write( str(template) )
-        outfile.close()
+        #outfile = file( outfileName, 'w' );
+        #outfile.write( str(template) )
+        #outfile.close()
+        conditionalWrite( outfileName, str( template ))
                                   
 
 def makeUpdateProcBody( table ):

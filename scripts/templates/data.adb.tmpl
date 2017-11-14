@@ -1,11 +1,11 @@
 --
--- Created by ada_generator.py on $date
+-- Created by Ada Mill (https://github.com/grahamstark/ada_mill)
 -- 
 
 with GNAT.Calendar.Time_IO;
 -- === CUSTOM IMPORTS START ===
 #for $e in $customImports 
-$e 
+$e
 #end for
 -- === CUSTOM IMPORTS END ===
 
@@ -16,7 +16,7 @@ package body $name is
 
    -- === CUSTOM TYPES START ===
 #for $e in $customTypes 
-$e 
+$e
 #end for
    -- === CUSTOM TYPES END ===
    
@@ -32,7 +32,7 @@ $cp
         
    -- === CUSTOM PROCS START ===
 #for $e in $customProcs
-$e 
+$e
 #end for
    -- === CUSTOM PROCS END ===
 

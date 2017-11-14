@@ -2,7 +2,9 @@ import sys, os
 from string import capwords, strip, replace, lower
 import re
 import traceback
-
+import shutil
+import filecmp
+ 
 INDENT = '   '
      
 MAXLENGTH = 120
@@ -210,4 +212,26 @@ class Singleton:
                 raise TypeError('Singletons must be accessed through `Instance()`.')
         
         def __instancecheck__(self, inst):      
-                return isinstance(inst, self._decorated)        
+                return isinstance(inst, self._decorated)
+                
+def conditionalWrite( fileName, newBody ):
+        """
+        write the body to filename if filename doesn't already contain exactly the same contents
+        """
+        if os.path.isfile( fileName ): 
+                tmpName = fileName + '.tmp'
+                outfile = file( tmpName, 'w' );        
+                outfile.write( newBody ) 
+                outfile.close()
+                if not filecmp.cmp( fileName, tmpName, False ):
+                        print "overwriting file |" + fileName + "| with |" + tmpName + "|\n"
+                        shutil.copyfile( tmpName, fileName )
+                else:
+                        print "leaving " + fileName + " alone"
+                os.remove( tmpName )
+        else:
+                print "creating new " + fileName
+                outfile = file( fileName, 'w' );        
+                outfile.write( newBody ) 
+                outfile.close()
+                

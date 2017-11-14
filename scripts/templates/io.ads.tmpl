@@ -1,5 +1,5 @@
 --
--- Created by ada_generator.py on $date
+-- Created by Ada Mill (https://github.com/grahamstark/ada_mill)
 -- 
 with $dataPackageName;
 with DB_Commons;
@@ -17,7 +17,7 @@ with $e;
 
 -- === CUSTOM IMPORTS START ===
 #for $e in $customImports 
-$e 
+$e
 #end for
 -- === CUSTOM IMPORTS END ===
 
@@ -41,7 +41,7 @@ package $IOName is
 
    -- === CUSTOM TYPES START ===
 #for $e in $customTypes 
-$e 
+$e
 #end for
    -- === CUSTOM TYPES END ===
 
@@ -136,7 +136,7 @@ $configuredRetrieveParamsHeader
 
    -- === CUSTOM PROCS START ===
 #for $e in $customProcs
-$e 
+$e
 #end for
    -- === CUSTOM PROCS END ===
 

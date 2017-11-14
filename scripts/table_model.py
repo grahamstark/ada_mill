@@ -548,9 +548,9 @@ class Table:
                 self.enumeratedTypes = {}
                 self.description = description
                 self.childRelations = {}
-                print "at end of creation; self.adaIOPackageName |" + \
-                      self.makeName( Format.ada, Qualification.unqualified, ItemType.io_package ) + \
-                      "| self.makeName( Format.ada, Qualification.full, ItemType.list_container ) |" + self.makeName( Format.ada, Qualification.full, ItemType.list_container )
+                # print "at end of creation; self.adaIOPackageName |" + \
+                #       self.makeName( Format.ada, Qualification.unqualified, ItemType.io_package ) + \
+                #      "| self.makeName( Format.ada, Qualification.full, ItemType.list_container ) |" + self.makeName( Format.ada, Qualification.full, ItemType.list_container )
         
         def unqualifiedName( self ):
                 if notNullOrBlank( self.adaExternalName ):
@@ -997,7 +997,7 @@ def parseTable( xtable, databaseAdapter, databaseName, schemaName, adaDataPackag
         defaultInstanceName = get( xtable, 'defaultInstanceName', '' )
         for column in xtable.iter( "column" ):
                 varname = column.get( 'name' )
-                print( "on column " + varname )
+                # print( "on column " + varname )
                 stype = column.get( 'type' )
                 adaTypeName = column.get( 'adaTypeName' )
                 size = get( column, 'size', 1 );
@@ -1038,7 +1038,7 @@ def parseTable( xtable, databaseAdapter, databaseName, schemaName, adaDataPackag
                         if arrayEnumValuesStr != None:
                                 arrayEnumValues = arrayEnumValuesStr.split()
                         arrayName = column.get( 'arrayName' )
-                        print( "on array " + arrayName )
+                        # print( "on array " + arrayName )
                         arrayInfo = ArrayInfo( 
                                 isExternallyDefined, 
                                 arrayIndexIsExternallyDefined,

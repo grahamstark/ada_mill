@@ -1,5 +1,5 @@
 --
--- Created by ada_generator.py on $date
+-- Created by Ada Mill (https://github.com/grahamstark/ada_mill)
 -- 
 with Ada.Containers.Vectors;
 --
@@ -16,7 +16,7 @@ with $e;
 
 -- === CUSTOM IMPORTS START ===
 #for $e in $customImports 
-$e 
+$e
 #end for
 -- === CUSTOM IMPORTS END ===
 
@@ -30,7 +30,7 @@ package $name is
 
    -- === CUSTOM TYPES START ===
 #for $e in $customTypes 
-$e 
+$e
 #end for
    -- === CUSTOM TYPES END ===
 
@@ -53,7 +53,7 @@ $child
         
    -- === CUSTOM PROCS START ===
 #for $e in $customProcs
-$e 
+$e
 #end for
    -- === CUSTOM PROCS END ===
 
